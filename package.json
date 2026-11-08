@@ -1,0 +1,24 @@
+{
+  "name": "hackathon-11-2026",
+  "scripts": {
+    "test:types": "./.commands/test-types.sh",
+    "test:lint": "./.commands/test-lint.sh"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.18.0",
+      "onFail": "download"
+    }
+  },
+  "packageManager": "pnpm@12.18.0",
+  "type": "module",
+  "dependencies": {
+    "@duplojs/lang": "0.1.0-beta.6"
+  },
+  "devDependencies": {
+    "@duplojs/agents-kit": "0.1.0-beta.6",
+    "@duplojs/code-config": "0.1.0-beta.6",
+    "typescript": "7.1.0-beta"
+  }
+}

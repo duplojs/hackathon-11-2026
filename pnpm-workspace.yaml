@@ -1,0 +1,5 @@
+minimumReleaseAgeExclude:
+  - '@duplojs/code-config@0.1.0-beta.6'
+  - '@duplojs/lang@0.1.0-beta.6'
+  - '@duplojs/agents-kit@0.1.0-beta.6'
+  - '@duplojs/server@0.1.0-beta.6'
