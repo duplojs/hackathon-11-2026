@@ -43,12 +43,17 @@ export interface Transformer<
 		data: GenericData,
 		context: TransformerContext,
 		localContext: LocalTransformerContext,
-	): (
+	): DCommon.MaybePromise<
 		| TransformationSuccess<GenericResultNode>
 		| TransformationError
 		| NotfoundTransformer
-	);
+	>;
 }
+
+export type TransformerResultNode<GenericTransformer extends Transformer> =
+	GenericTransformer extends Transformer<unknown, infer GenericGoNode>
+		? GenericGoNode
+		: never;
 
 export function createTransformer<
 	GenericData extends unknown,
@@ -59,11 +64,11 @@ export function createTransformer<
 		data: NoInfer<GenericData>,
 		context: TransformerContext,
 		localContext: LocalTransformerContext,
-	) => (
+	) => DCommon.MaybePromise<
 		| TransformationSuccess<GenericResultNode>
 		| TransformationError
 		| NotfoundTransformer
-	),
+	>,
 ): Transformer<
 	GenericData,
 	GenericResultNode
@@ -78,16 +83,22 @@ export function createTransformer<
 }
 
 export function transform<
-	GenericGoNode extends GO.AST.Node,
+	GenericTransformers extends readonly Transformer[],
 >(
 	data: unknown,
-	transformers: readonly Transformer<unknown, GenericGoNode>[],
+	transformers: GenericTransformers,
 	context: TransformerContext,
 	localContext: LocalTransformerContext,
-): (
-		| TransformationSuccess<GenericGoNode>
+): Promise<
+		| TransformationSuccess<TransformerResultNode<GenericTransformers[number]>>
 		| TransformationError
 		| NotfoundTransformer
+>;
+export async function transform(
+	data: unknown,
+	transformers: readonly Transformer[],
+	context: TransformerContext,
+	localContext: LocalTransformerContext,
 ) {
 	return DCommon.pipe(
 		transformers,

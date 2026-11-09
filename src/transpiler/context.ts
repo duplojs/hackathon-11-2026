@@ -9,6 +9,7 @@ import type { LocalTransformerContext } from "./localContext";
 import {
 	transform,
 	type Transformer,
+	type TransformerResultNode,
 	type TransformationSuccessPayload,
 	type TransformationSuccess,
 	type TransformationError,
@@ -31,15 +32,15 @@ export interface TransformerContext {
 	checker: Checker;
 	main: TopLevelContext;
 	dependencies: DependencyContext;
-	transform<GenericGoNode extends GO.AST.Node>(
+	transform<GenericTransformers extends readonly Transformer[]>(
 		data: unknown,
-		transformers: readonly Transformer<unknown, GenericGoNode>[],
+		transformers: GenericTransformers,
 		localContext: LocalTransformerContext,
-	): (
-		| TransformationSuccess<GenericGoNode>
+	): Promise<
+		| TransformationSuccess<TransformerResultNode<GenericTransformers[number]>>
 		| TransformationError
 		| NotfoundTransformer
-	);
+	>;
 	success<GenericGoNode extends GO.AST.Node>(
 		payload: DObject.PartialKeys<
 			TransformationSuccessPayload<GenericGoNode>,
