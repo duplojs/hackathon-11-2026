@@ -1,2 +1,2 @@
-export * from './AST';
-export * from './printer';
+export * as AST from "./AST";
+export * as Printer from "./printer";

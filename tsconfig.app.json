@@ -2,8 +2,9 @@
 	"extends": "@duplojs/code-config/tsconfig/base.json",
 	"compilerOptions": {
 		"paths": {
-			"@src/*": ["./src/*"]
+			"@go": ["./src/go/index.ts"],
+			"@transpiler": ["./src/transpiler/index.ts"],
 		}
 	},
-	"include": ["./src/**/*.ts"]
+	"include": ["./src/**/*.ts", "./bin/**/*.ts"]
 }

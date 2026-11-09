@@ -169,6 +169,12 @@ importers:
       '@duplojs/lang':
         specifier: 0.1.0-beta.7
         version: 0.1.0-beta.7
+      '@duplojs/server':
+        specifier: 0.1.0-beta.7
+        version: 0.1.0-beta.7(@duplojs/lang@0.1.0-beta.7)
+      typescript:
+        specifier: 7.1.0-beta
+        version: 7.1.0-beta
     devDependencies:
       '@duplojs/agents-kit':
         specifier: 0.1.0-beta.7
@@ -176,9 +182,6 @@ importers:
       '@duplojs/code-config':
         specifier: 0.1.0-beta.7
         version: 0.1.0-beta.7(conventional-commits-parser@7.1.4)(jiti@2.7.0)(typescript@7.1.0-beta)
-      typescript:
-        specifier: 7.1.0-beta
-        version: 7.1.0-beta
 
 packages:
 
