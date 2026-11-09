@@ -2,8 +2,9 @@ import * as DArray from "@duplojs/lang/array";
 import * as DCommon from "@duplojs/lang/common";
 import * as DEither from "@duplojs/lang/either";
 import * as DModeling from "@duplojs/lang/modeling";
-import type * as DObject from "@duplojs/lang/object";
 import type * as GO from "@go";
+import type { TransformerContext } from "./context";
+import type { LocalTransformerContext } from "./localContext";
 
 export interface TransformationSuccessPayload<
 	GenericGoNode extends GO.AST.Node,
@@ -33,19 +34,6 @@ export type NotfoundTransformer = DEither.Left<
 	unknown
 >;
 
-export interface TransformerContext {
-	transform: typeof transform;
-	success<
-		GenericGoNode extends GO.AST.Node,
-	>(
-		payload: DObject.PartialKeys<
-			TransformationSuccessPayload<GenericGoNode>,
-			"before" | "topLevelDeclarations"
-		>
-	): TransformationSuccess<GenericGoNode>;
-	error(content: unknown): TransformationError;
-}
-
 export interface Transformer<
 	GenericData extends unknown = unknown,
 	GenericResultNode extends GO.AST.Node = GO.AST.Node,
@@ -54,6 +42,7 @@ export interface Transformer<
 	transformer(
 		data: GenericData,
 		context: TransformerContext,
+		localContext: LocalTransformerContext,
 	): (
 		| TransformationSuccess<GenericResultNode>
 		| TransformationError
@@ -69,6 +58,7 @@ export function createTransformer<
 	transformer: (
 		data: NoInfer<GenericData>,
 		context: TransformerContext,
+		localContext: LocalTransformerContext,
 	) => (
 		| TransformationSuccess<GenericResultNode>
 		| TransformationError
@@ -87,21 +77,13 @@ export function createTransformer<
 	);
 }
 
-const transformerContext: TransformerContext = {
-	error: (content) => DEither.left("transformation-error", content),
-	success: (payload) => DEither.right("transformation-success", {
-		...payload,
-		before: payload.before ?? [],
-		topLevelDeclarations: payload.topLevelDeclarations ?? [],
-	}),
-	transform,
-};
-
 export function transform<
 	GenericGoNode extends GO.AST.Node,
 >(
 	data: unknown,
 	transformers: readonly Transformer<unknown, GenericGoNode>[],
+	context: TransformerContext,
+	localContext: LocalTransformerContext,
 ): (
 		| TransformationSuccess<GenericGoNode>
 		| TransformationError
@@ -126,7 +108,8 @@ export function transform<
 				return exit(
 					element.transformer(
 						data,
-						transformerContext,
+						context,
+						localContext,
 					),
 				);
 			},
