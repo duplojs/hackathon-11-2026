@@ -1,4 +1,4 @@
-import { createFactory } from "../base";
+import * as DModeling from "@duplojs/lang/modeling";
 import { type Identifier } from "../identifier";
 import { type Expression } from "../expression/base";
 import { type Type } from "../type/base";
@@ -15,7 +15,7 @@ export interface VariableDeclarationZeroValue extends _Declaration<"variable-zer
 	typeReference: VariableType;
 }
 
-export const variableDeclarationZeroValue = createFactory<
+export const variableDeclarationZeroValue = DModeling.createTaggedObjectFactory<
 	VariableDeclarationZeroValue
 >("node-declaration-variable-zero-value");
 
@@ -25,6 +25,6 @@ export interface VariableDeclarationInitialized extends _Declaration<"variable-i
 	initializer: Expression;
 }
 
-export const variableDeclarationInitialized = createFactory<
+export const variableDeclarationInitialized = DModeling.createTaggedObjectFactory<
 	VariableDeclarationInitialized
 >("node-declaration-variable-initialized");

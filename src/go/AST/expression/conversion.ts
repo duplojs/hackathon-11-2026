@@ -1,4 +1,4 @@
-import { createFactory } from "../base";
+import * as DModeling from "@duplojs/lang/modeling";
 import { type Type } from "../type/base";
 import { type TypeReference } from "../type/reference";
 import { type _Expression, type Expression } from "./base";
@@ -22,7 +22,7 @@ export function conversionExpression<
 		operand: GenericOperand;
 	},
 ) {
-	return createFactory<ConversionExpression<GenericType, GenericOperand>>(
+	return DModeling.createTaggedObjectFactory<ConversionExpression<GenericType, GenericOperand>>(
 		"node-expression-conversion",
 	)(properties);
 }

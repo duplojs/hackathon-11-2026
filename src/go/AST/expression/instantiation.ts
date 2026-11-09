@@ -1,5 +1,5 @@
+import * as DModeling from "@duplojs/lang/modeling";
 import type * as DArray from "@duplojs/lang/array";
-import { createFactory } from "../base";
 import { type Identifier } from "../identifier";
 import { type Type } from "../type/base";
 import { type TypeReference } from "../type/reference";
@@ -15,6 +15,6 @@ export interface InstantiationExpression extends _Expression<"instantiation"> {
 	typeArguments: readonly InstantiationTypeArgument[] & DArray.MinElements<1>;
 }
 
-export const instantiationExpression = createFactory<
+export const instantiationExpression = DModeling.createTaggedObjectFactory<
 	InstantiationExpression
 >("node-expression-instantiation");

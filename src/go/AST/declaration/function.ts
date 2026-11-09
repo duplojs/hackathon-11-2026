@@ -1,4 +1,4 @@
-import { createFactory } from "../base";
+import * as DModeling from "@duplojs/lang/modeling";
 import { type Identifier } from "../identifier";
 import { type Type } from "../type/base";
 import { type FunctionParameter, type TypeParameter } from "../type/function";
@@ -39,7 +39,7 @@ export interface FunctionDeclaration extends _Declaration<"function"> {
 	body: BlockStatement;
 }
 
-export const functionDeclaration = createFactory<
+export const functionDeclaration = DModeling.createTaggedObjectFactory<
 	FunctionDeclaration
 >("node-declaration-function");
 
@@ -53,6 +53,6 @@ export interface MethodDeclaration extends _Declaration<"method"> {
 	body: BlockStatement;
 }
 
-export const methodDeclaration = createFactory<
+export const methodDeclaration = DModeling.createTaggedObjectFactory<
 	MethodDeclaration
 >("node-declaration-method");

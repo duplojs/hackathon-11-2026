@@ -1,4 +1,4 @@
-import { createFactory } from "../base";
+import * as DModeling from "@duplojs/lang/modeling";
 import { type _Type, type Type } from "./base";
 import { type TypeReference } from "./reference";
 
@@ -18,7 +18,7 @@ export function pointerType<
 >(
 	properties: { typeReference: GenericTarget },
 ) {
-	return createFactory<PointerType<GenericTarget>>(
+	return DModeling.createTaggedObjectFactory<PointerType<GenericTarget>>(
 		"node-type-pointer",
 	)(properties);
 }

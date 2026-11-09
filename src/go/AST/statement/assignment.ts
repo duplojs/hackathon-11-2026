@@ -1,5 +1,5 @@
+import * as DModeling from "@duplojs/lang/modeling";
 import type * as DArray from "@duplojs/lang/array";
-import { createFactory } from "../base";
 import { type Identifier } from "../identifier";
 import { type IndexExpression, type SelectorExpression } from "../expression/access";
 import { type Expression } from "../expression/base";
@@ -18,7 +18,7 @@ export interface AssignmentStatement extends _Statement<"assignment"> {
 	values: readonly Expression[] & DArray.MinElements<1>;
 }
 
-export const assignmentStatement = createFactory<
+export const assignmentStatement = DModeling.createTaggedObjectFactory<
 	AssignmentStatement
 >("node-statement-assignment");
 
@@ -33,7 +33,7 @@ export interface CompoundAssignmentStatement extends _Statement<"assignment-comp
 	value: Expression;
 }
 
-export const compoundAssignmentStatement = createFactory<
+export const compoundAssignmentStatement = DModeling.createTaggedObjectFactory<
 	CompoundAssignmentStatement
 >("node-statement-assignment-compound");
 
@@ -42,6 +42,6 @@ export interface ShortVariableDeclarationStatement extends _Statement<"variable-
 	initializer: Expression;
 }
 
-export const shortVariableDeclarationStatement = createFactory<
+export const shortVariableDeclarationStatement = DModeling.createTaggedObjectFactory<
 	ShortVariableDeclarationStatement
 >("node-statement-variable-short");

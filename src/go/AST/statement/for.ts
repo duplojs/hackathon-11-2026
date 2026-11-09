@@ -1,4 +1,5 @@
-import { createFactory, type _Node } from "../base";
+import * as DModeling from "@duplojs/lang/modeling";
+import { type _Node } from "../base";
 import { type Identifier } from "../identifier";
 import { type Expression } from "../expression/base";
 import { type AssignmentStatement, type AssignmentTarget, type CompoundAssignmentStatement } from "./assignment";
@@ -21,7 +22,7 @@ export interface ForStatement extends _Statement<"for"> {
 	body: BlockStatement;
 }
 
-export const forStatement = createFactory<
+export const forStatement = DModeling.createTaggedObjectFactory<
 	ForStatement
 >("node-statement-for");
 
@@ -30,7 +31,7 @@ export interface RangeAssignment extends _Node<"range-assignment"> {
 	value?: AssignmentTarget;
 }
 
-export const rangeAssignment = createFactory<
+export const rangeAssignment = DModeling.createTaggedObjectFactory<
 	RangeAssignment
 >("node-range-assignment");
 
@@ -39,7 +40,7 @@ export interface RangeDeclaration extends _Node<"range-declaration"> {
 	value?: Identifier;
 }
 
-export const rangeDeclaration = createFactory<
+export const rangeDeclaration = DModeling.createTaggedObjectFactory<
 	RangeDeclaration
 >("node-range-declaration");
 
@@ -51,6 +52,6 @@ export interface RangeStatement extends _Statement<"range"> {
 	body: BlockStatement;
 }
 
-export const rangeStatement = createFactory<
+export const rangeStatement = DModeling.createTaggedObjectFactory<
 	RangeStatement
 >("node-statement-range");

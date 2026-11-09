@@ -1,4 +1,4 @@
-import { createFactory } from "../base";
+import * as DModeling from "@duplojs/lang/modeling";
 import { type Type } from "../type/base";
 import { type TypeReference } from "../type/reference";
 import { type _Expression, type Expression } from "./base";
@@ -26,7 +26,7 @@ export function callExpression<
 		variadicArgument?: Expression;
 	},
 ) {
-	return createFactory<CallExpression<GenericCallee>>(
+	return DModeling.createTaggedObjectFactory<CallExpression<GenericCallee>>(
 		"node-expression-call",
 	)(properties);
 }

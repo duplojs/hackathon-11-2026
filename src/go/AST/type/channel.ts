@@ -1,4 +1,4 @@
-import { createFactory } from "../base";
+import * as DModeling from "@duplojs/lang/modeling";
 import { type _Type, type Type } from "./base";
 import { type TypeReference } from "./reference";
 
@@ -12,6 +12,6 @@ export interface ChannelType extends _Type<"channel"> {
 	direction: "bidirectional" | "send" | "receive";
 }
 
-export const channelType = createFactory<
+export const channelType = DModeling.createTaggedObjectFactory<
 	ChannelType
 >("node-type-channel");

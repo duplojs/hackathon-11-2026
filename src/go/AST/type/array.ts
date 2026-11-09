@@ -1,4 +1,4 @@
-import { createFactory } from "../base";
+import * as DModeling from "@duplojs/lang/modeling";
 import { type ConstantExpression } from "../expression/constant";
 import { type _Type, type Type } from "./base";
 import { type TypeReference } from "./reference";
@@ -15,6 +15,6 @@ export interface ArrayType extends _Type<"array"> {
 	elementType: ArrayElementType;
 }
 
-export const arrayType = createFactory<
+export const arrayType = DModeling.createTaggedObjectFactory<
 	ArrayType
 >("node-type-array");

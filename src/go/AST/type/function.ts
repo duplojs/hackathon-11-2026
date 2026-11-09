@@ -1,4 +1,4 @@
-import { createFactory } from "../base";
+import * as DModeling from "@duplojs/lang/modeling";
 import { type Identifier } from "../identifier";
 import { type _Type, type Type } from "./base";
 import { type TypeConstraint } from "./constraint";
@@ -32,6 +32,6 @@ export interface FunctionType extends _Type<"function"> {
 	returnTypes: readonly FunctionReturnType[];
 }
 
-export const functionType = createFactory<
+export const functionType = DModeling.createTaggedObjectFactory<
 	FunctionType
 >("node-type-function");

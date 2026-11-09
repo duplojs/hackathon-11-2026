@@ -1,4 +1,5 @@
-import { createFactory, type _Node } from "../base";
+import * as DModeling from "@duplojs/lang/modeling";
+import { type _Node } from "../base";
 import { type Identifier } from "../identifier";
 import { type ReceiveExpression } from "../expression/operator";
 import { type AssignmentTarget } from "./assignment";
@@ -12,7 +13,7 @@ export interface SelectReceiveAssignment extends _Node<"select-receive-assignmen
 	receive: ReceiveExpression;
 }
 
-export const selectReceiveAssignment = createFactory<
+export const selectReceiveAssignment = DModeling.createTaggedObjectFactory<
 	SelectReceiveAssignment
 >("node-select-receive-assignment");
 
@@ -22,7 +23,7 @@ export interface SelectReceiveDeclaration extends _Node<"select-receive-declarat
 	receive: ReceiveExpression;
 }
 
-export const selectReceiveDeclaration = createFactory<
+export const selectReceiveDeclaration = DModeling.createTaggedObjectFactory<
 	SelectReceiveDeclaration
 >("node-select-receive-declaration");
 
@@ -38,7 +39,7 @@ export interface SelectCase extends _Node<"select-case"> {
 	statements: readonly Statement[];
 }
 
-export const selectCase = createFactory<
+export const selectCase = DModeling.createTaggedObjectFactory<
 	SelectCase
 >("node-select-case");
 
@@ -53,7 +54,7 @@ export interface SelectStatementWithoutDefault extends _Statement<"select-withou
 	cases: readonly SelectCase[];
 }
 
-export const selectStatementWithoutDefault = createFactory<
+export const selectStatementWithoutDefault = DModeling.createTaggedObjectFactory<
 	SelectStatementWithoutDefault
 >("node-statement-select-without-default");
 
@@ -63,6 +64,6 @@ export interface SelectStatementWithDefault extends _Statement<"select-with-defa
 	casesAfterDefault: readonly SelectCase[];
 }
 
-export const selectStatementWithDefault = createFactory<
+export const selectStatementWithDefault = DModeling.createTaggedObjectFactory<
 	SelectStatementWithDefault
 >("node-statement-select-with-default");

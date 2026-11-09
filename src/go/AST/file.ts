@@ -1,9 +1,8 @@
-import { createFactory } from "./base";
+import * as DModeling from "@duplojs/lang/modeling";
 import { type Identifier } from "./identifier";
 import { type ImportDeclaration } from "./declaration/import";
 import { type LocalDeclaration } from "./declaration/base";
 import { type FunctionDeclaration, type MethodDeclaration } from "./declaration/function";
-import type * as DModeling from "@duplojs/lang/modeling";
 
 export type TopLevelDeclaration = (
 	| LocalDeclaration
@@ -17,6 +16,6 @@ export interface GoFile extends DModeling.ObjectTag<"file"> {
 	declarations: readonly TopLevelDeclaration[];
 }
 
-export const goFile = createFactory<GoFile>(
+export const goFile = DModeling.createTaggedObjectFactory<GoFile>(
 	"file",
 );

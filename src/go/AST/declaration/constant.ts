@@ -1,4 +1,4 @@
-import { createFactory } from "../base";
+import * as DModeling from "@duplojs/lang/modeling";
 import { type Identifier } from "../identifier";
 import { type ConstantExpression } from "../expression/constant";
 import { type TypeReference } from "../type/reference";
@@ -12,6 +12,6 @@ export interface ConstantDeclaration extends _Declaration<"constant"> {
 	initializer: ConstantExpression;
 }
 
-export const constantDeclaration = createFactory<
+export const constantDeclaration = DModeling.createTaggedObjectFactory<
 	ConstantDeclaration
 >("node-declaration-constant");

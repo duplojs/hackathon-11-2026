@@ -1,4 +1,4 @@
-import { createFactory } from "../base";
+import * as DModeling from "@duplojs/lang/modeling";
 import { type Identifier } from "../identifier";
 import { type Type } from "../type/base";
 import { type TypeReference } from "../type/reference";
@@ -19,7 +19,7 @@ export function selectorExpression<
 		identifier: Identifier;
 	},
 ) {
-	return createFactory<SelectorExpression<GenericTarget>>(
+	return DModeling.createTaggedObjectFactory<SelectorExpression<GenericTarget>>(
 		"node-expression-selector",
 	)(properties);
 }
@@ -31,7 +31,7 @@ export interface MethodExpression extends _Expression<"method"> {
 	identifier: Identifier;
 }
 
-export const methodExpression = createFactory<
+export const methodExpression = DModeling.createTaggedObjectFactory<
 	MethodExpression
 >("node-expression-method");
 
@@ -40,7 +40,7 @@ export interface IndexExpression extends _Expression<"index"> {
 	index: Expression;
 }
 
-export const indexExpression = createFactory<
+export const indexExpression = DModeling.createTaggedObjectFactory<
 	IndexExpression
 >("node-expression-index");
 
@@ -50,7 +50,7 @@ export interface SliceExpression extends _Expression<"slice"> {
 	high?: Expression;
 }
 
-export const sliceExpression = createFactory<
+export const sliceExpression = DModeling.createTaggedObjectFactory<
 	SliceExpression
 >("node-expression-slice");
 
@@ -61,7 +61,7 @@ export interface FullSliceExpression extends _Expression<"slice-full"> {
 	max: Expression;
 }
 
-export const fullSliceExpression = createFactory<
+export const fullSliceExpression = DModeling.createTaggedObjectFactory<
 	FullSliceExpression
 >("node-expression-slice-full");
 
@@ -72,6 +72,6 @@ export interface TypeAssertionExpression extends _Expression<"type-assertion"> {
 	typeReference: TypeAssertionType;
 }
 
-export const typeAssertionExpression = createFactory<
+export const typeAssertionExpression = DModeling.createTaggedObjectFactory<
 	TypeAssertionExpression
 >("node-expression-type-assertion");

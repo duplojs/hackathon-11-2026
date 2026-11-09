@@ -1,5 +1,6 @@
+import * as DModeling from "@duplojs/lang/modeling";
 import type * as DArray from "@duplojs/lang/array";
-import { createFactory, type _Node } from "../base";
+import { type _Node } from "../base";
 import { type Identifier } from "../identifier";
 import { type _Type, type Type } from "./base";
 import { type TypeConstraint } from "./constraint";
@@ -24,7 +25,7 @@ export interface InterfaceMethod extends _Node<"interface-method"> {
 	returnTypes: readonly InterfaceMethodReturnType[];
 }
 
-export const interfaceMethod = createFactory<
+export const interfaceMethod = DModeling.createTaggedObjectFactory<
 	InterfaceMethod
 >("node-interface-method");
 
@@ -32,7 +33,7 @@ export interface InterfaceUnion extends _Node<"interface-union"> {
 	terms: readonly InterfaceUnionTerm[] & DArray.MinElements<1>;
 }
 
-export const typeUnion = createFactory<
+export const typeUnion = DModeling.createTaggedObjectFactory<
 	InterfaceUnion
 >("node-interface-union");
 
@@ -48,6 +49,6 @@ export interface InterfaceType extends _Type<"interface"> {
 	elements: readonly InterfaceElement[];
 }
 
-export const interfaceType = createFactory<
+export const interfaceType = DModeling.createTaggedObjectFactory<
 	InterfaceType
 >("node-type-interface");

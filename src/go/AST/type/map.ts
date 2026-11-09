@@ -1,4 +1,4 @@
-import { createFactory } from "../base";
+import * as DModeling from "@duplojs/lang/modeling";
 import { type ArrayType } from "./array";
 import { type _Type, type Type } from "./base";
 import { type ChannelType } from "./channel";
@@ -26,6 +26,6 @@ export interface MapType extends _Type<"map"> {
 	valueType: MapValueType;
 }
 
-export const mapType = createFactory<
+export const mapType = DModeling.createTaggedObjectFactory<
 	MapType
 >("node-type-map");

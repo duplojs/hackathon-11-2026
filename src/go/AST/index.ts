@@ -1,4 +1,4 @@
-export * from "./base";
+export type * from "./base";
 export * from "./declaration";
 export * from "./expression";
 export * from "./file";

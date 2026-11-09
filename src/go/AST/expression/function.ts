@@ -1,4 +1,4 @@
-import { createFactory } from "../base";
+import * as DModeling from "@duplojs/lang/modeling";
 import { type BlockStatement } from "../statement/block";
 import { type Type } from "../type/base";
 import { type FunctionParameter } from "../type/function";
@@ -14,6 +14,6 @@ export interface FunctionLiteral extends _Expression<"literal-function"> {
 	body: BlockStatement;
 }
 
-export const functionLiteral = createFactory<
+export const functionLiteral = DModeling.createTaggedObjectFactory<
 	FunctionLiteral
 >("node-expression-literal-function");

@@ -1,4 +1,4 @@
-import { createFactory } from "../base";
+import * as DModeling from "@duplojs/lang/modeling";
 import { type Identifier } from "../identifier";
 import { type IndexExpression, type SelectorExpression } from "./access";
 import { type _Expression, type Expression } from "./base";
@@ -28,7 +28,7 @@ export function unaryExpression<
 		operand: GenericOperand;
 	},
 ) {
-	return createFactory<UnaryExpression<GenericOperand>>(
+	return DModeling.createTaggedObjectFactory<UnaryExpression<GenericOperand>>(
 		"node-expression-unary",
 	)(properties);
 }
@@ -51,7 +51,7 @@ export function binaryExpression<
 		right: GenericRight;
 	},
 ) {
-	return createFactory<BinaryExpression<GenericLeft | GenericRight>>(
+	return DModeling.createTaggedObjectFactory<BinaryExpression<GenericLeft | GenericRight>>(
 		"node-expression-binary",
 	)(properties);
 }
@@ -68,7 +68,7 @@ export interface AddressExpression extends _Expression<"address"> {
 	operand: AddressOperand;
 }
 
-export const addressExpression = createFactory<
+export const addressExpression = DModeling.createTaggedObjectFactory<
 	AddressExpression
 >("node-expression-address");
 
@@ -76,7 +76,7 @@ export interface DereferenceExpression extends _Expression<"dereference"> {
 	operand: Expression;
 }
 
-export const dereferenceExpression = createFactory<
+export const dereferenceExpression = DModeling.createTaggedObjectFactory<
 	DereferenceExpression
 >("node-expression-dereference");
 
@@ -84,6 +84,6 @@ export interface ReceiveExpression extends _Expression<"receive"> {
 	operand: Expression;
 }
 
-export const receiveExpression = createFactory<
+export const receiveExpression = DModeling.createTaggedObjectFactory<
 	ReceiveExpression
 >("node-expression-receive");

@@ -1,5 +1,5 @@
+import * as DModeling from "@duplojs/lang/modeling";
 
-import { createFactory } from "../base";
 import { type Identifier } from "../identifier";
 import { type _Declaration } from "./base";
 
@@ -8,6 +8,6 @@ export interface ImportDeclaration extends _Declaration<"import"> {
 	alias?: Identifier | ".";
 }
 
-export const importDeclaration = createFactory<
+export const importDeclaration = DModeling.createTaggedObjectFactory<
 	ImportDeclaration
 >("node-declaration-import");

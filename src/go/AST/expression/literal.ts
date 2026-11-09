@@ -1,4 +1,4 @@
-import { createFactory } from "../base";
+import * as DModeling from "@duplojs/lang/modeling";
 import { type _Expression } from "./base";
 
 export type ConstantLiteral = (
@@ -16,7 +16,7 @@ export interface IntegerLiteral extends _Expression<"literal-integer"> {
 	value: bigint;
 }
 
-export const integerLiteral = createFactory<
+export const integerLiteral = DModeling.createTaggedObjectFactory<
 	IntegerLiteral
 >("node-expression-literal-integer");
 
@@ -25,7 +25,7 @@ export interface FloatLiteral extends _Expression<"literal-float"> {
 	value: string;
 }
 
-export const floatLiteral = createFactory<
+export const floatLiteral = DModeling.createTaggedObjectFactory<
 	FloatLiteral
 >("node-expression-literal-float");
 
@@ -34,7 +34,7 @@ export interface ImaginaryLiteral extends _Expression<"literal-imaginary"> {
 	value: string;
 }
 
-export const imaginaryLiteral = createFactory<
+export const imaginaryLiteral = DModeling.createTaggedObjectFactory<
 	ImaginaryLiteral
 >("node-expression-literal-imaginary");
 
@@ -43,7 +43,7 @@ export interface RuneLiteral extends _Expression<"literal-rune"> {
 	value: string;
 }
 
-export const runeLiteral = createFactory<
+export const runeLiteral = DModeling.createTaggedObjectFactory<
 	RuneLiteral
 >("node-expression-literal-rune");
 
@@ -57,7 +57,7 @@ export interface StringLiteral extends _Expression<"literal-string"> {
 	value: string;
 }
 
-export const stringLiteral = createFactory<
+export const stringLiteral = DModeling.createTaggedObjectFactory<
 	StringLiteral
 >("node-expression-literal-string");
 
@@ -65,7 +65,7 @@ export interface BooleanLiteral extends _Expression<"literal-boolean"> {
 	value: boolean;
 }
 
-export const booleanLiteral = createFactory<
+export const booleanLiteral = DModeling.createTaggedObjectFactory<
 	BooleanLiteral
 >("node-expression-literal-boolean");
 
@@ -73,6 +73,6 @@ export interface NilLiteral extends _Expression<"literal-nil"> {
 
 }
 
-export const nilLiteral = createFactory<
+export const nilLiteral = DModeling.createTaggedObjectFactory<
 	NilLiteral
 >("node-expression-literal-nil");

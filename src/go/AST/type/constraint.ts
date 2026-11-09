@@ -1,4 +1,5 @@
-import { createFactory, type _Node } from "../base";
+import * as DModeling from "@duplojs/lang/modeling";
+import { type _Node } from "../base";
 import { type ArrayType } from "./array";
 import { type ChannelType } from "./channel";
 import { type FunctionType } from "./function";
@@ -23,6 +24,6 @@ export interface TypeConstraint extends _Node<"type-constraint"> {
 	typeReference: TypeConstraintTarget;
 }
 
-export const typeConstraint = createFactory<
+export const typeConstraint = DModeling.createTaggedObjectFactory<
 	TypeConstraint
 >("node-type-constraint");

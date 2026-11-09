@@ -1,5 +1,6 @@
+import * as DModeling from "@duplojs/lang/modeling";
 import type * as DArray from "@duplojs/lang/array";
-import { createFactory, type _Node } from "../base";
+import { type _Node } from "../base";
 import { type Identifier } from "../identifier";
 import { type Expression } from "../expression/base";
 import { type NilLiteral } from "../expression/literal";
@@ -12,7 +13,7 @@ export interface ExpressionSwitchCase extends _Node<"switch-case-expression"> {
 	statements: readonly Statement[];
 }
 
-export const expressionSwitchCase = createFactory<
+export const expressionSwitchCase = DModeling.createTaggedObjectFactory<
 	ExpressionSwitchCase
 >("node-switch-case-expression");
 
@@ -20,7 +21,7 @@ export interface DefaultCase extends _Node<"case-default"> {
 	statements: readonly Statement[];
 }
 
-export const defaultCase = createFactory<
+export const defaultCase = DModeling.createTaggedObjectFactory<
 	DefaultCase
 >("node-case-default");
 
@@ -37,7 +38,7 @@ export interface ExpressionSwitchStatementWithoutDefault extends _Statement<"swi
 	cases: readonly ExpressionSwitchCase[];
 }
 
-export const expressionSwitchStatementWithoutDefault = createFactory<
+export const expressionSwitchStatementWithoutDefault = DModeling.createTaggedObjectFactory<
 	ExpressionSwitchStatementWithoutDefault
 >("node-statement-switch-expression-without-default");
 
@@ -50,7 +51,7 @@ export interface ExpressionSwitchStatementWithDefault extends _Statement<"switch
 	casesAfterDefault: readonly ExpressionSwitchCase[];
 }
 
-export const expressionSwitchStatementWithDefault = createFactory<
+export const expressionSwitchStatementWithDefault = DModeling.createTaggedObjectFactory<
 	ExpressionSwitchStatementWithDefault
 >("node-statement-switch-expression-with-default");
 
@@ -61,7 +62,7 @@ export interface TypeSwitchCase extends _Node<"switch-case-type"> {
 	statements: readonly Statement[];
 }
 
-export const typeSwitchCase = createFactory<
+export const typeSwitchCase = DModeling.createTaggedObjectFactory<
 	TypeSwitchCase
 >("node-switch-case-type");
 
@@ -80,7 +81,7 @@ export interface TypeSwitchStatementWithoutDefault extends _Statement<"switch-ty
 	cases: readonly TypeSwitchCase[];
 }
 
-export const typeSwitchStatementWithoutDefault = createFactory<
+export const typeSwitchStatementWithoutDefault = DModeling.createTaggedObjectFactory<
 	TypeSwitchStatementWithoutDefault
 >("node-statement-switch-type-without-default");
 
@@ -93,6 +94,6 @@ export interface TypeSwitchStatementWithDefault extends _Statement<"switch-type-
 	casesAfterDefault: readonly TypeSwitchCase[];
 }
 
-export const typeSwitchStatementWithDefault = createFactory<
+export const typeSwitchStatementWithDefault = DModeling.createTaggedObjectFactory<
 	TypeSwitchStatementWithDefault
 >("node-statement-switch-type-with-default");

@@ -1,4 +1,5 @@
-import { createFactory, type _Node } from "../base";
+import * as DModeling from "@duplojs/lang/modeling";
+import { type _Node } from "../base";
 import { type Identifier } from "../identifier";
 import { type ArrayType } from "../type/array";
 import { type MapType } from "../type/map";
@@ -30,7 +31,7 @@ export function keyedElement<
 		value: Expression;
 	},
 ) {
-	return createFactory<KeyedElement<GenericKey>>(
+	return DModeling.createTaggedObjectFactory<KeyedElement<GenericKey>>(
 		"node-literal-element-keyed",
 	)(properties);
 }
@@ -44,7 +45,7 @@ export interface ArrayLiteral extends _Expression<"literal-array"> {
 	elements: readonly ArrayLiteralElement[];
 }
 
-export const arrayLiteral = createFactory<
+export const arrayLiteral = DModeling.createTaggedObjectFactory<
 	ArrayLiteral
 >("node-expression-literal-array");
 
@@ -57,7 +58,7 @@ export interface SliceLiteral extends _Expression<"literal-slice"> {
 	elements: readonly SliceLiteralElement[];
 }
 
-export const sliceLiteral = createFactory<
+export const sliceLiteral = DModeling.createTaggedObjectFactory<
 	SliceLiteral
 >("node-expression-literal-slice");
 
@@ -68,11 +69,13 @@ export interface MapLiteral extends _Expression<"literal-map"> {
 	elements: readonly KeyedElement[];
 }
 
-export const mapLiteral = createFactory<
+export const mapLiteral = DModeling.createTaggedObjectFactory<
 	MapLiteral
 >("node-expression-literal-map");
 
 export type StructLiteralType = TypeReference | StructType;
+
+export type StructLiteralElement = Expression | KeyedElement<Identifier>;
 
 export interface StructLiteral extends _Expression<"literal-struct"> {
 	typeReference: StructLiteralType;
@@ -80,6 +83,6 @@ export interface StructLiteral extends _Expression<"literal-struct"> {
 	elements: readonly Expression[] | readonly KeyedElement<Identifier>[];
 }
 
-export const structLiteral = createFactory<
+export const structLiteral = DModeling.createTaggedObjectFactory<
 	StructLiteral
 >("node-expression-literal-struct");

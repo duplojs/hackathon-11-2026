@@ -1,5 +1,5 @@
+import * as DModeling from "@duplojs/lang/modeling";
 
-import { createFactory } from "../base";
 import { type Identifier } from "../identifier";
 import { type Type } from "../type/base";
 import { type TypeParameter } from "../type/function";
@@ -16,22 +16,22 @@ export type TypeAliasType = (
 	| Type
 );
 
-export interface TypeDefinition extends _Declaration<"type-definition"> {
+export interface TypeDeclaration extends _Declaration<"type-declaration"> {
 	identifier: Identifier;
 	generic?: readonly TypeParameter[];
 	type: TypeDefinitionType;
 }
 
-export const typeDefinition = createFactory<
-	TypeDefinition
->("node-declaration-type-definition");
+export const typeDefinition = DModeling.createTaggedObjectFactory<
+	TypeDeclaration
+>("node-declaration-type-declaration");
 
-export interface TypeAlias extends _Declaration<"type-alias"> {
+export interface TypeAliasDeclaration extends _Declaration<"type-alias-declaration"> {
 	identifier: Identifier;
 	generic?: readonly TypeParameter[];
 	type: TypeAliasType;
 }
 
-export const typeAlias = createFactory<
-	TypeAlias
->("node-declaration-type-alias");
+export const typeAlias = DModeling.createTaggedObjectFactory<
+	TypeAliasDeclaration
+>("node-declaration-type-alias-declaration");

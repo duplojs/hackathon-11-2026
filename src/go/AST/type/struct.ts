@@ -1,4 +1,5 @@
-import { createFactory, type _Node } from "../base";
+import * as DModeling from "@duplojs/lang/modeling";
+import { type _Node } from "../base";
 import { type Identifier } from "../identifier";
 import { type _Type, type Type } from "./base";
 import { type PointerType } from "./pointer";
@@ -20,7 +21,7 @@ export interface StructField extends _Node<"struct-field"> {
 	tag?: string;
 }
 
-export const structField = createFactory<
+export const structField = DModeling.createTaggedObjectFactory<
 	StructField
 >("node-struct-field");
 
@@ -29,7 +30,7 @@ export interface StructEmbeddedField extends _Node<"struct-embedded-field"> {
 	tag?: string;
 }
 
-export const structEmbeddedField = createFactory<
+export const structEmbeddedField = DModeling.createTaggedObjectFactory<
 	StructEmbeddedField
 >("node-struct-embedded-field");
 
@@ -39,6 +40,6 @@ export interface StructType extends _Type<"struct"> {
 	fields: readonly StructMember[];
 }
 
-export const structType = createFactory<
+export const structType = DModeling.createTaggedObjectFactory<
 	StructType
 >("node-type-struct");

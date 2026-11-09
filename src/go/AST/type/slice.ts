@@ -1,4 +1,4 @@
-import { createFactory } from "../base";
+import * as DModeling from "@duplojs/lang/modeling";
 import { type _Type, type Type } from "./base";
 import { type TypeReference } from "./reference";
 
@@ -11,6 +11,6 @@ export interface SliceType extends _Type<"slice"> {
 	elementType: SliceElementType;
 }
 
-export const sliceType = createFactory<
+export const sliceType = DModeling.createTaggedObjectFactory<
 	SliceType
 >("node-type-slice");
