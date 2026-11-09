@@ -90,8 +90,7 @@ Chaque nœud concret possède une interface et une factory.
 Respecter le mécanisme `createFactory` existant.
 
 ```ts
-export interface ExampleDeclaration
-  extends _Declaration<"example"> {
+export interface ExampleDeclaration extends _Declaration<"example"> {
   identifier: Identifier;
 }
 

@@ -1,6 +1,6 @@
 import { createFactory } from "../base";
 import { type Identifier } from "../identifier";
-import { type _Expression } from "../expression/base";
+import { type Expression } from "../expression/base";
 import { type Type } from "../type/base";
 import { type TypeReference } from "../type/reference";
 import { type _Declaration } from "./base";
@@ -22,8 +22,7 @@ export const variableDeclarationZeroValue = createFactory<
 export interface VariableDeclarationInitialized extends _Declaration<"variable-initialized"> {
 	identifier: Identifier;
 	typeReference?: VariableType;
-	// Il manque une expression concrète : utiliser son union lorsque la famille sera définie.
-	initializer: _Expression;
+	initializer: Expression;
 }
 
 export const variableDeclarationInitialized = createFactory<

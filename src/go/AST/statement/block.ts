@@ -1,12 +1,8 @@
-import { createFactory, type _Node } from "../base";
-import { type _Statement } from "./base";
-
-type Statement = (
-	never
-);
+import { createFactory } from "../base";
+import { type _Statement, type Statement } from "./base";
 
 export interface BlockStatement extends _Statement<"block"> {
-	statements: Statement[];
+	statements: readonly Statement[];
 }
 
 export const blockStatement = createFactory<BlockStatement>(
