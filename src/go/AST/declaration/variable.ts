@@ -1,10 +1,18 @@
-import { createFactory, type Identifier } from "../base";
+import { createFactory } from "../base";
+import { type Identifier } from "../identifier";
 import { type _Expression } from "../expression/base";
+import { type Type } from "../type/base";
+import { type TypeReference } from "../type/reference";
 import { type _Declaration } from "./base";
+
+export type VariableType = (
+	| TypeReference
+	| Type
+);
 
 export interface VariableDeclarationZeroValue extends _Declaration<"variable-zero-value"> {
 	identifier: Identifier;
-	typeReference: Identifier;
+	typeReference: VariableType;
 }
 
 export const variableDeclarationZeroValue = createFactory<
@@ -13,7 +21,8 @@ export const variableDeclarationZeroValue = createFactory<
 
 export interface VariableDeclarationInitialized extends _Declaration<"variable-initialized"> {
 	identifier: Identifier;
-	typeReference?: Identifier;
+	typeReference?: VariableType;
+	// Il manque une expression concrète : utiliser son union lorsque la famille sera définie.
 	initializer: _Expression;
 }
 

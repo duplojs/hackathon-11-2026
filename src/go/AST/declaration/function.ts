@@ -1,14 +1,41 @@
-import { createFactory, type Identifier } from "../base";
-import { type _Type } from "../type/base";
-import { type BlockStatement } from "../blockStatement";
+import { createFactory } from "../base";
+import { type Identifier } from "../identifier";
+import { type Type } from "../type/base";
+import { type FunctionParameter, type TypeParameter } from "../type/function";
+import { type PointerType } from "../type/pointer";
+import { type GenericTypeReference, type TypeReference } from "../type/reference";
+import { type BlockStatement } from "../statement/block";
 import { type _Declaration } from "./base";
 
-type Parameter = readonly [Identifier, Identifier | _Type];
+export type FunctionDeclarationReturnType = (
+	| TypeReference
+	| Type
+);
+
+export type MethodDeclarationReturnType = (
+	| TypeReference
+	| Type
+);
+
+export type MethodReceiverPointerTarget = (
+	| Identifier
+	| GenericTypeReference
+);
+
+export type MethodReceiverType = (
+	| Identifier
+	| GenericTypeReference
+	| PointerType<MethodReceiverPointerTarget>
+);
+
+export type MethodReceiver = readonly [identifier: Identifier, typeReference: MethodReceiverType];
 
 export interface FunctionDeclaration extends _Declaration<"function"> {
 	identifier: Identifier;
-	parameters: readonly Parameter[];
-	returnTypes: readonly(Identifier | _Type)[];
+	generic: readonly TypeParameter[];
+	parameters: readonly FunctionParameter[];
+	variadicParameter?: FunctionParameter;
+	returnTypes: readonly FunctionDeclarationReturnType[];
 	body: BlockStatement;
 }
 
@@ -18,9 +45,11 @@ export const functionDeclaration = createFactory<
 
 export interface MethodDeclaration extends _Declaration<"method"> {
 	identifier: Identifier;
-	receiver: Parameter;
-	parameters: readonly Parameter[];
-	returnTypes: readonly (Identifier | _Type)[];
+	receiver: MethodReceiver;
+	generic: readonly TypeParameter[];
+	parameters: readonly FunctionParameter[];
+	variadicParameter?: FunctionParameter;
+	returnTypes: readonly MethodDeclarationReturnType[];
 	body: BlockStatement;
 }
 

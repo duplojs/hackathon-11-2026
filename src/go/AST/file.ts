@@ -1,4 +1,5 @@
-import { createFactory, type Identifier } from "./base";
+import { createFactory } from "./base";
+import { type Identifier } from "./identifier";
 import { type ImportDeclaration } from "./declaration/import";
 import type * as DModeling from "@duplojs/lang/modeling";
 

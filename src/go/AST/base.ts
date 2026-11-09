@@ -8,8 +8,6 @@ export interface _Node<
 
 }
 
-export type Identifier = string;
-
 export function createFactory<
 	GenericTaggedObject extends DModeling.ObjectTag = never,
 >(

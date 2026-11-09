@@ -1,11 +1,25 @@
 
-import { createFactory, type Identifier } from "../base";
-import { type _Type } from "../type/base";
+import { createFactory } from "../base";
+import { type Identifier } from "../identifier";
+import { type Type } from "../type/base";
+import { type TypeParameter } from "../type/function";
+import { type TypeReference } from "../type/reference";
 import { type _Declaration } from "./base";
+
+export type TypeDefinitionType = (
+	| TypeReference
+	| Type
+);
+
+export type TypeAliasType = (
+	| TypeReference
+	| Type
+);
 
 export interface TypeDefinition extends _Declaration<"type-definition"> {
 	identifier: Identifier;
-	type: Identifier | _Type;
+	generic?: readonly TypeParameter[];
+	type: TypeDefinitionType;
 }
 
 export const typeDefinition = createFactory<
@@ -14,7 +28,8 @@ export const typeDefinition = createFactory<
 
 export interface TypeAlias extends _Declaration<"type-alias"> {
 	identifier: Identifier;
-	type: Identifier | _Type;
+	generic?: readonly TypeParameter[];
+	type: TypeAliasType;
 }
 
 export const typeAlias = createFactory<

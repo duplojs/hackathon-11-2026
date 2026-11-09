@@ -4,7 +4,8 @@ export default oxlint.defineConfig({
 	extends: [engineConfig],
 	overrides: [
 		createOxlintOverride({
-			files: ["src/**"],
+			files: ["src/**", "oxlint.config.ts"],
+			ruleset: { open: true },
 		}),
 	],
 });
