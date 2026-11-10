@@ -1,5 +1,6 @@
 export * from "./array";
 export type * from "./base";
+export * from "./builtin";
 export * from "./channel";
 export * from "./constraint";
 export * from "./function";

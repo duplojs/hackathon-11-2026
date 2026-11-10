@@ -1,7 +1,6 @@
 import * as DArray from "@duplojs/lang/array";
 import * as DCommon from "@duplojs/lang/common";
 import * as DEither from "@duplojs/lang/either";
-import * as DObject from "@duplojs/lang/object";
 import * as GO from "@go";
 import * as TS from "typescript/ast";
 import { createTransformer, type Transformer } from "../../factory";
@@ -9,10 +8,11 @@ import { transformExpression } from "../helpers";
 
 export const binaryExpressionTransformer: Transformer<GO.AST.BinaryExpression> = createTransformer(
 	async(node, context, localContext) => {
-		if (!(
-			TS.isBinaryExpression(node)
-			&& DObject.discriminate(node.operatorToken, "kind", DCommon.equal(TS.SyntaxKind.PlusToken))
-		)) {
+		if (!TS.isBinaryExpression(node)) {
+			return context.notSupport(node);
+		}
+
+		if (node.operatorToken.kind !== TS.SyntaxKind.PlusToken) {
 			return context.notSupport(node);
 		}
 

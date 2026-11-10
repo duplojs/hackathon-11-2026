@@ -1,8 +1,6 @@
-import * as DArray from "@duplojs/lang/array";
 import * as DCommon from "@duplojs/lang/common";
 import * as DEither from "@duplojs/lang/either";
 import * as DGenerator from "@duplojs/lang/generator";
-import * as DObject from "@duplojs/lang/object";
 import * as GO from "@go";
 import * as TS from "typescript/ast";
 import { TypeFlags } from "typescript/async";
@@ -18,34 +16,23 @@ interface TransformedParameters {
 
 export const functionDeclarationTransformer: Transformer<GO.AST.FunctionDeclaration> = createTransformer(
 	async(node, context, localContext) => {
-		if (!(
-			TS.isFunctionDeclaration(node)
-			&& DObject.discriminate(node, "name", DCommon.truthy)
-			&& DObject.discriminate(node, "body", DCommon.truthy)
-			&& DObject.discriminate(node, "asteriskToken", DCommon.isType("undefined"))
-			&& DObject.discriminate(node, "typeParameters", DCommon.isType("undefined"))
-			&& DObject.discriminate(node, "modifiers", DCommon.isType("undefined"))
-			&& DObject.discriminate(
-				node,
-				"parameters",
-				(parameters): parameters is TS.NodeArray<
-					TS.ParameterDeclaration & { name: TS.Identifier }
-				> => DArray.every(
-					parameters,
-					(parameter) => (
-						DObject.discriminate(parameter, "name", TS.isIdentifier)
-						&& DObject.discriminate(parameter, "dotDotDotToken", DCommon.isType("undefined"))
-						&& DObject.discriminate(parameter, "questionToken", DCommon.isType("undefined"))
-						&& DObject.discriminate(parameter, "initializer", DCommon.isType("undefined"))
-						&& DObject.discriminate(parameter, "modifiers", DCommon.isType("undefined"))
-					),
-				),
-			)
-		)) {
+		if (!TS.isFunctionDeclaration(node)) {
 			return context.notSupport(node);
 		}
 
-		const identifier = GO.AST.createIdentifier(node.name.text);
+		if (!node.name || !node.body) {
+			return context.notSupport(node);
+		}
+
+		if (
+			node.asteriskToken !== undefined
+			|| node.typeParameters !== undefined
+			|| node.modifiers !== undefined
+		) {
+			return context.notSupport(node);
+		}
+
+		const identifier = context.createSourceIdentifier(node.name.text);
 
 		const parameters = await DCommon.asyncPipe(
 			node.parameters,
@@ -56,6 +43,19 @@ export const functionDeclarationTransformer: Transformer<GO.AST.FunctionDeclarat
 					topLevelDeclarations: [],
 				}),
 				async({ item: parameter, lastValue, next, exit }) => {
+					if (!TS.isIdentifier(parameter.name)) {
+						return exit(context.notSupport(node));
+					}
+
+					if (
+						parameter.dotDotDotToken !== undefined
+						|| parameter.questionToken !== undefined
+						|| parameter.initializer !== undefined
+						|| parameter.modifiers !== undefined
+					) {
+						return exit(context.notSupport(node));
+					}
+
 					const typeNode = parameter.type ?? await context.checker.typeToTypeNode(
 						await context.checker.getTypeAtLocation(parameter),
 						parameter,
@@ -76,10 +76,12 @@ export const functionDeclarationTransformer: Transformer<GO.AST.FunctionDeclarat
 						return exit(type);
 					}
 
+					const parameterIdentifier = context.createSourceIdentifier(parameter.name.text);
+
 					return next({
 						parameters: [
 							...lastValue.parameters,
-							[GO.AST.createIdentifier(parameter.name.text), type.result],
+							[parameterIdentifier, type.result],
 						],
 						before: [...lastValue.before, ...type.before],
 						topLevelDeclarations: [...lastValue.topLevelDeclarations, ...type.topLevelDeclarations],

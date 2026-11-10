@@ -2,7 +2,7 @@ import * as DSDataStructure from "@duplojs/server/dataStructure";
 import * as DSCommand from "@duplojs/server/command";
 import * as DPath from "@duplojs/lang/path";
 import * as DSCommon from "@duplojs/server/common";
-import { createTypescriptInstance } from "./createTypescriptInstance";
+import { createTypescriptInstance } from "@transpiler";
 import * as DEither from "@duplojs/lang/either";
 
 await DSCommand.exec(
@@ -39,7 +39,7 @@ await DSCommand.exec(
 				tsconfigPath: resolvedTsconfig,
 			}),
 			(typescriptInstance) => {
-				return;
+
 			},
 		);
 

@@ -8,6 +8,8 @@ import type * as TS from "typescript/ast";
 import type { SharedDependency } from "./sharedDependency";
 import type { LocalTransformerContext } from "./localContext";
 import { transform, type Transformer, type TransformerResultNode, type TransformationSuccessPayload, type TransformationSuccess, type TransformationError, type NotfoundTransformer, type TransformationNotSupported } from "./factory";
+import * as DCommon from "@duplojs/lang/common";
+import * as DString from "@duplojs/lang/string";
 
 export interface TopLevelContext {
 	readonly imports: readonly GO.AST.ImportDeclaration[];
@@ -49,6 +51,7 @@ export interface TransformerContext {
 	notSupport(content: unknown): TransformationNotSupported;
 	error(content: unknown): TransformationError;
 	createIdentifier(): GO.AST.Identifier;
+	createSourceIdentifier(value: string): GO.AST.Identifier;
 }
 
 function createTopLevelContext() {
@@ -137,7 +140,21 @@ export function createTransformerContext(checker: Checker) {
 		createIdentifier() {
 			identifierIndex += 1;
 
-			return GO.AST.createIdentifier(`generated_${identifierIndex}`);
+			return GO.AST.createIdentifier(`Generated_${identifierIndex}`);
+		},
+		createSourceIdentifier(value) {
+			return DCommon.pipe(
+				value,
+				DString.replace(
+					/[^a-zA-Z0-9]/g,
+					({ matchedValue }) => matchedValue
+						.charCodeAt(0)
+						.toString(36)
+						.padStart(4, "0"),
+				),
+				DString.prepend("Duplojs_"),
+				GO.AST.createIdentifier,
+			);
 		},
 	};
 

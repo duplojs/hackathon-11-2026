@@ -2,7 +2,6 @@ import * as DArray from "@duplojs/lang/array";
 import * as DCommon from "@duplojs/lang/common";
 import * as DEither from "@duplojs/lang/either";
 import * as DGenerator from "@duplojs/lang/generator";
-import * as DObject from "@duplojs/lang/object";
 import * as GO from "@go";
 import * as TS from "typescript/ast";
 import { createTransformer, type Transformer, type TransformationSuccessPayload } from "../../factory";
@@ -16,12 +15,15 @@ interface TransformedArguments {
 
 export const callExpressionTransformer: Transformer<GO.AST.CallExpression> = createTransformer(
 	async(node, context, localContext) => {
-		if (!(
-			TS.isCallExpression(node)
-			&& DObject.discriminate(node, "questionDotToken", DCommon.isType("undefined"))
-			&& DObject.discriminate(node, "typeArguments", DCommon.isType("undefined"))
-			&& DArray.every(node.arguments, (argument) => !TS.isSpreadElement(argument))
-		)) {
+		if (!TS.isCallExpression(node)) {
+			return context.notSupport(node);
+		}
+
+		if (node.questionDotToken !== undefined || node.typeArguments !== undefined) {
+			return context.notSupport(node);
+		}
+
+		if (DArray.some(node.arguments, TS.isSpreadElement)) {
 			return context.notSupport(node);
 		}
 

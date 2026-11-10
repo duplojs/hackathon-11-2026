@@ -25,6 +25,7 @@ import { type ReturnStatement, type BreakStatement, type ContinueStatement, type
 import { type SelectReceiveAssignment, type SelectReceiveDeclaration, type SelectCase, type SelectStatementWithoutDefault, type SelectStatementWithDefault } from "./statement/select";
 import { type ExpressionSwitchCase, type DefaultCase, type ExpressionSwitchStatementWithoutDefault, type ExpressionSwitchStatementWithDefault, type TypeSwitchCase, type TypeSwitchStatementWithoutDefault, type TypeSwitchStatementWithDefault } from "./statement/switch";
 import { type ArrayType } from "./type/array";
+import { type BuiltinTypeReference } from "./type/builtin";
 import { type ChannelType } from "./type/channel";
 import { type TypeConstraint } from "./type/constraint";
 import { type FunctionType } from "./type/function";
@@ -111,6 +112,7 @@ export type Node = (
 	| TypeSwitchStatementWithoutDefault
 	| TypeSwitchStatementWithDefault
 	| ArrayType
+	| BuiltinTypeReference
 	| ChannelType
 	| TypeConstraint
 	| FunctionType

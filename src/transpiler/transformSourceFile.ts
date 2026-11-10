@@ -8,6 +8,7 @@ import { type SourceFile } from "typescript/ast";
 import type { TransformerContext } from "./context";
 import type { LocalTransformerContext } from "./localContext";
 import { sourceFileTransformers } from "./transformers";
+import * as DPath from "@duplojs/lang/path";
 
 interface TransformedFileContent {
 	imports: GO.AST.GoFile["imports"];
@@ -18,7 +19,6 @@ interface TransformedFileContent {
 export async function transformSourceFile(
 	sourceFile: SourceFile,
 	context: TransformerContext,
-	packageName: GO.AST.Identifier,
 ) {
 	const localContext: LocalTransformerContext = { sourceFile };
 
@@ -36,6 +36,7 @@ export async function transformSourceFile(
 					DEither.keepAsRightByInformation("transformation-success"),
 					DEither.unwrapRight,
 				);
+
 				if (DEither.isLeft(statement)) {
 					return exit(statement);
 				}
@@ -60,12 +61,29 @@ export async function transformSourceFile(
 			},
 		),
 	);
+
 	if (DEither.isLeft(content)) {
 		return content;
 	}
 
-	return DEither.success(GO.AST.goFile({
-		packageName,
-		...content,
-	}));
+	const packageNameResult = DEither.rightPipe(
+		sourceFile.fileName,
+		DPath.normalize,
+		DEither.toMaybe,
+		(value) => DPath.getBaseName(value, { removeExtension: true }),
+		DEither.toMaybe,
+	);
+
+	if (DEither.isLeft(packageNameResult)) {
+		return DEither.left("invalid-package-name", sourceFile);
+	}
+
+	const packageName = context.createSourceIdentifier(DEither.unwrapRight(packageNameResult));
+
+	return DEither.success(
+		GO.AST.goFile({
+			packageName,
+			...content,
+		}),
+	);
 }

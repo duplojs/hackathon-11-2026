@@ -1,4 +1,5 @@
 export * from "./printArrayType";
+export * from "./printBuiltinTypeReference";
 export * from "./printChannelType";
 export * from "./printTypeConstraint";
 export * from "./printFunctionType";

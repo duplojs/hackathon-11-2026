@@ -83,6 +83,7 @@ export function renderNode(node: Node, depth = 0): string {
 		"node-statement-switch-type-without-default": StatementPrinter.printTypeSwitchStatementWithoutDefault(context),
 		"node-statement-switch-type-with-default": StatementPrinter.printTypeSwitchStatementWithDefault(context),
 		"node-type-array": TypePrinter.printArrayType(context),
+		"node-type-reference-builtin": TypePrinter.printBuiltinTypeReference(context),
 		"node-type-channel": TypePrinter.printChannelType(context),
 		"node-type-constraint": TypePrinter.printTypeConstraint(context),
 		"node-type-function": TypePrinter.printFunctionType(context),

@@ -10,7 +10,7 @@ export const numericLiteralTransformer: Transformer<GO.AST.ConversionExpression>
 
 		return context.success({
 			result: GO.AST.conversionExpression({
-				typeReference: GO.AST.defaultTypeReferences.float64,
+				typeReference: GO.AST.builtinTypeReferences.float64,
 				operand: GO.AST.floatLiteral({ value: node.text }),
 			}),
 		});
