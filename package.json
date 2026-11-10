@@ -1,6 +1,8 @@
 {
   "name": "hackathon-11-2026",
   "scripts": {
+    "build": "tsx --tsconfig tsconfig.app.json bin/index.ts",
+    "build:00": "pnpm build --tsconfig projects/00/tsconfig.json --input projects/00/index.ts --output projects/00/dist",
     "test:types": "./.commands/test-types.sh",
     "test:lint": "./.commands/test-lint.sh"
   },
@@ -14,13 +16,14 @@
   "packageManager": "pnpm@12.18.0",
   "type": "module",
   "dependencies": {
-    "@duplojs/lang": "0.1.0-beta.8",
-    "@duplojs/server": "0.1.0-beta.8",
+    "@duplojs/lang": "0.1.0-beta.9",
+    "@duplojs/server": "0.1.0-beta.9",
     "typescript": "7.1.0-beta"
   },
   "devDependencies": {
-    "@duplojs/agents-kit": "0.1.0-beta.8",
-    "@duplojs/code-config": "0.1.0-beta.8",
-    "@types/node": "^24.19.2"
+    "@duplojs/agents-kit": "0.1.0-beta.9",
+    "@duplojs/code-config": "0.1.0-beta.9",
+    "@types/node": "24.19.2",
+    "tsx": "4.23.15"
   }
 }

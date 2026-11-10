@@ -21,7 +21,8 @@ export async function transformSourceFile(
 	sourceFile: SourceFile,
 	transpilationContext: TranspilationContext,
 ) {
-	const context = createBuildContext(transpilationContext, createFileContext(sourceFile));
+	const fileContext = createFileContext(sourceFile);
+	const context = createBuildContext(transpilationContext, fileContext);
 
 	const content = await DCommon.asyncPipe(
 		sourceFile.statements,
@@ -81,10 +82,11 @@ export async function transformSourceFile(
 
 	const packageName = context.createSourceIdentifier(DEither.unwrapRight(packageNameResult));
 
-	return DEither.success(
-		GO.AST.goFile({
+	return DEither.success({
+		file: GO.AST.goFile({
 			packageName,
 			...content,
 		}),
-	);
+		context,
+	});
 }
