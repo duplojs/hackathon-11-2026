@@ -1,12 +1,20 @@
+import * as DArray from "@duplojs/lang/array";
 import * as DCommon from "@duplojs/lang/common";
 import * as DEither from "@duplojs/lang/either";
 import type * as DObject from "@duplojs/lang/object";
 import * as DString from "@duplojs/lang/string";
 import * as GO from "@go";
-import type * as TS from "typescript/ast";
+import * as TS from "typescript/ast";
+import { SymbolFlags } from "typescript/async";
 import { transform, type Transformer, type TransformerResultNode, type NotfoundTransformer, type TransformationError, type TransformationNotSupported, type TransformationSuccess, type TransformationSuccessPayload } from "../factory";
 import type { FileContext } from "./file";
 import type { TranspilationContext } from "./transpilation";
+
+export type DependencyReference =
+	| TS.Identifier
+	| TS.QualifiedName
+	| TS.PropertyAccessExpression
+	| TS.ElementAccessExpression;
 
 export interface BuildContext {
 	readonly transpilation: TranspilationContext;
@@ -29,6 +37,7 @@ export interface BuildContext {
 	error(content: unknown): TransformationError;
 	createIdentifier(): GO.AST.Identifier;
 	createSourceIdentifier(value: string): GO.AST.Identifier;
+	registerDependency(node: DependencyReference): Promise<DEither.Ok | TransformationError>;
 }
 
 export function createBuildContext(
@@ -46,6 +55,37 @@ export function createBuildContext(
 			topLevelDeclarations: payload.topLevelDeclarations ?? [],
 		}),
 		notSupport: (content) => DEither.left("transformation-not-supported", content),
+		async registerDependency(node) {
+			const symbol = TS.isIdentifier(node) && TS.isShorthandPropertyAssignment(node.parent)
+				? await transpilation.typeChecker.getShorthandAssignmentValueSymbol(node.parent)
+				: await transpilation.typeChecker.getSymbolAtLocation(node);
+
+			if (!symbol) {
+				return context.error({
+					reason: "unresolved-dependency-reference",
+					node,
+				});
+			}
+
+			const resolved = symbol.flags & SymbolFlags.Alias
+				? await transpilation.typeChecker.getAliasedSymbol(symbol)
+				: symbol;
+
+			if (await transpilation.typeChecker.isUnknownSymbol(resolved)) {
+				return context.error({
+					reason: "unresolved-dependency-reference",
+					node,
+				});
+			}
+
+			const path = resolved.valueDeclaration?.path;
+
+			if (path && path !== file.sourceFile.path) {
+				file.dependencies.add(path);
+			}
+
+			return DEither.ok();
+		},
 		createIdentifier() {
 			return GO.AST.createIdentifier(`Generated_${transpilation.increment()}`);
 		},
