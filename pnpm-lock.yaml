@@ -167,21 +167,21 @@ importers:
   .:
     dependencies:
       '@duplojs/lang':
-        specifier: 0.1.0-beta.7
-        version: 0.1.0-beta.7
+        specifier: 0.1.0-beta.8
+        version: 0.1.0-beta.8
       '@duplojs/server':
-        specifier: 0.1.0-beta.7
-        version: 0.1.0-beta.7(@duplojs/lang@0.1.0-beta.7)
+        specifier: 0.1.0-beta.8
+        version: 0.1.0-beta.8(@duplojs/lang@0.1.0-beta.8)
       typescript:
         specifier: 7.1.0-beta
         version: 7.1.0-beta
     devDependencies:
       '@duplojs/agents-kit':
-        specifier: 0.1.0-beta.7
-        version: 0.1.0-beta.7(@duplojs/code-config@0.1.0-beta.7(conventional-commits-parser@7.1.4)(jiti@2.7.0)(typescript@7.1.0-beta))(@duplojs/lang@0.1.0-beta.7)(@duplojs/server@0.1.0-beta.7(@duplojs/lang@0.1.0-beta.7))
+        specifier: 0.1.0-beta.8
+        version: 0.1.0-beta.8(@duplojs/code-config@0.1.0-beta.8(conventional-commits-parser@7.1.4)(jiti@2.7.0)(typescript@7.1.0-beta))(@duplojs/lang@0.1.0-beta.8)(@duplojs/server@0.1.0-beta.8(@duplojs/lang@0.1.0-beta.8))
       '@duplojs/code-config':
-        specifier: 0.1.0-beta.7
-        version: 0.1.0-beta.7(conventional-commits-parser@7.1.4)(jiti@2.7.0)(typescript@7.1.0-beta)
+        specifier: 0.1.0-beta.8
+        version: 0.1.0-beta.8(conventional-commits-parser@7.1.4)(jiti@2.7.0)(typescript@7.1.0-beta)
 
 packages:
 
@@ -288,20 +288,20 @@ packages:
     resolution: {integrity: sha512-mHyyEL0eIEqJ6+aF24+AdZRo4bu4W5GdUiCiCx5X7kfDY51ye8GQJ264uOINObrRSKxtSRCOWPpl9hbOy4UzxQ==}
     engines: {node: '>=22'}
 
-  '@duplojs/agents-kit@0.1.0-beta.7':
-    resolution: {integrity: sha512-1BpGVMoTD8BjPIrSduex5p9CZAuB4Qj4MQd5TeoA9eBzSV0yfpfvtsGvdstBjU5Xj0k3sfJzyk3Z6LaSfMII9w==}
+  '@duplojs/agents-kit@0.1.0-beta.8':
+    resolution: {integrity: sha512-Ul9mh6FCMTxSf6pWpj6g8QIb4W+k5jTIIMMW7W1QMQ72+3majnCQwGu5mIFrBgkceEKuwA7i5m3OgWPCcchw/w==}
     engines: {node: '>=24.18.0'}
     hasBin: true
     peerDependencies:
-      '@duplojs/code-config': 0.1.0-beta.7
-      '@duplojs/eslint': 0.1.0-beta.7
-      '@duplojs/form': 0.1.0-beta.7
-      '@duplojs/http': 0.1.0-beta.7
-      '@duplojs/json-web-token': 0.1.0-beta.7
-      '@duplojs/lang': 0.1.0-beta.7
-      '@duplojs/playwright': 0.1.0-beta.7
-      '@duplojs/server': 0.1.0-beta.7
-      '@duplojs/tools': 0.1.0-beta.7
+      '@duplojs/code-config': 0.1.0-beta.8
+      '@duplojs/eslint': 0.1.0-beta.8
+      '@duplojs/form': 0.1.0-beta.8
+      '@duplojs/http': 0.1.0-beta.8
+      '@duplojs/json-web-token': 0.1.0-beta.8
+      '@duplojs/lang': 0.1.0-beta.8
+      '@duplojs/playwright': 0.1.0-beta.8
+      '@duplojs/server': 0.1.0-beta.8
+      '@duplojs/tools': 0.1.0-beta.8
     peerDependenciesMeta:
       '@duplojs/code-config':
         optional: true
@@ -318,20 +318,20 @@ packages:
       '@duplojs/tools':
         optional: true
 
-  '@duplojs/code-config@0.1.0-beta.7':
-    resolution: {integrity: sha512-YL+yoc+KqB6V+JkvyFDAIkwyWVIAx6I5fi/q5HAtDqhHp32+1n0ZTlbhMlbbKV3AemGZtZeeGyCw9LMJ9YIrrA==}
+  '@duplojs/code-config@0.1.0-beta.8':
+    resolution: {integrity: sha512-g5hi/sXGm0nIlk31zrvvDRJEPADEqcCFj7JrOhkAhXflkZa/qqunnT+1XVQA14NBGwVH+oKXDzwrIOj8rr8W9A==}
     engines: {node: '>=24.18.0'}
     hasBin: true
 
-  '@duplojs/lang@0.1.0-beta.7':
-    resolution: {integrity: sha512-0CrgO5VeBLL2wOUi4zLt3cOy3GAJXXXLh85l62SDxbKhwzrdE7eYfnUugPbBHbMRADMgOVMdpGKEUQ7QMxdAaA==}
+  '@duplojs/lang@0.1.0-beta.8':
+    resolution: {integrity: sha512-qOEVc0hUU4HqSvk2OdZ/hAD3RtUXcY/AtfwyfeET0Uu6kQ+QUqUjaPe7o9N+GYDuUHKntm4fzv1k0V7Pky6PqQ==}
     engines: {node: '>=24.18.0'}
 
-  '@duplojs/server@0.1.0-beta.7':
-    resolution: {integrity: sha512-xMUsLO2wu7QvPV7APx67pz50mDaQZq79XyVErVY21iyZz7qf21pcP4112G8wC0e5vfQbutzery2s0BsRAgzrzw==}
+  '@duplojs/server@0.1.0-beta.8':
+    resolution: {integrity: sha512-KioWSZah1/IUjhea7SVnVDLvo5R61l8KcrOcjTjqkurZekBhs6Iz8/QtQggoW4uaseU6Ts4GS0pc+Jmo4/X22A==}
     engines: {node: '>=24.18.0'}
     peerDependencies:
-      '@duplojs/lang': 0.1.0-beta.7
+      '@duplojs/lang': 0.1.0-beta.8
 
   '@eslint-community/eslint-utils@4.10.1':
     resolution: {integrity: sha512-cuadcxVFE8sDK6iWJbs8Sn0av2Nrh2QSGQhVlBW9AaAHqHwjWsZHT8LJ4hFGPh7ASBV2deFdM7H/DPjulmh8rg==}
@@ -1282,14 +1282,14 @@ snapshots:
 
   '@conventional-changelog/template@1.4.1': {}
 
-  '@duplojs/agents-kit@0.1.0-beta.7(@duplojs/code-config@0.1.0-beta.7(conventional-commits-parser@7.1.4)(jiti@2.7.0)(typescript@7.1.0-beta))(@duplojs/lang@0.1.0-beta.7)(@duplojs/server@0.1.0-beta.7(@duplojs/lang@0.1.0-beta.7))':
+  '@duplojs/agents-kit@0.1.0-beta.8(@duplojs/code-config@0.1.0-beta.8(conventional-commits-parser@7.1.4)(jiti@2.7.0)(typescript@7.1.0-beta))(@duplojs/lang@0.1.0-beta.8)(@duplojs/server@0.1.0-beta.8(@duplojs/lang@0.1.0-beta.8))':
     dependencies:
-      '@duplojs/lang': 0.1.0-beta.7
-      '@duplojs/server': 0.1.0-beta.7(@duplojs/lang@0.1.0-beta.7)
+      '@duplojs/lang': 0.1.0-beta.8
+      '@duplojs/server': 0.1.0-beta.8(@duplojs/lang@0.1.0-beta.8)
     optionalDependencies:
-      '@duplojs/code-config': 0.1.0-beta.7(conventional-commits-parser@7.1.4)(jiti@2.7.0)(typescript@7.1.0-beta)
+      '@duplojs/code-config': 0.1.0-beta.8(conventional-commits-parser@7.1.4)(jiti@2.7.0)(typescript@7.1.0-beta)
 
-  '@duplojs/code-config@0.1.0-beta.7(conventional-commits-parser@7.1.4)(jiti@2.7.0)(typescript@7.1.0-beta)':
+  '@duplojs/code-config@0.1.0-beta.8(conventional-commits-parser@7.1.4)(jiti@2.7.0)(typescript@7.1.0-beta)':
     dependencies:
       '@commitlint/cli': 21.2.2(conventional-commits-parser@7.1.4)(typescript@7.1.0-beta)
       '@commitlint/config-conventional': 21.2.2
@@ -1306,11 +1306,11 @@ snapshots:
       - typescript
       - vite-plus
 
-  '@duplojs/lang@0.1.0-beta.7': {}
+  '@duplojs/lang@0.1.0-beta.8': {}
 
-  '@duplojs/server@0.1.0-beta.7(@duplojs/lang@0.1.0-beta.7)':
+  '@duplojs/server@0.1.0-beta.8(@duplojs/lang@0.1.0-beta.8)':
     dependencies:
-      '@duplojs/lang': 0.1.0-beta.7
+      '@duplojs/lang': 0.1.0-beta.8
 
   '@eslint-community/eslint-utils@4.10.1(eslint@10.10.0(jiti@2.7.0))':
     dependencies:

@@ -3,8 +3,10 @@ import * as DCommon from "@duplojs/lang/common";
 import * as DEither from "@duplojs/lang/either";
 import * as DModeling from "@duplojs/lang/modeling";
 import type * as GO from "@go";
+import type * as TS from "typescript/ast";
 import type { TransformerContext } from "./context";
 import type { LocalTransformerContext } from "./localContext";
+import * as DGenerator from "@duplojs/lang/generator";
 
 export interface TransformationSuccessPayload<
 	GenericGoNode extends GO.AST.Node,
@@ -29,54 +31,57 @@ export type TransformationError = DEither.Left<
 	unknown
 >;
 
+export type TransformationNotSupported = DEither.Left<
+	"transformation-not-supported",
+	unknown
+>;
+
 export type NotfoundTransformer = DEither.Left<
 	"notfound-transformer",
 	unknown
 >;
 
 export interface Transformer<
-	GenericData extends unknown = unknown,
 	GenericResultNode extends GO.AST.Node = GO.AST.Node,
 > extends DModeling.ObjectTag<"Transformer"> {
-	predicate(input: unknown): input is GenericData;
 	transformer(
-		data: GenericData,
+		data: TS.Node,
 		context: TransformerContext,
 		localContext: LocalTransformerContext,
 	): DCommon.MaybePromise<
 		| TransformationSuccess<GenericResultNode>
 		| TransformationError
 		| NotfoundTransformer
+		| TransformationNotSupported
 	>;
 }
 
 export type TransformerResultNode<GenericTransformer extends Transformer> =
-	GenericTransformer extends Transformer<unknown, infer GenericGoNode>
+	GenericTransformer extends Transformer<infer GenericGoNode>
 		? GenericGoNode
 		: never;
 
 export function createTransformer<
-	GenericData extends unknown,
-	GenericResultNode extends GO.AST.Node,
+	GenericResultNode extends GO.AST.Node = never,
 >(
-	predicate: (input: unknown) => input is GenericData,
-	transformer: (
-		data: NoInfer<GenericData>,
-		context: TransformerContext,
-		localContext: LocalTransformerContext,
-	) => DCommon.MaybePromise<
-		| TransformationSuccess<GenericResultNode>
-		| TransformationError
-		| NotfoundTransformer
-	>,
+	transformer: DCommon.IsNever<GenericResultNode> extends true
+		? never
+		: (
+			data: TS.Node,
+			context: TransformerContext,
+			localContext: LocalTransformerContext,
+		) => DCommon.MaybePromise<
+			| TransformationSuccess<NoInfer<GenericResultNode>>
+			| TransformationError
+			| NotfoundTransformer
+			| TransformationNotSupported
+		>,
 ): Transformer<
-	GenericData,
 	GenericResultNode
 > {
 	return DModeling.taggedObject(
 		"Transformer",
 		{
-			predicate,
 			transformer,
 		},
 	);
@@ -85,45 +90,42 @@ export function createTransformer<
 export function transform<
 	GenericTransformers extends readonly Transformer[],
 >(
-	data: unknown,
+	data: TS.Node,
 	transformers: GenericTransformers,
 	context: TransformerContext,
 	localContext: LocalTransformerContext,
 ): Promise<
-		| TransformationSuccess<TransformerResultNode<GenericTransformers[number]>>
-		| TransformationError
-		| NotfoundTransformer
+	| TransformationSuccess<TransformerResultNode<GenericTransformers[number]>>
+	| TransformationError
+	| NotfoundTransformer
+	| TransformationNotSupported
 >;
-export async function transform(
-	data: unknown,
+export function transform(
+	data: TS.Node,
 	transformers: readonly Transformer[],
 	context: TransformerContext,
 	localContext: LocalTransformerContext,
 ) {
 	return DCommon.pipe(
 		transformers,
-		DArray.reduce(
-			DArray.reduceFrom<NotfoundTransformer>(
+		DGenerator.asyncReduce(
+			DGenerator.reduceFrom<NotfoundTransformer>(
 				DEither.left("notfound-transformer", data),
 			),
-			({
-				element,
+			async({
+				item,
 				lastValue,
 				next,
 				exit,
-			}) => {
-				if (!element.predicate(data)) {
-					return next(lastValue);
-				}
-
-				return exit(
-					element.transformer(
-						data,
-						context,
-						localContext,
-					),
-				);
-			},
+			}) => DEither.matchInformation(
+				await item.transformer(data, context, localContext),
+				{
+					"transformation-not-supported": () => next(lastValue),
+					"notfound-transformer": exit,
+					"transformation-error": exit,
+					"transformation-success": exit,
+				},
+			),
 		),
 	);
 }

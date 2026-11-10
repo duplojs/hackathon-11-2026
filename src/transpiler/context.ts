@@ -4,17 +4,10 @@ import * as DModeling from "@duplojs/lang/modeling";
 import type * as DObject from "@duplojs/lang/object";
 import * as GO from "@go";
 import type { Checker } from "typescript/async";
-import type { ConstantDependency } from "./dependency";
+import type * as TS from "typescript/ast";
+import type { SharedDependency } from "./sharedDependency";
 import type { LocalTransformerContext } from "./localContext";
-import {
-	transform,
-	type Transformer,
-	type TransformerResultNode,
-	type TransformationSuccessPayload,
-	type TransformationSuccess,
-	type TransformationError,
-	type NotfoundTransformer,
-} from "./factory";
+import { transform, type Transformer, type TransformerResultNode, type TransformationSuccessPayload, type TransformationSuccess, type TransformationError, type NotfoundTransformer, type TransformationNotSupported } from "./factory";
 
 export interface TopLevelContext {
 	readonly imports: readonly GO.AST.ImportDeclaration[];
@@ -22,24 +15,30 @@ export interface TopLevelContext {
 	push(...nodes: readonly (GO.AST.ImportDeclaration | GO.AST.TopLevelDeclaration)[]): void;
 }
 
-export interface DependencyContext {
+export interface SharedDependencyContext {
 	readonly imports: readonly GO.AST.ImportDeclaration[];
 	readonly topLevelDeclarations: readonly GO.AST.TopLevelDeclaration[];
-	push(dependency: ConstantDependency): void;
+	push(sharedDependency: SharedDependency): void;
+}
+
+export interface MainContext extends TopLevelContext {
+	readonly statements: readonly GO.AST.Statement[];
+	pushStatements(...nodes: readonly GO.AST.Statement[]): void;
 }
 
 export interface TransformerContext {
 	checker: Checker;
-	main: TopLevelContext;
-	dependencies: DependencyContext;
+	main: MainContext;
+	sharedDependencies: SharedDependencyContext;
 	transform<GenericTransformers extends readonly Transformer[]>(
-		data: unknown,
+		data: TS.Node,
 		transformers: GenericTransformers,
 		localContext: LocalTransformerContext,
 	): Promise<
 		| TransformationSuccess<TransformerResultNode<GenericTransformers[number]>>
 		| TransformationError
 		| NotfoundTransformer
+		| TransformationNotSupported
 	>;
 	success<GenericGoNode extends GO.AST.Node>(
 		payload: DObject.PartialKeys<
@@ -47,6 +46,7 @@ export interface TransformerContext {
 			"before" | "topLevelDeclarations"
 		>
 	): TransformationSuccess<GenericGoNode>;
+	notSupport(content: unknown): TransformationNotSupported;
 	error(content: unknown): TransformationError;
 	createIdentifier(): GO.AST.Identifier;
 }
@@ -63,18 +63,20 @@ function createTopLevelContext() {
 			return topLevelDeclarations;
 		},
 		push(...nodes: readonly (GO.AST.ImportDeclaration | GO.AST.TopLevelDeclaration)[]) {
-			for (const node of nodes) {
-				if (DModeling.hasTagValue(node, "node-declaration-import")) {
-					imports = DArray.push(imports, node);
-				} else {
-					topLevelDeclarations = DArray.push(topLevelDeclarations, node);
-				}
-			}
+			const grouped = DArray.group(
+				nodes,
+				(node, { output }) => DModeling.hasTagValue(node, "node-declaration-import")
+					? output("imports", node)
+					: output("topLevelDeclarations", node),
+			);
+
+			imports = [...imports, ...grouped.imports ?? []];
+			topLevelDeclarations = [...topLevelDeclarations, ...grouped.topLevelDeclarations ?? []];
 		},
 	};
 }
 
-function createDependencyContext() {
+function createSharedDependencyContext() {
 	const topLevelContext = createTopLevelContext();
 	let names: readonly string[] = [];
 
@@ -85,13 +87,34 @@ function createDependencyContext() {
 		get topLevelDeclarations() {
 			return topLevelContext.topLevelDeclarations;
 		},
-		push(dependency: ConstantDependency) {
-			if (DArray.includes(names, dependency.name)) {
+		push(sharedDependency: SharedDependency) {
+			if (DArray.includes(names, sharedDependency.name)) {
 				return;
 			}
 
-			names = DArray.push(names, dependency.name);
-			topLevelContext.push(...dependency.imports, ...dependency.topLevelDeclarations);
+			names = DArray.push(names, sharedDependency.name);
+			topLevelContext.push(...sharedDependency.imports, ...sharedDependency.topLevelDeclarations);
+		},
+	};
+}
+
+function createMainContext() {
+	const topLevelContext = createTopLevelContext();
+	let statements: readonly GO.AST.Statement[] = [];
+
+	return {
+		get imports() {
+			return topLevelContext.imports;
+		},
+		get topLevelDeclarations() {
+			return topLevelContext.topLevelDeclarations;
+		},
+		push: topLevelContext.push,
+		get statements() {
+			return statements;
+		},
+		pushStatements(...nodes: readonly GO.AST.Statement[]) {
+			statements = [...statements, ...nodes];
 		},
 	};
 }
@@ -101,14 +124,15 @@ export function createTransformerContext(checker: Checker) {
 
 	const context: TransformerContext = {
 		checker,
-		main: createTopLevelContext(),
-		dependencies: createDependencyContext(),
+		main: createMainContext(),
+		sharedDependencies: createSharedDependencyContext(),
 		error: (content) => DEither.left("transformation-error", content),
 		success: (payload) => DEither.right("transformation-success", {
 			...payload,
 			before: payload.before ?? [],
 			topLevelDeclarations: payload.topLevelDeclarations ?? [],
 		}),
+		notSupport: (content) => DEither.left("transformation-not-supported", content),
 		transform: (data, transformers, localContext) => transform(data, transformers, context, localContext),
 		createIdentifier() {
 			identifierIndex += 1;
