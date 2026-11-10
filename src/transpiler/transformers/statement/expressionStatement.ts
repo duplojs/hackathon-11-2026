@@ -6,7 +6,7 @@ import { createTransformer, type Transformer } from "../../factory";
 import { callExpressionTransformer } from "../expression";
 
 export const expressionStatementTransformer: Transformer<GO.AST.ExpressionStatement> = createTransformer(
-	async(node, context, localContext) => {
+	async(node, context) => {
 		if (!TS.isExpressionStatement(node)) {
 			return context.notSupport(node);
 		}
@@ -16,7 +16,7 @@ export const expressionStatementTransformer: Transformer<GO.AST.ExpressionStatem
 		}
 
 		const expression = await DCommon.asyncPipe(
-			context.transform(node.expression, [callExpressionTransformer], localContext),
+			context.transform(node.expression, [callExpressionTransformer]),
 			DEither.keepAsRightByInformation("transformation-success"),
 			DEither.unwrapRight,
 		);

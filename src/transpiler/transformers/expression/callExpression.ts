@@ -14,7 +14,7 @@ interface TransformedArguments {
 }
 
 export const callExpressionTransformer: Transformer<GO.AST.CallExpression> = createTransformer(
-	async(node, context, localContext) => {
+	async(node, context) => {
 		if (!TS.isCallExpression(node)) {
 			return context.notSupport(node);
 		}
@@ -28,7 +28,7 @@ export const callExpressionTransformer: Transformer<GO.AST.CallExpression> = cre
 		}
 
 		const callee = await DCommon.asyncPipe(
-			transformExpression(node.expression, context, localContext),
+			transformExpression(node.expression, context),
 			DEither.keepAsRightByInformation("transformation-success"),
 			DEither.unwrapRight,
 		);
@@ -63,7 +63,7 @@ export const callExpressionTransformer: Transformer<GO.AST.CallExpression> = cre
 				}),
 				async({ item, lastValue, next, exit }) => {
 					const argument = await DCommon.asyncPipe(
-						transformExpression(item, context, localContext),
+						transformExpression(item, context),
 						DEither.keepAsRightByInformation("transformation-success"),
 						DEither.unwrapRight,
 					);

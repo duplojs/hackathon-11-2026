@@ -12,7 +12,7 @@ interface TransformedBlock {
 }
 
 export const blockTransformer: Transformer<GO.AST.BlockStatement> = createTransformer(
-	async(node, context, localContext) => {
+	async(node, context) => {
 		if (!TS.isBlock(node)) {
 			return context.notSupport(node);
 		}
@@ -26,7 +26,7 @@ export const blockTransformer: Transformer<GO.AST.BlockStatement> = createTransf
 				}),
 				async({ item, lastValue, next, exit }) => {
 					const statement = await DCommon.asyncPipe(
-						context.transform(item, statementTransformers.value, localContext),
+						context.transform(item, statementTransformers.value),
 						DEither.keepAsRightByInformation("transformation-success"),
 						DEither.unwrapRight,
 					);

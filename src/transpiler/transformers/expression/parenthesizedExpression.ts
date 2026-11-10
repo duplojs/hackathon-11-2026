@@ -4,11 +4,11 @@ import { createTransformer, type Transformer } from "../../factory";
 import { transformExpression } from "../helpers";
 
 export const parenthesizedExpressionTransformer: Transformer<GO.AST.Expression> = createTransformer(
-	(node, context, localContext) => {
+	(node, context) => {
 		if (!TS.isParenthesizedExpression(node)) {
 			return context.notSupport(node);
 		}
 
-		return transformExpression(node.expression, context, localContext);
+		return transformExpression(node.expression, context);
 	},
 );

@@ -7,7 +7,7 @@ import { createTransformer, type Transformer } from "../../factory";
 import { transformExpression } from "../helpers";
 
 export const binaryExpressionTransformer: Transformer<GO.AST.BinaryExpression> = createTransformer(
-	async(node, context, localContext) => {
+	async(node, context) => {
 		if (!TS.isBinaryExpression(node)) {
 			return context.notSupport(node);
 		}
@@ -17,7 +17,7 @@ export const binaryExpressionTransformer: Transformer<GO.AST.BinaryExpression> =
 		}
 
 		const left = await DCommon.asyncPipe(
-			transformExpression(node.left, context, localContext),
+			transformExpression(node.left, context),
 			DEither.keepAsRightByInformation("transformation-success"),
 			DEither.unwrapRight,
 		);
@@ -26,7 +26,7 @@ export const binaryExpressionTransformer: Transformer<GO.AST.BinaryExpression> =
 		}
 
 		const right = await DCommon.asyncPipe(
-			transformExpression(node.right, context, localContext),
+			transformExpression(node.right, context),
 			DEither.keepAsRightByInformation("transformation-success"),
 			DEither.unwrapRight,
 		);

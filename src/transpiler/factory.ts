@@ -1,11 +1,9 @@
-import * as DArray from "@duplojs/lang/array";
 import * as DCommon from "@duplojs/lang/common";
 import * as DEither from "@duplojs/lang/either";
 import * as DModeling from "@duplojs/lang/modeling";
 import type * as GO from "@go";
 import type * as TS from "typescript/ast";
-import type { TransformerContext } from "./context";
-import type { LocalTransformerContext } from "./localContext";
+import type { BuildContext } from "./context/build";
 import * as DGenerator from "@duplojs/lang/generator";
 
 export interface TransformationSuccessPayload<
@@ -46,8 +44,7 @@ export interface Transformer<
 > extends DModeling.ObjectTag<"Transformer"> {
 	transformer(
 		data: TS.Node,
-		context: TransformerContext,
-		localContext: LocalTransformerContext,
+		context: BuildContext,
 	): DCommon.MaybePromise<
 		| TransformationSuccess<GenericResultNode>
 		| TransformationError
@@ -68,8 +65,7 @@ export function createTransformer<
 		? never
 		: (
 			data: TS.Node,
-			context: TransformerContext,
-			localContext: LocalTransformerContext,
+			context: BuildContext,
 		) => DCommon.MaybePromise<
 			| TransformationSuccess<NoInfer<GenericResultNode>>
 			| TransformationError
@@ -92,19 +88,16 @@ export function transform<
 >(
 	data: TS.Node,
 	transformers: GenericTransformers,
-	context: TransformerContext,
-	localContext: LocalTransformerContext,
+	context: BuildContext,
 ): Promise<
 	| TransformationSuccess<TransformerResultNode<GenericTransformers[number]>>
 	| TransformationError
 	| NotfoundTransformer
-	| TransformationNotSupported
 >;
 export function transform(
 	data: TS.Node,
 	transformers: readonly Transformer[],
-	context: TransformerContext,
-	localContext: LocalTransformerContext,
+	context: BuildContext,
 ) {
 	return DCommon.pipe(
 		transformers,
@@ -118,7 +111,7 @@ export function transform(
 				next,
 				exit,
 			}) => DEither.matchInformation(
-				await item.transformer(data, context, localContext),
+				await item.transformer(data, context),
 				{
 					"transformation-not-supported": () => next(lastValue),
 					"notfound-transformer": exit,

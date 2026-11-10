@@ -5,8 +5,9 @@ import * as DEither from "@duplojs/lang/either";
 import * as DGenerator from "@duplojs/lang/generator";
 import * as DModeling from "@duplojs/lang/modeling";
 import { type SourceFile } from "typescript/ast";
-import type { TransformerContext } from "./context";
-import type { LocalTransformerContext } from "./localContext";
+import { createBuildContext } from "./context/build";
+import { createFileContext } from "./context/file";
+import type { TranspilationContext } from "./context/transpilation";
 import { sourceFileTransformers } from "./transformers";
 import * as DPath from "@duplojs/lang/path";
 
@@ -18,9 +19,9 @@ interface TransformedFileContent {
 
 export async function transformSourceFile(
 	sourceFile: SourceFile,
-	context: TransformerContext,
+	transpilationContext: TranspilationContext,
 ) {
-	const localContext: LocalTransformerContext = { sourceFile };
+	const context = createBuildContext(transpilationContext, createFileContext(sourceFile));
 
 	const content = await DCommon.asyncPipe(
 		sourceFile.statements,
@@ -32,7 +33,7 @@ export async function transformSourceFile(
 			}),
 			async({ item, lastValue, next, exit }) => {
 				const statement = await DCommon.asyncPipe(
-					context.transform(item, sourceFileTransformers.value, localContext),
+					context.transform(item, sourceFileTransformers.value),
 					DEither.keepAsRightByInformation("transformation-success"),
 					DEither.unwrapRight,
 				);

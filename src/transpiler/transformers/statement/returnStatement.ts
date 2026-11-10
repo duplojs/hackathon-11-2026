@@ -6,7 +6,7 @@ import { createTransformer, type Transformer } from "../../factory";
 import { transformExpression } from "../helpers";
 
 export const returnStatementTransformer: Transformer<GO.AST.ReturnStatement> = createTransformer(
-	async(node, context, localContext) => {
+	async(node, context) => {
 		if (!TS.isReturnStatement(node)) {
 			return context.notSupport(node);
 		}
@@ -16,7 +16,7 @@ export const returnStatementTransformer: Transformer<GO.AST.ReturnStatement> = c
 		}
 
 		const expression = await DCommon.asyncPipe(
-			transformExpression(node.expression, context, localContext),
+			transformExpression(node.expression, context),
 			DEither.keepAsRightByInformation("transformation-success"),
 			DEither.unwrapRight,
 		);

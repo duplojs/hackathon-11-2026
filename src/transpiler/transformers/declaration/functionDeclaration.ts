@@ -15,7 +15,7 @@ interface TransformedParameters {
 }
 
 export const functionDeclarationTransformer: Transformer<GO.AST.FunctionDeclaration> = createTransformer(
-	async(node, context, localContext) => {
+	async(node, context) => {
 		if (!TS.isFunctionDeclaration(node)) {
 			return context.notSupport(node);
 		}
@@ -56,8 +56,8 @@ export const functionDeclarationTransformer: Transformer<GO.AST.FunctionDeclarat
 						return exit(context.notSupport(node));
 					}
 
-					const typeNode = parameter.type ?? await context.checker.typeToTypeNode(
-						await context.checker.getTypeAtLocation(parameter),
+					const typeNode = parameter.type ?? await context.transpilation.typeChecker.typeToTypeNode(
+						await context.transpilation.typeChecker.getTypeAtLocation(parameter),
 						parameter,
 					);
 					if (!typeNode) {
@@ -68,7 +68,7 @@ export const functionDeclarationTransformer: Transformer<GO.AST.FunctionDeclarat
 					}
 
 					const type = await DCommon.asyncPipe(
-						context.transform(typeNode, typeTransformers, localContext),
+						context.transform(typeNode, typeTransformers),
 						DEither.keepAsRightByInformation("transformation-success"),
 						DEither.unwrapRight,
 					);
@@ -93,11 +93,11 @@ export const functionDeclarationTransformer: Transformer<GO.AST.FunctionDeclarat
 			return parameters;
 		}
 
-		const signature = await context.checker.getSignatureFromDeclaration(node);
-		const returnType = await context.checker.getReturnTypeOfSignature(signature);
+		const signature = await context.transpilation.typeChecker.getSignatureFromDeclaration(node);
+		const returnType = await context.transpilation.typeChecker.getReturnTypeOfSignature(signature);
 		const returnTypeNode = returnType.flags === TypeFlags.Void
 			? undefined
-			: node.type ?? await context.checker.typeToTypeNode(returnType, node);
+			: node.type ?? await context.transpilation.typeChecker.typeToTypeNode(returnType, node);
 		if (returnType.flags !== TypeFlags.Void && !returnTypeNode) {
 			return context.error({
 				reason: "unsupported-function-return-type",
@@ -107,7 +107,7 @@ export const functionDeclarationTransformer: Transformer<GO.AST.FunctionDeclarat
 
 		const returnTypePayload = returnTypeNode
 			? await DCommon.asyncPipe(
-				context.transform(returnTypeNode, typeTransformers, localContext),
+				context.transform(returnTypeNode, typeTransformers),
 				DEither.keepAsRightByInformation("transformation-success"),
 				DEither.unwrapRight,
 			)
@@ -121,7 +121,7 @@ export const functionDeclarationTransformer: Transformer<GO.AST.FunctionDeclarat
 		}
 
 		const body = await DCommon.asyncPipe(
-			context.transform(node.body, [blockTransformer], localContext),
+			context.transform(node.body, [blockTransformer]),
 			DEither.keepAsRightByInformation("transformation-success"),
 			DEither.unwrapRight,
 		);
