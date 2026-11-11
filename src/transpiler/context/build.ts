@@ -3,6 +3,7 @@ import * as DEither from "@duplojs/lang/either";
 import type * as DObject from "@duplojs/lang/object";
 import * as DString from "@duplojs/lang/string";
 import * as GO from "@go";
+import type * as TS from "typescript/ast";
 import type { Symbol } from "typescript/async";
 import { transform, type Transformer, type TransformerResultNode, type NotfoundTransformer, type TransformationError, type TransformationNotSupported, type TransformationSuccess, type TransformationSuccessPayload } from "../factory";
 import type { FileContext } from "./file";
@@ -20,7 +21,7 @@ export interface BuildContext {
 	transform<
 		GenericTransformers extends readonly Transformer[],
 	>(
-		data: unknown,
+		data: TS.Node,
 		transformers: GenericTransformers,
 	): Promise<
 		| TransformationSuccess<TransformerResultNode<DArray.Unwrap<GenericTransformers>>>
