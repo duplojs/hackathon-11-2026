@@ -4,6 +4,8 @@ export * from "./context/file";
 export * from "./context/transpilation";
 export * from "./createTypescriptInstance";
 export * from "./factory";
+export * from "./resolvedReference";
 export * from "./sharedDependency";
+export * from "./sourcePackage";
 export * from "./transformSourceFile";
 export * from "./transformers";

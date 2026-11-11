@@ -4,7 +4,6 @@ import * as DPath from "@duplojs/lang/path";
 import * as DSCommon from "@duplojs/server/common";
 import { build, createTypescriptInstance } from "@transpiler";
 import * as DEither from "@duplojs/lang/either";
-import * as GO from "@go";
 import * as DCommon from "@duplojs/lang/common";
 import * as DGenerator from "@duplojs/lang/generator";
 import * as DSFile from "@duplojs/server/file";
@@ -67,7 +66,7 @@ await DSCommand.exec(
 
 						const written = await DEither.rightAsyncPipe(
 							DSFile.ensureDirectory(parent),
-							() => DSFile.writeTextFile(destination, GO.Printer.printGoFile(transformed.file)),
+							() => DSFile.writeTextFile(destination, transformed.content),
 						);
 
 						return DEither.isLeft(written) ? exit(written) : next(DEither.ok());

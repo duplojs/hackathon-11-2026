@@ -11,14 +11,14 @@ export interface CreateTypescriptInstanceParams {
 export async function createTypescriptInstance(
 	params: CreateTypescriptInstanceParams,
 ) {
-	const workDirectory = DPath.getParentFolderPath(params.tsconfigPath);
+	const tsconfigDirectory = DPath.getParentFolderPath(params.tsconfigPath);
 
-	if (!workDirectory) {
+	if (!tsconfigDirectory) {
 		return DEither.left("invalidTsconfigPath");
 	}
 
 	const api = new API({
-		cwd: workDirectory,
+		cwd: tsconfigDirectory,
 	});
 
 	const snapshot = await api.createSnapshot({
@@ -28,7 +28,20 @@ export async function createTypescriptInstance(
 	const project = snapshot.getConfiguredProject(params.tsconfigPath);
 
 	if (!project) {
+		await api.close();
 		return DEither.left("missingProject");
+	}
+
+	const projectWorkDirectory = DCommon.pipe(
+		api.getCurrentDirectory(),
+		(directory) => api.getCanonicalFileName(directory),
+		DPath.createAbsolute,
+		DEither.unwrapRight,
+	);
+
+	if (DEither.isLeft(projectWorkDirectory)) {
+		await api.close();
+		return projectWorkDirectory;
 	}
 
 	return DCommon.pipe(
@@ -36,7 +49,7 @@ export async function createTypescriptInstance(
 			snapshot,
 			api,
 			project,
-			workDirectory,
+			projectWorkDirectory,
 			tsconfigPath: params.tsconfigPath,
 		},
 		DInvocation.appendEvidence("typescript-instance"),

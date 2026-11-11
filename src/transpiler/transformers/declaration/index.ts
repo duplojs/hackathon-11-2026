@@ -1,5 +1,3 @@
-import { functionDeclarationTransformer } from "./functionDeclaration";
+import * as DCommon from "@duplojs/lang/common";
 
-export { functionDeclarationTransformer };
-
-export const declarationTransformers = [functionDeclarationTransformer];
+export const declarationTransformers = DCommon.memo(() => []);

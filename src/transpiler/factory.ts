@@ -2,7 +2,6 @@ import * as DCommon from "@duplojs/lang/common";
 import * as DEither from "@duplojs/lang/either";
 import * as DModeling from "@duplojs/lang/modeling";
 import type * as GO from "@go";
-import type * as TS from "typescript/ast";
 import type { BuildContext } from "./context/build";
 import * as DGenerator from "@duplojs/lang/generator";
 import type * as DArray from "@duplojs/lang/array";
@@ -43,7 +42,7 @@ export interface Transformer<
 	GenericResultNode extends GO.AST.Node = GO.AST.Node,
 > extends DModeling.ObjectTag<"Transformer"> {
 	transformer(
-		data: TS.Node,
+		data: unknown,
 		context: BuildContext,
 	): DCommon.MaybePromise<
 		| TransformationSuccess<GenericResultNode>
@@ -68,7 +67,7 @@ export function createTransformer<
 	transformer: DCommon.IsNever<GenericResultNode> extends true
 		? never
 		: (
-			data: TS.Node,
+			data: unknown,
 			context: BuildContext,
 		) => DCommon.MaybePromise<
 			| TransformationSuccess<NoInfer<GenericResultNode>>
@@ -90,7 +89,7 @@ export function createTransformer<
 export function transform<
 	GenericTransformers extends readonly Transformer[],
 >(
-	data: TS.Node,
+	data: unknown,
 	transformers: GenericTransformers,
 	context: BuildContext,
 ): Promise<

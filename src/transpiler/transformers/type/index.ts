@@ -1,5 +1,3 @@
-import { numberTypeTransformer } from "./number";
+import * as DCommon from "@duplojs/lang/common";
 
-export { numberTypeTransformer } from "./number";
-
-export const typeTransformers = [numberTypeTransformer];
+export const typeTransformers = DCommon.memo(() => []);

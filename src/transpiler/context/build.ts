@@ -3,20 +3,16 @@ import * as DEither from "@duplojs/lang/either";
 import type * as DObject from "@duplojs/lang/object";
 import * as DString from "@duplojs/lang/string";
 import * as GO from "@go";
-import * as TS from "typescript/ast";
-import { SymbolFlags } from "typescript/async";
+import type { Symbol } from "typescript/async";
 import { transform, type Transformer, type TransformerResultNode, type NotfoundTransformer, type TransformationError, type TransformationNotSupported, type TransformationSuccess, type TransformationSuccessPayload } from "../factory";
 import type { FileContext } from "./file";
 import type { TranspilationContext } from "./transpilation";
 import { sharedDependencyImportDeclaration, sharedDependencyPackageName, type SharedDependency } from "../sharedDependency";
 import * as DPath from "@duplojs/lang/path";
 import type * as DArray from "@duplojs/lang/array";
+import { resolveReference, resolveReferenceModule, type DependencyReference, type ResolvedReference, type ResolvedModuleReference } from "../resolvedReference";
 
-export type DependencyReference =
-	| TS.Identifier
-	| TS.QualifiedName
-	| TS.PropertyAccessExpression
-	| TS.ElementAccessExpression;
+export type { DependencyReference } from "../resolvedReference";
 
 export interface BuildContext {
 	readonly transpilation: TranspilationContext;
@@ -24,7 +20,7 @@ export interface BuildContext {
 	transform<
 		GenericTransformers extends readonly Transformer[],
 	>(
-		data: TS.Node,
+		data: unknown,
 		transformers: GenericTransformers,
 	): Promise<
 		| TransformationSuccess<TransformerResultNode<DArray.Unwrap<GenericTransformers>>>
@@ -41,8 +37,16 @@ export interface BuildContext {
 	error(content: unknown): TransformationError;
 	generateIdentifier(): GO.AST.Identifier;
 	createSourceIdentifier(value: string): GO.AST.Identifier;
-	useShardDependency(sharedDependency: SharedDependency, identifier: GO.AST.Identifier): GO.AST.SelectorExpression;
-	registerDependency(node: DependencyReference): Promise<DEither.Maybe<GO.AST.Identifier>>;
+	registerSharedDependency(sharedDependency: SharedDependency): GO.AST.Identifier;
+	resolveReference(
+		reference: DependencyReference | Symbol,
+	): Promise<DEither.Maybe<ResolvedReference>>;
+	resolveReferenceModule(
+		reference: DependencyReference | Symbol,
+		moduleName: string,
+		entryPattern?: RegExp,
+	): Promise<DEither.Maybe<ResolvedModuleReference>>;
+	registerDependency(reference: ResolvedReference): DEither.Maybe<GO.AST.Identifier>;
 }
 
 export function createBuildContext(
@@ -59,33 +63,25 @@ export function createBuildContext(
 			before: payload.before ?? [],
 		}),
 		notSupport: (content) => DEither.left("transformation-not-supported", content),
-		useShardDependency: (sharedDependency, identifier) => {
+		registerSharedDependency: (sharedDependency) => {
 			transpilation.sharedDependencies.add(sharedDependency);
 			file.imports.add(sharedDependencyImportDeclaration);
 
-			return GO.AST.selectorExpression({
-				identifier: identifier,
-				target: sharedDependencyPackageName,
-			});
+			return sharedDependencyPackageName;
 		},
-		registerDependency: async(node) => {
-			const symbol = TS.isIdentifier(node) && TS.isShorthandPropertyAssignment(node.parent)
-				? await transpilation.typeChecker.getShorthandAssignmentValueSymbol(node.parent)
-				: await transpilation.typeChecker.getSymbolAtLocation(node);
-
-			if (!symbol) {
-				return DEither.none();
-			}
-
-			const resolved = symbol.flags & SymbolFlags.Alias
-				? await transpilation.typeChecker.getAliasedSymbol(symbol)
-				: symbol;
-
-			if (await transpilation.typeChecker.isUnknownSymbol(resolved)) {
-				return DEither.none();
-			}
-
-			const path = resolved.valueDeclaration?.path;
+		resolveReference: (reference) => resolveReference(
+			reference,
+			transpilation.typeChecker,
+			transpilation.projectWorkDirectory,
+		),
+		resolveReferenceModule: (reference, moduleName, entryPattern) => resolveReferenceModule(
+			reference,
+			transpilation.typeChecker,
+			moduleName,
+			entryPattern,
+		),
+		registerDependency: (reference) => {
+			const path = reference.symbol.valueDeclaration?.path;
 
 			if (!path) {
 				return DEither.none();

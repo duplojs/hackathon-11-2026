@@ -5,6 +5,34 @@ description: Créer ou modifier le build et les transformers TypeScript vers Go,
 
 # Transpiler TypeScript vers Go
 
+## Périmètre des évolutions de traduction
+
+Pour ajouter ou corriger une prise en charge TypeScript vers Go, modifier uniquement `src/transpiler/transformers/`. La logique de reconnaissance, de traduction et de composition appartient aux transformers et aux listes de transformers de ce dossier.
+
+Ne pas modifier le système des transformers pour y parvenir : ni `factory.ts`, ni le dispatch, ni les contrats de résultat, ni les contextes, ni le build ou les autres fichiers hors de `transformers/`. Les descriptions de ces couches ci-dessous servent à comprendre et utiliser leurs contrats existants ; elles n'autorisent pas leur modification. Une demande explicite portant sur une de ces couches constitue un travail distinct.
+
+Si une traduction exige un outil absent des contrats existants, signaler précisément le besoin, son usage et ce qui bloque. Ne pas implémenter cet outil de sa propre initiative, étendre le contexte ou contourner la limite par un helper dans `transformers/`.
+
+## Responsabilité et granularité des transformers
+
+Chaque transformer porte une tâche précise : reconnaître la forme ou l'opération qu'il prend en charge, vérifier sa compatibilité, puis effectuer sa traduction. Garder cette logique lisible dans le transformer concerné. Ne pas regrouper plusieurs opérations indépendantes dans une grande fonction configurable ni créer une abstraction générique pour anticiper d'autres cas.
+
+La spécialisation porte sur l'opération, pas sur le code de l'exemple à traduire. Concevoir sa prise en charge pour les variations valides de cette opération : noms locaux et alias d'import, valeurs et formes d'arguments, types compatibles et contexte d'utilisation. Déduire ces informations du nœud, du checker et des transformations enfants ; ne pas figer les noms, valeurs ou structures d'un exemple. Cette généralité reste dans le périmètre de l'opération prise en charge et ne justifie ni un transformer universel ni une factorisation supplémentaire.
+
+Ne pas extraire de helpers de factorisation de sa propre initiative, même dans `transformers/helpers/`. Une ressemblance de code ou quelques répétitions ne justifient pas une extraction. Si une logique ne peut raisonnablement être portée par un transformer et les délégations existantes, remonter le besoin d'un outil dédié sans le fabriquer.
+
+La composition se fait par délégation à d'autres transformers via `context.transform(node, listeAdaptée)`. Le transformer parent reste responsable de son opération, du choix des listes pour ses enfants et de la composition de leurs résultats. Un argument littéral est ainsi confié à une liste adaptée aux expressions, sans réimplémenter sa traduction dans le transformer appelant.
+
+Un transformer dédié à `left`, par exemple, reconnaît précisément cette fonction via son symbole, traite son opération, délègue ses enfants aux listes appropriées et demande une shared dependency si sa traduction en a besoin. Ne pas reconnaître une API uniquement par le texte du nom appelé. Une shared dependency fournit du code Go réutilisable ; elle ne remplace pas les responsabilités de reconnaissance et de traduction du transformer.
+
+## Sélection préalable des listes par domaine
+
+Pour DuploJS, organiser la sélection par domaine et par catégorie de résultat. Chaque liste spécialisée est accessible par un transformer d'entrée chargé d'établir si elle est compatible avec le nœud courant. Ce transformer vérifie d'abord la forme du nœud et l'origine du symbole résolu : le module et le domaine dont provient la fonction ou l'API utilisée. La résolution doit conserver cette reconnaissance malgré un renommage local ou une variation de syntaxe prise en charge.
+
+Si le nœud ne relève pas du domaine, retourner `context.notSupport(node)` sans parcourir la liste spécialisée ni modifier le contexte. S'il relève du domaine, déléguer seulement alors avec `context.transform(node, listeDuDomaine)`, puis propager le résultat selon les contrats existants. La compatibilité avec le domaine autorise l'essai de sa liste ; elle ne garantit pas qu'un transformer de cette liste prenne déjà en charge l'opération.
+
+La liste parente référence le transformer d'entrée, sans y étaler tous les transformers internes du domaine. Un seul point d'entrée valide ainsi l'accès à cette liste ; les candidats internes ne sont parcourus qu'après validation. Appliquer ce fonctionnement aux déclarations comme aux expressions, instructions et types, en conservant les listes adaptées au résultat attendu. Ajouter les prises en charge dans la liste du domaine concerné, sans modifier la factory ni le dispatch pour réaliser ce filtrage.
+
 ## Repères et responsabilités
 
 - [bin/index.ts](../../../bin/index.ts) : options `--tsconfig`, `--input`, `--output`, impression et écriture des fichiers.
@@ -14,9 +42,9 @@ description: Créer ou modifier le build et les transformers TypeScript vers Go,
 - [factory.ts](../../../src/transpiler/factory.ts) : contrat `Transformer`, factory, dispatch et résultats.
 - [context/transpilation.ts](../../../src/transpiler/context/transpilation.ts), [context/file.ts](../../../src/transpiler/context/file.ts), [context/build.ts](../../../src/transpiler/context/build.ts) : état global, état du fichier et opérations des transformers.
 - [sharedDependency.ts](../../../src/transpiler/sharedDependency.ts) : définition d'une dépendance partagée et de son package.
-- [transformers/](../../../src/transpiler/transformers/) : transformers classés par catégorie ; [helpers/typescriptExpression.ts](../../../src/transpiler/transformers/helpers/typescriptExpression.ts) traite notamment les identifiants et leurs dépendances.
+- [transformers/](../../../src/transpiler/transformers/) : transformers et listes classés par catégorie et, lorsque nécessaire, par bibliothèque ou domaine.
 
-Appliquer [duplojs-fundamental](../duplojs-fundamental/SKILL.md) et les routeurs indiqués dans `AGENTS.md`. Consulter [go-ast](../go-ast/SKILL.md) pour modifier les nœuds Go et [go-printer](../go-printer/SKILL.md) pour leur rendu. Appliquer les skills CLI ou serveur lorsque ces couches sont concernées.
+Appliquer [duplojs-fundamental](../duplojs-fundamental/SKILL.md) et les routeurs indiqués dans `AGENTS.md`. Consulter [go-ast](../go-ast/SKILL.md) pour utiliser les nœuds Go et [go-printer](../go-printer/SKILL.md) pour comprendre leur rendu. Si une demande porte explicitement sur une évolution de ces couches ou du CLI, appliquer leurs skills spécialisés ; l'ajout d'une traduction ne suffit pas à autoriser ces modifications.
 
 Le transpiler construit l'AST Go ; le printer le rend en texte ; le CLI gère les entrées et les sorties. Lire les contrats et les appelants avant une modification : les principes ci-dessous ne signifient pas que toutes les formes TypeScript disposent déjà d'un transformer.
 
@@ -65,15 +93,17 @@ export const numericLiteralTransformer: Transformer<GO.AST.FloatLiteral> = creat
 
 Le contrat sur la constante coupe le cycle d'inférence entre le transformer, ses appels récursifs et les registres. Laisser `createTransformer` inférer son générique depuis ce contrat, sans le répéter sur la factory ni annoter le retour du callback. Conserver son générique par défaut `never` et son `NoInfer` sur le résultat. À l'intérieur, laisser les valeurs et retours s'inférer.
 
-Construire les nœuds Go via les factories de l'AST. Spécialiser chaque transformer pour une forme réutilisable, indépendante d'un exemple ou d'un nom de fonction. Consulter le checker pour les types inférés au lieu de les supposer à partir d'un exemple.
+Construire les nœuds Go via les factories existantes de l'AST. Spécialiser chaque transformer pour une forme ou une opération précise, indépendante d'un exemple particulier. Pour une API de bibliothèque, une fonction précise peut être cette opération ; la reconnaître par résolution de symboles. Consulter le checker pour les types inférés au lieu de les supposer à partir d'un exemple.
 
 Choisir les candidats selon la catégorie Go attendue : `expressionTransformers`, `typeTransformers`, `statementTransformers`, `declarationTransformers`, ou une liste plus restreinte. `sourceFileTransformers` compose déclarations et instructions. Une liste globale indifférenciée permettrait de produire un type là où une instruction est requise.
+
+Enrichir les listes existantes avec les transformers dédiés à la prise en charge demandée. Choisir la liste à chaque délégation selon le nœud à traiter, le résultat attendu et, si nécessaire, le domaine reconnu. Ajouter une liste ciblée dans `transformers/` lorsqu'un domaine le nécessite, puis la raccorder par un transformer de sélection. Ne pas remplacer cette composition par un registre universel, un helper de dispatch ou une modification de la factory.
 
 Le dispatch infère l'union des résultats depuis les contrats des constantes de la liste. Conserver le type précis des listes : une annotation générale `readonly Transformer[]` perd cette précision. Aucun générique explicite n'est nécessaire sur `context.transform`.
 
 Conserver `DCommon.memo(() => [...])` pour les registres récursifs d'expressions, d'instructions et leur composition au niveau fichier ; lire `.value` au moment de transformer. L'évaluation différée évite les accès avant initialisation dans les imports circulaires. Ce mécanisme et le contrat sur les constantes résolvent deux problèmes distincts : initialisation et inférence. Laisser le mémo inférer son type sans recopier les contrats dans un tuple.
 
-Placer les helpers partagés dans `src/transpiler/transformers/helpers/` et les exporter depuis son `index.ts`. Pour une expression enfant, utiliser `transformExpression(node, context)` afin de conserver le traitement des identifiants et de leurs dépendances avant le dispatch des autres expressions.
+Pour une expression enfant, déléguer à la liste adaptée avec `context.transform`. Le traitement des identifiants et de leurs dépendances doit être pris en charge par les transformers concernés, sans créer un helper parallèle qui intercepte les expressions avant le dispatch.
 
 ## Résultats et refus
 
@@ -127,15 +157,15 @@ Les dépendances sont déduites par les transformers au fil des références ren
 
 La résolution consulte le symbole, traite les shorthand properties et suit les alias TypeScript. Elle utilise le chemin de la déclaration de valeur résolue. Pour un chemin absolu valide différent du fichier courant, elle l'ajoute à `context.file.dependencyFiles` et retourne `DEither.some(packageIdentifier)`. Un symbole absent ou inconnu, une déclaration sans chemin utilisable ou une référence au fichier courant retourne `DEither.none()`.
 
-Le helper `transformExpression` convertit actuellement une référence locale en identifiant source et une référence à un autre fichier en sélecteur `packageIdentifier.sourceIdentifier`. Enregistrer la dépendance permet à la fois son import dans le fichier courant et sa transformation ultérieure par le build.
+Le transformer chargé d'une référence doit produire un identifiant source pour une référence locale et un sélecteur `packageIdentifier.sourceIdentifier` pour une référence à un autre fichier, à partir des informations de résolution disponibles. Enregistrer la dépendance permet à la fois son import dans le fichier courant et sa transformation ultérieure par le build.
 
 Le package d'un fichier est prédictible depuis son chemin absolu, avant son build. Utiliser le même encodage pour sa déclaration et ses références. Pour la visibilité TypeScript, s'appuyer sur la résolution du checker : si TypeScript permet la référence importée, considérer l'export comme établi, sans reconstruire un registre parallèle des exports.
 
-Il n'existe pas de mécanisme général de compatibilité avec les bibliothèques externes ou `node_modules`. Leur présence peut conduire à un échec de compilation. Ne pas ajouter implicitement de traduction de packages npm, de fallback ou de conversion automatique en shared dependencies pour les rendre compatibles.
+Ne pas supposer une compatibilité générale avec les bibliothèques externes ou `node_modules`. Leur prise en charge doit être explicite, par des transformers dédiés et des listes de domaine. Ne pas ajouter de fallback ni de conversion automatique de packages npm en shared dependencies.
 
 ### Imports renommés : évolution à prévoir
 
-La résolution suit déjà les alias pour retrouver le fichier, mais le helper utilise encore le texte de l'identifiant local pour construire le membre du sélecteur. Cela ne suffit pas pour `import { foo as bar }` : le membre du package source reste `foo`.
+La résolution des alias doit distinguer le nom local du nom exporté pour construire le membre du sélecteur. Utiliser seulement le texte de l'identifiant local ne suffit pas pour `import { foo as bar }` : le membre du package source reste `foo`. Vérifier la prise en charge effective dans les transformers présents.
 
 La direction souhaitée est de matérialiser le renommage au niveau du package du fichier importateur afin que le nom local reste utilisable dans ses fonctions. Une liaison vers la valeur importée est une piste pour les valeurs compatibles ; le choix de représentation et la conservation de la sémantique des imports restent à implémenter. Ne pas présenter une copie de valeur comme un alias universel, ni cette prise en charge comme déjà acquise. Cette évolution concerne la résolution du symbole, son nom exporté et les références au nom local.
 
@@ -162,5 +192,7 @@ Utiliser `context.generateIdentifier()` pour une nouvelle variable temporaire, p
 ## Vérification d'une évolution
 
 Après une modification TypeScript, exécuter `pnpm test:types` et `pnpm test:lint`. Pour une évolution du build ou d'un transformer, vérifier aussi le rendu d'un exemple pertinent dans un dossier de sortie dédié, notamment l'ordre des préparations, leur portée et les imports demandés. Respecter les validations des skills AST et printer lorsque ces couches changent.
+
+Pour une sélection de domaine, vérifier qu'un nœud d'un autre module est refusé avant l'appel à la liste interne. Pour une nouvelle opération, vérifier des variations pertinentes du code source au-delà de l'exemple initial, notamment un renommage local ou des arguments de formes différentes lorsque l'opération les accepte.
 
 Le [projet 00](../../../projects/00/index.ts) illustre une fonction numérique, l'appel avec temporaires et `init`. Le [projet 01](../../../projects/01/index.ts) contient des imports et des usages supplémentaires ; lire les transformers présents avant de le considérer comme un cas entièrement pris en charge. Les exemples servent à vérifier des comportements, pas à spécialiser le transpiler pour leurs seuls noms ou formes.

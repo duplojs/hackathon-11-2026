@@ -10,6 +10,7 @@ import { createTranspilationContext } from "./context/transpilation";
 import { transformSourceFile } from "./transformSourceFile";
 import { createFile, type CreateFileParams } from "./createFile";
 import { sharedDependencyPackageName } from "./sharedDependency";
+import { createSourcePackageLayout, goModuleContent } from "./sourcePackage";
 
 export function build(
 	typescriptInstance: DInvocation.GetEvidenceResult<
@@ -20,7 +21,7 @@ export function build(
 ) {
 	const context = createTranspilationContext({
 		typeChecker: typescriptInstance.project.checker,
-		projectWorkDirectory: typescriptInstance.workDirectory,
+		projectWorkDirectory: typescriptInstance.projectWorkDirectory,
 	});
 
 	return DGenerator.asyncLoopAccumulator(
@@ -35,8 +36,46 @@ export function build(
 			const path = DArray.first(accumulator.pending);
 
 			if (path === undefined) {
+				const entryPackage = DCommon.pipe(
+					DEither.rightPipe(
+						DPath.createAbsolute(typescriptInstance.api.getCanonicalFileName(input)),
+						(sourcePath) => createSourcePackageLayout(typescriptInstance.projectWorkDirectory, sourcePath),
+					),
+					DEither.unwrapRight,
+				);
+
+				if (DEither.isLeft(entryPackage)) {
+					return exit(entryPackage);
+				}
+
+				const mainFile = DEither.right("build-main-file", {
+					content: GO.Printer.printGoFile(GO.AST.goFile({
+						packageName: GO.AST.createIdentifier("main"),
+						imports: [
+							GO.AST.importDeclaration({
+								path: entryPackage.importPath,
+								alias: GO.AST.createIdentifier("_"),
+							}),
+						],
+						topLevelDeclarations: [
+							GO.AST.functionDeclaration({
+								identifier: GO.AST.createIdentifier("main"),
+								generic: [],
+								parameters: [],
+								returnTypes: [],
+								body: GO.AST.blockStatement({ statements: [] }),
+							}),
+						],
+					})),
+					outputPath: DPath.declarePath("main.go"),
+				});
+				const moduleFile = DEither.right("build-go-module-file", {
+					content: goModuleContent,
+					outputPath: DPath.declarePath("go.mod"),
+				});
+
 				if (context.sharedDependencies.size === 0) {
-					return exit();
+					return exit(mainFile, moduleFile);
 				}
 
 				const file = DCommon.pipe(
@@ -65,9 +104,13 @@ export function build(
 
 				return exit(
 					DEither.right("build-shared-dependencies-file", {
-						file,
-						outputPath: DPath.declarePath(`${sharedDependencyPackageName.value}.go`),
+						content: GO.Printer.printGoFile(file),
+						outputPath: DPath.declarePath(
+							`${sharedDependencyPackageName.value}/${sharedDependencyPackageName.value}.go`,
+						),
 					}),
+					mainFile,
+					moduleFile,
 				);
 			}
 
@@ -78,7 +121,10 @@ export function build(
 			}
 
 			if (accumulator.built.has(sourceFile.path)) {
-				return next(accumulator);
+				return next({
+					...accumulator,
+					pending: DArray.shift(accumulator.pending),
+				});
 			}
 
 			const pendingRest = DArray.shift(accumulator.pending);
@@ -89,17 +135,16 @@ export function build(
 				return exit(transformed);
 			}
 
-			const outputPath = DCommon.pipe(
+			const sourcePackage = DCommon.pipe(
 				DEither.rightPipe(
-					DPath.createAbsolute(sourceFile.fileName),
-					(sourcePath) => DPath.computeRelative(typescriptInstance.workDirectory, sourcePath),
-					(relativePath) => DPath.create(`${relativePath}.go`),
+					DPath.createAbsolute(sourceFile.path),
+					(sourcePath) => createSourcePackageLayout(typescriptInstance.projectWorkDirectory, sourcePath),
 				),
 				DEither.unwrapRight,
 			);
 
-			if (DEither.isLeft(outputPath)) {
-				return exit(outputPath);
+			if (DEither.isLeft(sourcePackage)) {
+				return exit(sourcePackage);
 			}
 
 			const result = DEither.unwrapRight(transformed);
@@ -111,8 +156,8 @@ export function build(
 					built: accumulator.built,
 				},
 				DEither.right("build-source-file", {
-					file: result.file,
-					outputPath,
+					content: GO.Printer.printGoFile(result.file),
+					outputPath: sourcePackage.outputPath,
 				}),
 			);
 		},
