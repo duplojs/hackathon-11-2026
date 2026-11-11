@@ -76,7 +76,7 @@ export async function transformSourceFile(
 		DGenerator.map(
 			(path) => GO.AST.importDeclaration({
 				path: DPath.computeRelative(
-					fileContext.currentFilePath,
+					transpilationContext.projectWorkDirectory,
 					path,
 				),
 			}),

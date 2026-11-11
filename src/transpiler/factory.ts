@@ -5,6 +5,7 @@ import type * as GO from "@go";
 import type * as TS from "typescript/ast";
 import type { BuildContext } from "./context/build";
 import * as DGenerator from "@duplojs/lang/generator";
+import type * as DArray from "@duplojs/lang/array";
 
 export interface TransformationSuccessPayload<
 	GenericGoNode extends GO.AST.Node,
@@ -52,10 +53,14 @@ export interface Transformer<
 	>;
 }
 
-export type TransformerResultNode<GenericTransformer extends Transformer> =
-	GenericTransformer extends Transformer<infer GenericGoNode>
-		? GenericGoNode
-		: never;
+export type TransformerResultNode<
+	GenericTransformer extends Transformer,
+> = DEither.GetValue<
+	Extract<
+		Awaited<ReturnType<GenericTransformer["transformer"]>>,
+		TransformationSuccess<GO.AST.Node>
+	>
+>["result"];
 
 export function createTransformer<
 	GenericResultNode extends GO.AST.Node = never,
@@ -89,15 +94,10 @@ export function transform<
 	transformers: GenericTransformers,
 	context: BuildContext,
 ): Promise<
-	| TransformationSuccess<TransformerResultNode<GenericTransformers[number]>>
+	| TransformationSuccess<TransformerResultNode<DArray.Unwrap<GenericTransformers>>>
 	| TransformationError
 	| NotfoundTransformer
->;
-export function transform(
-	data: TS.Node,
-	transformers: readonly Transformer[],
-	context: BuildContext,
-) {
+> {
 	return DCommon.pipe(
 		transformers,
 		DGenerator.asyncReduce(
@@ -109,14 +109,13 @@ export function transform(
 				lastValue,
 				next,
 				exit,
-			}) => DEither.matchInformation(
-				await item.transformer(data, context),
-				{
-					"transformation-not-supported": () => next(lastValue),
-					"notfound-transformer": exit,
-					"transformation-error": exit,
-					"transformation-success": exit,
-				},
+			}) => DCommon.asyncPipe(
+				item.transformer(data, context),
+				DEither.whenHasInformationOtherwise(
+					"transformation-not-supported",
+					() => next(lastValue),
+					exit,
+				),
 			),
 		),
 	);

@@ -10,6 +10,7 @@ import type { FileContext } from "./file";
 import type { TranspilationContext } from "./transpilation";
 import { sharedDependencyImportDeclaration, sharedDependencyPackageName, type SharedDependency } from "../sharedDependency";
 import * as DPath from "@duplojs/lang/path";
+import type * as DArray from "@duplojs/lang/array";
 
 export type DependencyReference =
 	| TS.Identifier
@@ -20,11 +21,13 @@ export type DependencyReference =
 export interface BuildContext {
 	readonly transpilation: TranspilationContext;
 	readonly file: FileContext;
-	transform<GenericTransformers extends readonly Transformer[]>(
+	transform<
+		GenericTransformers extends readonly Transformer[],
+	>(
 		data: TS.Node,
 		transformers: GenericTransformers,
 	): Promise<
-		| TransformationSuccess<TransformerResultNode<GenericTransformers[number]>>
+		| TransformationSuccess<TransformerResultNode<DArray.Unwrap<GenericTransformers>>>
 		| TransformationError
 		| NotfoundTransformer
 	>;
@@ -111,7 +114,7 @@ export function createBuildContext(
 		createSourceIdentifier: (value) => DCommon.pipe(
 			value,
 			DString.replace(
-				/[^a-zA-Z0-9]/g,
+				/[^a-zA-Z0-9_]/g,
 				({ matchedValue }) => DCommon.pipe(
 					matchedValue.charCodeAt(0).toString(36),
 					DString.padStart(4, "0"),

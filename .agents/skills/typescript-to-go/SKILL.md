@@ -1,62 +1,53 @@
 ---
 name: typescript-to-go
-description: Créer ou modifier les transformers TypeScript vers Go, leur contexte et leurs dépendances partagées. À utiliser pour src/transpiler/ et son raccordement au CLI.
+description: Créer ou modifier le build et les transformers TypeScript vers Go, leurs contextes, le parcours des dépendances et les dépendances partagées. À utiliser pour src/transpiler/ et son raccordement au CLI.
 ---
 
 # Transpiler TypeScript vers Go
 
-## Repères
+## Repères et responsabilités
 
-- [transformSourceFile.ts](../../../src/transpiler/transformSourceFile.ts) : conversion d'un fichier avec `transformSourceFile(sourceFile, context, packageName)`.
-- [factory.ts](../../../src/transpiler/factory.ts) : `createTransformer`, dispatch `transform` et résultats de transformation.
-- [context.ts](../../../src/transpiler/context.ts) : création du contexte, compteur d'identifiants et espaces main/dépendances partagées.
-- [localContext.ts](../../../src/transpiler/localContext.ts) : informations courantes transmises séparément à chaque transformation.
-- [sharedDependency.ts](../../../src/transpiler/sharedDependency.ts) : `SharedDependency` et `createSharedDependency`.
-- [transformers/](../../../src/transpiler/transformers/) : emplacement des transformers spécialisés.
-- [transformers/helper/](../../../src/transpiler/transformers/helper/) : helpers de transformation, dont `typescriptExpression.ts` et sa fonction `transformExpression`.
-- [bin/index.ts](../../../bin/index.ts) : CLI avec les options `--tsconfig`, `--input`, `--output`.
-- [bin/createTypescriptInstance.ts](../../../bin/createTypescriptInstance.ts) : chargement du projet TypeScript, dont `project.checker`.
-- [projects/00/index.ts](../../../projects/00/index.ts) : premier exemple, déclaration d'une fonction `add` puis son appel.
+- [bin/index.ts](../../../bin/index.ts) : options `--tsconfig`, `--input`, `--output`, impression et écriture des fichiers.
+- [createTypescriptInstance.ts](../../../src/transpiler/createTypescriptInstance.ts) : ouverture du projet TypeScript ; le dossier du `tsconfig` devient `workDirectory`.
+- [build.ts](../../../src/transpiler/build.ts) : parcours depuis l'entrée, émission des fichiers et assemblage des dépendances partagées.
+- [transformSourceFile.ts](../../../src/transpiler/transformSourceFile.ts) et [createFile.ts](../../../src/transpiler/createFile.ts) : transformation d'une source, assemblage du `GoFile` et construction de sa fonction `init`.
+- [factory.ts](../../../src/transpiler/factory.ts) : contrat `Transformer`, factory, dispatch et résultats.
+- [context/transpilation.ts](../../../src/transpiler/context/transpilation.ts), [context/file.ts](../../../src/transpiler/context/file.ts), [context/build.ts](../../../src/transpiler/context/build.ts) : état global, état du fichier et opérations des transformers.
+- [sharedDependency.ts](../../../src/transpiler/sharedDependency.ts) : définition d'une dépendance partagée et de son package.
+- [transformers/](../../../src/transpiler/transformers/) : transformers classés par catégorie ; [helpers/typescriptExpression.ts](../../../src/transpiler/transformers/helpers/typescriptExpression.ts) traite notamment les identifiants et leurs dépendances.
 
-Appliquer [duplojs-fundamental](../duplojs-fundamental/SKILL.md) et les routeurs de documentation indiqués dans `AGENTS.md`. Consulter [go-ast](../go-ast/SKILL.md) pour modifier l'AST Go et [go-printer](../go-printer/SKILL.md) pour modifier son rendu. Appliquer les skills CLI ou serveur lorsqu'une modification concerne ces couches.
+Appliquer [duplojs-fundamental](../duplojs-fundamental/SKILL.md) et les routeurs indiqués dans `AGENTS.md`. Consulter [go-ast](../go-ast/SKILL.md) pour modifier les nœuds Go et [go-printer](../go-printer/SKILL.md) pour leur rendu. Appliquer les skills CLI ou serveur lorsque ces couches sont concernées.
 
-## Conversion d'un fichier et contexte
+Le transpiler construit l'AST Go ; le printer le rend en texte ; le CLI gère les entrées et les sorties. Lire les contrats et les appelants avant une modification : les principes ci-dessous ne signifient pas que toutes les formes TypeScript disposent déjà d'un transformer.
 
-Créer le contexte d'accumulation avec `createTransformerContext(checker)` avant de transformer les fichiers, puis passer la même instance à chaque appel `transformSourceFile(sourceFile, context, packageName)`. Les accumulateurs et le compteur sont partagés, mais le contenu de chaque `GoFile` reste propre au fichier transformé. Ne pas recréer ce contexte pour chaque fichier ou chaque enfant.
+## Build depuis le fichier d'entrée
 
-`transformSourceFile` a pour seul rôle de convertir un `TS.SourceFile` en `GO.AST.GoFile`. Elle se situe en dehors du dispatch des transformers et n'est pas créée avec `createTransformer`. Elle crée le contexte local `{ sourceFile }`, parcourt les éléments du fichier et appelle `context.transform` avec `sourceFileTransformers.value`, qui rassemble les transformers de déclarations et d'instructions. Elle assemble les résultats propres à ce fichier dans `imports`, `declarations` et `init`. Les `topLevelDeclarations` retournées par les enfants sont insérées dans les déclarations de ce même fichier, dans l'ordre de transformation.
+Le CLI crée l'instance TypeScript depuis le `tsconfig`, puis consomme le générateur asynchrone `build(typescriptInstance, input)`. L'entrée est le premier fichier transformé ; les autres fichiers du projet ne sont pas tous parcourus d'avance.
 
-Le nom de package est fourni par l'appelant comme `GO.AST.Identifier`. Cette conversion n'impose aucun package, ne crée aucune fonction `main` et ne lit ni n'alimente `context.main`. Elle n'organise pas l'assemblage de plusieurs fichiers. Les instructions exécutables de niveau fichier TypeScript sont placées dans `GoFile.init` : le printer rend cette liste dans une fonction Go `init`. La conversion ne construit pas elle-même une déclaration de fonction `init`.
+`build` crée un seul `TranspilationContext` pour toute la construction. Il maintient une file `pending`, initialisée avec l'entrée, et un ensemble `built` de chemins déjà traités. Chaque transformation complète d'un fichier révèle ses dépendances ; leurs chemins alimentent la suite du parcours. Préserver la progression de la file et le traitement unique d'un fichier lorsque plusieurs sources le référencent.
 
-Préserver l'ordre des instructions : ajouter les `before` de chaque enfant à `init`, puis son résultat s'il s'agit d'une instruction. Les `before` restent dans `init`, y compris leurs déclarations locales ; ne pas les remonter au niveau du package. Les résultats principaux qui sont des imports ou des déclarations Go restent respectivement dans `imports` ou `declarations`. Une déclaration locale produite comme résultat principal d'un élément de niveau fichier peut ainsi être placée dans `declarations`, tandis qu'une déclaration locale de préparation reste dans `init`.
+Les émissions réussies portent l'information `build-source-file` ou `build-shared-dependencies-file` et la valeur `{ file, outputPath }`. Pour une source, le chemin de sortie est relatif au dossier du `tsconfig`, avec `.go` ajouté au nom source : `index.ts` donne `index.ts.go`. Après les sources, le fichier des dépendances partagées est émis seulement si des dépendances ont été demandées. Les refus de résolution ou de transformation arrêtent le parcours et remontent au consommateur.
 
-En cas de réussite, retourner directement `DEither.success(goFile)`, soit un `DEither.Success<GO.AST.GoFile>`. Ne pas utiliser `context.success({ result: goFile })` ni envelopper le fichier dans un `TransformationSuccess`. Propager tout refus reçu d'une transformation enfant tel quel jusqu'à l'appelant ; ne pas construire un fichier après un refus. Le checker et les accumulateurs partagés restent disponibles pour les transformers via le contexte reçu.
+Le CLI imprime chaque AST puis écrit sous `--output`. Il supprime actuellement ce dossier récursivement avant la construction : pour vérifier un exemple sans toucher à une sortie existante, choisir un dossier temporaire dédié.
 
-Le contexte s'enrichit au fil du traitement par ses méthodes. Les tableaux et le compteur sont conservés en closure ; les listes sont exposées en lecture seule. Le contexte fournit :
+## Trois contextes
 
-- `checker` pour consulter les types inférés, les signatures et les symboles.
-- `transform(data, transformers, localContext)` pour transformer une donnée avec le même contexte d'accumulation et le contexte local fourni.
-- `success(payload)` et `error(content)` pour construire les résultats.
-- `notSupport(content)` pour retourner un `TransformationNotSupported` lorsque le transformer ne prend pas en charge le nœud reçu.
-- `createIdentifier()` pour allouer un identifiant Go.
-- `main` pour accumuler les imports et déclarations du fichier principal.
-- `sharedDependencies` pour accumuler les dépendances partagées demandées.
+`TranspilationContext` conserve les données communes à tous les fichiers :
 
-Le compteur commence à zéro et augmente simplement avec `+= 1`. Les identifiants produits sont `generated_1`, `generated_2`, etc. Réutiliser l'identifiant obtenu pour ses références. Ce mécanisme distingue les noms générés dans un contexte ; il ne vérifie pas les collisions avec les noms déjà présents dans les sources.
+- `typeChecker` : checker du projet TypeScript.
+- `projectWorkDirectory` : dossier du `tsconfig`.
+- `sharedDependencies` : `Set<SharedDependency>` des dépendances demandées.
+- `increment()` : compteur global utilisé pour les identifiants générés.
 
-Le transformer reçoit trois arguments : `(data, context, localContext)`. `data` est un `TS.Node`, à affiner dans l'implémentation. `LocalTransformerContext` porte les informations courantes, actuellement `sourceFile`, avec des propriétés en lecture seule. Il ne contient ni accumulateur ni méthode d'ajout. Le transmettre explicitement à chaque appel enfant ; lorsqu'une information courante change, fournir un nouvel objet local sans modifier celui du parent. Ajouter les autres informations locales seulement selon les besoins des transformations.
+`createFileContext(sourceFile)` valide le chemin absolu de la source et retourne un `Either`. Son `FileContext` contient `sourceFile`, `currentFilePath` et trois ensembles propres à ce fichier : `dependencyFiles`, `topLevelDeclarations` et `imports`.
 
-L'API TypeScript installée utilise `typescript/ast` et `typescript/async`. Vérifier ses déclarations locales avant de reprendre une API d'une autre version. Les transformers acceptent un retour `DCommon.MaybePromise` : un résultat `Either` direct ou une promesse de ce résultat. Utiliser une fonction synchrone lorsque le traitement le permet ; n'ajouter `async` que lorsque nécessaire. `transform`, `context.transform` et `transformSourceFile` conservent un retour asynchrone commun aux appelants. Attendre les consultations du checker et les transformations enfants avant de composer le résultat. Les factories, `success`, `error`, `notSupport` et les méthodes d'ajout au contexte restent synchrones.
+`createBuildContext(transpilation, file)` relie ces contextes et expose les opérations aux transformers. Une implémentation reçoit `(node, context)` ; elle appelle ses enfants avec `context.transform(node, transformers)`, en conservant ce contexte de build. Les informations globales passent par `context.transpilation`, les ajouts au fichier par `context.file`. Créer un contexte de fichier par source, sans recréer le contexte global ni son compteur pour les enfants.
 
-## Transformers génériques
+Les API TypeScript installées sont `typescript/ast` et `typescript/async`. Vérifier leurs déclarations locales avant de reprendre une API d'une autre version. Attendre les consultations asynchrones du checker et les transformations enfants avant de composer les résultats.
 
-Créer les transformers avec `const transformer: Transformer<GoNode> = createTransformer(implementation)` et les placer dans `src/transpiler/transformers/`. La factory reçoit uniquement l'implémentation : aucun predicate séparé n'est déclaré ni stocké dans le transformer.
+## Transformers et listes selon le résultat attendu
 
-Placer les helpers partagés entre transformers dans `src/transpiler/transformers/helper/` et les exporter depuis son `index.ts`. Ils restent auprès des transformers plutôt qu'à la racine du transpiler avec la factory, les contextes et les dépendances partagées.
-
-Déclarer le contrat `Transformer<GoNode>` directement sur chaque constante exportée. Le générique décrit le nœud Go produit, pas le nœud TypeScript reçu. Ce contrat coupe le cycle d'inférence entre le transformer, ses appels récursifs et les registres avant l'analyse du callback. Le générique de `createTransformer` est inféré depuis ce contrat : ne pas répéter le type Go sur l'appel à la factory ni annoter le retour de son callback. Un générique explicite sur la factory seule ne suffit pas à couper ce cycle. La factory conserve `never` par défaut et `NoInfer` sur le résultat du callback pour recevoir le type depuis le contrat plutôt que depuis l'implémentation. Conserver l'inférence des valeurs et des retours à l'intérieur de l'implémentation.
-
-Vérifier la prise en charge et affiner le `TS.Node` dans l'implémentation, avec les gardes TypeScript et les outils DuploJS adaptés. Si la forme ou une caractéristique du nœud n'est pas prise en charge, retourner `context.notSupport(content)`. Effectuer ces vérifications avant de modifier les accumulateurs du contexte, puisque le dispatch peut ensuite essayer un autre transformer. Cette règle remplace entièrement l'ancien modèle fondé sur un predicate préalable.
+Déclarer chaque constante avec le contrat `Transformer<GoNode> = createTransformer(implementation)`. Le générique décrit le résultat Go, pas le nœud TypeScript reçu. La factory reçoit seulement l'implémentation ; la garde TypeScript et les vérifications de prise en charge sont dans celle-ci.
 
 ```ts
 export const numericLiteralTransformer: Transformer<GO.AST.FloatLiteral> = createTransformer(
@@ -72,72 +63,104 @@ export const numericLiteralTransformer: Transformer<GO.AST.FloatLiteral> = creat
 );
 ```
 
-Le transformer produit un nœud de l'AST Go via ses factories. Il peut traiter une déclaration, une instruction, une expression, un type ou toute autre forme de nœud TypeScript ; il n'est pas limité aux expressions.
+Le contrat sur la constante coupe le cycle d'inférence entre le transformer, ses appels récursifs et les registres. Laisser `createTransformer` inférer son générique depuis ce contrat, sans le répéter sur la factory ni annoter le retour du callback. Conserver son générique par défaut `never` et son `NoInfer` sur le résultat. À l'intérieur, laisser les valeurs et retours s'inférer.
 
-Spécialiser chaque transformer pour une tâche réutilisable, indépendante du projet 00, du nom du fichier et d'un emplacement arbitraire dans l'arbre. Utiliser le contexte pour les informations nécessaires. Par exemple, le retour de `add` est inféré : ne pas supposer son type uniquement à partir de cet exemple.
+Construire les nœuds Go via les factories de l'AST. Spécialiser chaque transformer pour une forme réutilisable, indépendante d'un exemple ou d'un nom de fonction. Consulter le checker pour les types inférés au lieu de les supposer à partir d'un exemple.
 
-Le parent transforme les enfants avec `await context.transform(data, transformers, localContext)` et les collections de transformers adaptées aux résultats Go attendus. Traiter les résultats `Either` avant de construire le résultat parent. Exécuter les transformations dans l'ordre requis par le programme et les ajouts au contexte partagé.
+Choisir les candidats selon la catégorie Go attendue : `expressionTransformers`, `typeTransformers`, `statementTransformers`, `declarationTransformers`, ou une liste plus restreinte. `sourceFileTransformers` compose déclarations et instructions. Une liste globale indifférenciée permettrait de produire un type là où une instruction est requise.
 
-`transform` et `context.transform` déduisent le résultat depuis le type de la liste fournie : le nœud de réussite est l'union des résultats Go déclarés dans les contrats `Transformer<GoNode>` des constantes. Conserver le type précis des listes réutilisées ; une annotation générale `readonly Transformer[]` perd cette précision. Une liste mêlant un transformer de littéral numérique et un transformer d'appel produit ainsi `TransformationSuccess<FloatLiteral | CallExpression>`, en plus des refus possibles. Aucun générique explicite n'est nécessaire lors de l'appel au dispatch.
+Le dispatch infère l'union des résultats depuis les contrats des constantes de la liste. Conserver le type précis des listes : une annotation générale `readonly Transformer[]` perd cette précision. Aucun générique explicite n'est nécessaire sur `context.transform`.
 
-Conserver `DCommon.memo(() => [...])` pour les registres récursifs `expressionTransformers`, `statementTransformers` et leur composition `sourceFileTransformers`. Lire leur `.value` au moment de la transformation : l'évaluation différée évite de lire un transformer avant l'initialisation de sa constante lors des imports circulaires. Le mémo gère cet ordre d'initialisation ; le contrat sur les constantes résout séparément le cycle d'inférence. Laisser le mémo et sa callback inférer leurs types depuis les constantes, sans recopier leurs contrats dans un tuple ni annoter le retour du mémo.
+Conserver `DCommon.memo(() => [...])` pour les registres récursifs d'expressions, d'instructions et leur composition au niveau fichier ; lire `.value` au moment de transformer. L'évaluation différée évite les accès avant initialisation dans les imports circulaires. Ce mécanisme et le contrat sur les constantes résolvent deux problèmes distincts : initialisation et inférence. Laisser le mémo inférer son type sans recopier les contrats dans un tuple.
 
-```ts
-export const expressionTransformers = DCommon.memo(() => [
-	numericLiteralTransformer,
-	binaryExpressionTransformer,
-	callExpressionTransformer,
-	parenthesizedExpressionTransformer,
-]);
-```
+Placer les helpers partagés dans `src/transpiler/transformers/helpers/` et les exporter depuis son `index.ts`. Pour une expression enfant, utiliser `transformExpression(node, context)` afin de conserver le traitement des identifiants et de leurs dépendances avant le dispatch des autres expressions.
 
-## Résultats et placement
+## Résultats et refus
 
-Un transformer retourne directement ou par promesse l'une des quatre issues :
+Les implémentations acceptent un retour synchrone ou une promesse (`DCommon.MaybePromise`). Ajouter `async` seulement lorsque nécessaire. Le dispatch et `context.transform` restent asynchrones pour leurs appelants.
 
-- `transformation-success` : résultat principal et éventuels éléments secondaires.
-- `transformation-error` : erreur terminale à propager.
-- `transformation-not-supported` : ce transformer ne prend pas en charge le nœud ; créé avec `context.notSupport(content)`.
-- `notfound-transformer` : aucun transformer n'a pu traiter une donnée, éventuellement lors d'une transformation enfant ; résultat terminal à propager.
+Un transformer retourne l'une de ces issues :
 
-Le dispatch parcourt les transformers séquentiellement avec `DGenerator.asyncReduce` et attend le résultat de chaque implémentation, même lorsqu'elle retourne un `Either` synchrone. Initialiser la réduction avec un `notfound-transformer` portant la donnée concernée. Une sélection exhaustive des informations décide de la suite :
+- `transformation-success` : `context.success({ result, before? })`, avec `before` initialisé à `[]` s'il est omis.
+- `transformation-not-supported` : `context.notSupport(content)`, autorise l'essai du candidat suivant.
+- `transformation-error` : `context.error(content)`, erreur terminale à propager.
+- `notfound-transformer` : aucun candidat n'a pris en charge le nœud, éventuellement dans un enfant ; refus terminal à propager.
 
-- `transformation-not-supported` produit `next(lastValue)` pour essayer le candidat suivant.
-- `transformation-success`, `transformation-error` et `notfound-transformer` produisent `exit(result)` et retournent le résultat reçu tel quel.
+Le dispatch essaie les transformers séquentiellement avec `DGenerator.asyncReduce`, en partant d'un `notfound-transformer` portant le nœud concerné. Seul `transformation-not-supported` continue la recherche ; toutes les autres issues terminent le dispatch avec le résultat reçu. Si tous les candidats refusent, le `notfound-transformer` initial est retourné.
 
-Si la liste est vide ou si tous les transformers retournent `TransformationNotSupported`, la réduction retourne le `NotfoundTransformer` initial. Le dispatch consomme ainsi les résultats non pris en charge ; ses sorties effectives sont une réussite, une erreur terminale ou un `NotfoundTransformer`.
+Sélectionner et déballer une réussite avant d'en utiliser le contenu ; propager les autres résultats sans construire de réussite partielle. Un `notfound-transformer` enfant ne devient pas un `transformation-not-supported` du parent.
 
-Un `NotfoundTransformer` reçu d'un enfant remonte tel quel de parent en parent jusqu'à l'appelant. Ne pas le convertir en `TransformationNotSupported`, ne pas essayer un autre candidat après ce résultat et ne pas construire une réussite partielle. Seul `TransformationNotSupported` autorise la poursuite de la recherche dans la liste courante.
+Effectuer les vérifications d'éligibilité avant de modifier le contexte partagé : le dispatch ne restaure pas ses ensembles lorsqu'un candidat refuse. Un problème de placement découvert après transformation des enfants relève d'une erreur terminale, comme `unsupported-binary-preparation` dans le transformer binaire, plutôt que d'un nouvel essai avec un contexte déjà modifié.
 
-`context.success` attend `result`, le nœud Go principal, et accepte deux listes optionnelles, initialisées à vide :
+## Placement : résultat, préparations et déclarations du fichier
 
-- `before` : uniquement des `Statement | LocalDeclaration` Go.
-- `topLevelDeclarations` : des `TopLevelDeclaration` Go, union qui exclut déjà les imports.
+`TransformationSuccessPayload` contient uniquement `result` et `before`. `before` accepte des `GO.AST.Statement | GO.AST.LocalDeclaration` : ce sont les opérations nécessaires avant l'évaluation du résultat, dans son contexte d'exécution.
 
-Le parent décide manuellement où insérer les `before` de ses enfants. S'il ne peut pas les consommer à son niveau, il les transmet dans son propre `before`, jusqu'au parent capable de les placer. Préserver l'ordre d'évaluation, les conditions d'exécution et la portée lors de cette insertion. Une préparation conditionnelle ou répétée ne doit pas devenir inconditionnelle ou exécutée une seule fois par simple remontée.
+Le parent place explicitement les `before` de ses enfants ou les transmet dans son propre résultat jusqu'au parent capable de les consommer. Préserver l'ordre d'évaluation, la portée, les conditions et la répétition. Une préparation conditionnelle ne doit pas devenir inconditionnelle ; une préparation dans une boucle doit rester exécutée au bon rythme.
 
-Consommer ou propager explicitement les résultats secondaires. Retourner `topLevelDeclarations` n'ajoute pas automatiquement ces nœuds à `context.main`. Le parent responsable les insère dans le fichier ou l'accumulateur approprié ; éviter de les ajouter deux fois. Dans `transformSourceFile`, elles appartiennent au fichier en cours. Le transformer qui produit une déclaration remontée reste responsable de ses noms et de ses références, notamment lorsqu'elle dépend de données locales.
+Le [transformer d'appel](../../../src/transpiler/transformers/expression/callExpression.ts) illustre cette contrainte. Avec des arguments, il accumule d'abord les `before` de la fonction appelée et affecte celle-ci à un identifiant généré. Puis, pour chaque argument dans l'ordre, il ajoute ses `before` et une déclaration locale contenant son résultat. L'appel final utilise ces identifiants. Une préparation d'un argument ultérieur ne passe donc pas avant l'évaluation d'un argument précédent. Sans argument, il conserve les préparations de la fonction appelée sans créer ces temporaires.
 
-## Espaces main et dépendances partagées
+Le [transformer de bloc](../../../src/transpiler/transformers/statement/block.ts) consomme les préparations de chaque instruction juste avant son résultat, dans le bloc. Les transformers de retour ou d'instruction d'appel transmettent les préparations de leur expression au parent.
 
-`context.main.push(...nodes)` accepte des `ImportDeclaration | TopLevelDeclaration`. La méthode sépare les imports dans `main.imports` et les autres déclarations dans `main.topLevelDeclarations`.
+Pour ajouter des éléments au niveau du package depuis un transformer, utiliser les ensembles du fichier :
 
-`context.sharedDependencies.push(sharedDependency)` reçoit une dépendance partagée nommée. Elle ajoute ses listes `imports` et `topLevelDeclarations` aux listes correspondantes de `sharedDependencies`. Les deux espaces sont indépendants. Passer par leurs méthodes pour ajouter du contenu ; ne pas modifier directement les listes exposées en lecture seule.
+- `context.file.topLevelDeclarations.add(declaration)` pour une déclaration supplémentaire.
+- `context.file.imports.add(importDeclaration)` pour un import manuel.
 
-Ces espaces sont partagés dans le contexte. Leur utilisation pour assembler un programme ou un éventuel fichier `main` relève d'une orchestration distincte de `transformSourceFile`. Leur contenu n'est pas repris automatiquement dans les fichiers convertis. Une politique de package `main` et la création d'une fonction `main` doivent être décidées par cette orchestration. Les instructions propres à un fichier sont représentées par son champ `GoFile.init` ; le printer se charge de son rendu.
+Ces ajouts sont collectés directement lors de l'assemblage du fichier. Ne pas les retourner dans un ancien champ `topLevelDeclarations` du payload. Les déclarations ajoutées doivent avoir des noms et références cohérents et ne pas dépendre de variables hors de leur portée. Les ensembles de nœuds dédupliquent par identité d'objet, pas par contenu.
+
+## Assemblage d'une source et fonction init
+
+`transformSourceFile(sourceFile, transpilationContext)` est une orchestration hors du dispatch, pas un transformer créé avec `createTransformer`. Elle crée les contextes du fichier et de build, puis parcourt les statements séquentiellement avec `sourceFileTransformers.value`.
+
+Pour chaque réussite, elle ajoute les `before` à la liste d'exécution `init`. Un résultat portant le groupe de tags `declaration` rejoint les déclarations du fichier ; les autres résultats rejoignent `init` après leurs préparations. Les déclarations locales de préparation restent donc dans `init`.
+
+Elle construit les imports des `dependencyFiles` à partir de leurs chemins relatifs à `projectWorkDirectory`, puis ajoute les imports manuels. Elle assemble les déclarations principales, suivies de celles ajoutées à `context.file.topLevelDeclarations`. Le package est calculé avec `createSourceIdentifier(currentFilePath)`.
+
+`createFile({ packageName, imports, topLevelDeclaration, init })` ajoute une déclaration de fonction Go `init`, même si sa liste d'instructions est vide, puis construit le `GoFile`. Le champ `init` est un paramètre d'assemblage ; il n'existe pas dans l'AST final `GoFile`. Le printer imprime la déclaration déjà construite. Cette chaîne ne crée pas de fonction `main`.
+
+En cas de réussite, `transformSourceFile` retourne `DEither.success({ file, context })`, ce qui permet au build de récupérer les dépendances découvertes. Propager les refus avant cet assemblage.
+
+## Références et dépendances du projet
+
+Les dépendances sont déduites par les transformers au fil des références rencontrées. `await context.registerDependency(node)` accepte un `Identifier`, `QualifiedName`, `PropertyAccessExpression` ou `ElementAccessExpression` TypeScript. Ce contrat de résolution ne signifie pas que toutes ces expressions disposent déjà d'un transformer.
+
+La résolution consulte le symbole, traite les shorthand properties et suit les alias TypeScript. Elle utilise le chemin de la déclaration de valeur résolue. Pour un chemin absolu valide différent du fichier courant, elle l'ajoute à `context.file.dependencyFiles` et retourne `DEither.some(packageIdentifier)`. Un symbole absent ou inconnu, une déclaration sans chemin utilisable ou une référence au fichier courant retourne `DEither.none()`.
+
+Le helper `transformExpression` convertit actuellement une référence locale en identifiant source et une référence à un autre fichier en sélecteur `packageIdentifier.sourceIdentifier`. Enregistrer la dépendance permet à la fois son import dans le fichier courant et sa transformation ultérieure par le build.
+
+Le package d'un fichier est prédictible depuis son chemin absolu, avant son build. Utiliser le même encodage pour sa déclaration et ses références. Pour la visibilité TypeScript, s'appuyer sur la résolution du checker : si TypeScript permet la référence importée, considérer l'export comme établi, sans reconstruire un registre parallèle des exports.
+
+Il n'existe pas de mécanisme général de compatibilité avec les bibliothèques externes ou `node_modules`. Leur présence peut conduire à un échec de compilation. Ne pas ajouter implicitement de traduction de packages npm, de fallback ou de conversion automatique en shared dependencies pour les rendre compatibles.
+
+### Imports renommés : évolution à prévoir
+
+La résolution suit déjà les alias pour retrouver le fichier, mais le helper utilise encore le texte de l'identifiant local pour construire le membre du sélecteur. Cela ne suffit pas pour `import { foo as bar }` : le membre du package source reste `foo`.
+
+La direction souhaitée est de matérialiser le renommage au niveau du package du fichier importateur afin que le nom local reste utilisable dans ses fonctions. Une liaison vers la valeur importée est une piste pour les valeurs compatibles ; le choix de représentation et la conservation de la sémantique des imports restent à implémenter. Ne pas présenter une copie de valeur comme un alias universel, ni cette prise en charge comme déjà acquise. Cette évolution concerne la résolution du symbole, son nom exporté et les références au nom local.
 
 ## Dépendances partagées à la demande
 
-Définir une dépendance partagée à un endroit dédié avec `createSharedDependency({ name, imports, topLevelDeclarations })`, puis réutiliser cette dépendance partagée dans les transformers qui en ont besoin. Cette factory utilise `DModeling.createTaggedObjectFactory` et produit un `SharedDependency` portant l'`ObjectTag<"SharedDependency">`. Elle contient son nom de déduplication et deux listes distinctes : `imports` pour les `ImportDeclaration`, `topLevelDeclarations` pour les `TopLevelDeclaration`. `context.sharedDependencies.push` accepte uniquement ce type taggé, pas un objet brut ni un nœud Go isolé.
+Une shared dependency est du code Go prédéfini réutilisable, par exemple une fonction utilitaire. La déclarer une fois à un emplacement dédié avec `createSharedDependency({ imports, topLevelDeclarations, init })` et réutiliser cette définition. La factory produit un objet taggé `SharedDependency` ; il n'a pas de champ `name`.
 
-Appeler `context.sharedDependencies.push(sharedDependency)` au besoin. Le premier ajout d'un nom insère ses imports et ses déclarations ; les suivants sont ignorés, même si l'objet fourni est différent. Employer un nom distinct pour chaque dépendance partagée distincte : le mécanisme ne compare pas leurs contenus.
+Appeler `context.useShardDependency(sharedDependency, identifier)` depuis le transformer qui en a besoin. Conserver l'orthographe de l'API actuelle. Cette méthode :
 
-La déduplication s'applique au contexte partagé entre les fichiers. Une dépendance partagée demandée depuis plusieurs fichiers n'est ajoutée qu'une fois. Elle porte sur le nom de la dépendance partagée entière, pas sur chaque import ou déclaration séparément. Une dépendance partagée non demandée n'est pas ajoutée. Les déclarations et leurs références partagent les identifiants définis dans la dépendance partagée ; le nom de déduplication n'est pas automatiquement un identifiant Go.
+- ajoute la définition à `context.transpilation.sharedDependencies` ;
+- ajoute l'import partagé à `context.file.imports` ;
+- retourne un `SelectorExpression` visant l'identifiant fourni dans le package partagé.
 
-## État actuel et évolution
+Les références et déclarations utilisent le même identifiant exporté de la dépendance. Le package actuel s'appelle `shard_dependencies` et le build émet `shard_dependencies.go`. Après le parcours des sources, il concatène les `imports`, `topLevelDeclarations` et `init` des définitions demandées, puis utilise `createFile` pour assembler ce fichier.
 
-Lire le code avant chaque intervention. `factory.ts` et `context.ts` exposent le contrat sans predicate décrit ci-dessus ; des transformers spécialisés peuvent encore utiliser l'ancienne signature tant que leur migration n'a pas été effectuée. Conserver le nouveau contrat comme référence et migrer les implémentations lorsqu'une tâche le demande. Vérifier séparément le raccordement du parcours des fichiers, de l'émission des dépendances et du CLI.
+La déduplication globale repose sur l'identité de l'objet dans un `Set`, pas sur un nom ni une comparaison structurelle. Réutiliser la même instance entre transformers et fichiers ; recréer une définition identique ne la déduplique pas. Une dépendance non demandée n'est pas émise. Les shared dependencies sont distinctes des fichiers source découverts par `registerDependency`.
 
-Faire évoluer ces points selon la tâche demandée, une responsabilité à la fois. Le transpiler construit l'AST ; le printer le traduit en texte ; le CLI gère les entrées et les fichiers de sortie.
+## Identifiants source et identifiants générés
 
-Après une modification TypeScript, vérifier avec `pnpm test:types` et `pnpm test:lint`. Respecter les règles de validation des skills AST et printer si ces domaines sont concernés.
+Utiliser `context.createSourceIdentifier(value)` pour un nom provenant de TypeScript, une clé ou un chemin servant de nom de package. Cette opération déterministe centralise l'encodage vers un identifiant Go compatible ; l'utiliser à la déclaration et à chaque référence. Elle préfixe actuellement par `Duplojs_`, conserve les caractères ASCII alphanumériques et `_`, et encode les autres caractères. Ne pas reconstruire cet encodage dans un transformer.
+
+Utiliser `context.generateIdentifier()` pour une nouvelle variable temporaire, puis réutiliser l'objet retourné pour toutes ses références. Les noms actuels sont `Generated_1`, `Generated_2`, etc., avec un compteur partagé par toute la transpilation. Le préfixe distinct sépare ces temporaires des identifiants source encodés. Ne pas réinitialiser le compteur par fichier ou par fonction, ni inventer un nom temporaire à partir d'un nom source.
+
+## Vérification d'une évolution
+
+Après une modification TypeScript, exécuter `pnpm test:types` et `pnpm test:lint`. Pour une évolution du build ou d'un transformer, vérifier aussi le rendu d'un exemple pertinent dans un dossier de sortie dédié, notamment l'ordre des préparations, leur portée et les imports demandés. Respecter les validations des skills AST et printer lorsque ces couches changent.
+
+Le [projet 00](../../../projects/00/index.ts) illustre une fonction numérique, l'appel avec temporaires et `init`. Le [projet 01](../../../projects/01/index.ts) contient des imports et des usages supplémentaires ; lire les transformers présents avant de le considérer comme un cas entièrement pris en charge. Les exemples servent à vérifier des comportements, pas à spécialiser le transpiler pour leurs seuls noms ou formes.
