@@ -10,7 +10,7 @@ export async function transformExpression(
 	if (TS.isIdentifier(node)) {
 		const dependency = await context.registerDependency(node);
 		if (DEither.isLeft(dependency)) {
-			return dependency;
+			return context.transform(node, expressionTransformers.value);
 		}
 
 		return context.success({ result: context.createSourceIdentifier(node.text) });

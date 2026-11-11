@@ -8,6 +8,8 @@ import { SymbolFlags } from "typescript/async";
 import { transform, type Transformer, type TransformerResultNode, type NotfoundTransformer, type TransformationError, type TransformationNotSupported, type TransformationSuccess, type TransformationSuccessPayload } from "../factory";
 import type { FileContext } from "./file";
 import type { TranspilationContext } from "./transpilation";
+import { sharedDependencyImportDeclaration, sharedDependencyPackageName, type SharedDependency } from "../sharedDependency";
+import * as DPath from "@duplojs/lang/path";
 
 export type DependencyReference =
 	| TS.Identifier
@@ -34,9 +36,10 @@ export interface BuildContext {
 	): TransformationSuccess<GenericGoNode>;
 	notSupport(content: unknown): TransformationNotSupported;
 	error(content: unknown): TransformationError;
-	createIdentifier(): GO.AST.Identifier;
+	generateIdentifier(): GO.AST.Identifier;
 	createSourceIdentifier(value: string): GO.AST.Identifier;
-	registerDependency(node: DependencyReference): Promise<DEither.Ok | TransformationError>;
+	useShardDependency(sharedDependency: SharedDependency, identifier: GO.AST.Identifier): GO.AST.SelectorExpression;
+	registerDependency(node: DependencyReference): Promise<DEither.Maybe<GO.AST.Identifier>>;
 }
 
 export function createBuildContext(
@@ -53,16 +56,22 @@ export function createBuildContext(
 			before: payload.before ?? [],
 		}),
 		notSupport: (content) => DEither.left("transformation-not-supported", content),
-		async registerDependency(node) {
+		useShardDependency: (sharedDependency, identifier) => {
+			transpilation.sharedDependencies.add(sharedDependency);
+			file.imports.add(sharedDependencyImportDeclaration);
+
+			return GO.AST.selectorExpression({
+				identifier: identifier,
+				target: sharedDependencyPackageName,
+			});
+		},
+		registerDependency: async(node) => {
 			const symbol = TS.isIdentifier(node) && TS.isShorthandPropertyAssignment(node.parent)
 				? await transpilation.typeChecker.getShorthandAssignmentValueSymbol(node.parent)
 				: await transpilation.typeChecker.getSymbolAtLocation(node);
 
 			if (!symbol) {
-				return context.error({
-					reason: "unresolved-dependency-reference",
-					node,
-				});
+				return DEither.none();
 			}
 
 			const resolved = symbol.flags & SymbolFlags.Alias
@@ -70,37 +79,47 @@ export function createBuildContext(
 				: symbol;
 
 			if (await transpilation.typeChecker.isUnknownSymbol(resolved)) {
-				return context.error({
-					reason: "unresolved-dependency-reference",
-					node,
-				});
+				return DEither.none();
 			}
 
 			const path = resolved.valueDeclaration?.path;
 
-			if (path && path !== file.sourceFile.path) {
-				file.dependencies.add(path);
+			if (!path) {
+				return DEither.none();
 			}
 
-			return DEither.ok();
-		},
-		createIdentifier() {
-			return GO.AST.createIdentifier(`Generated_${transpilation.increment()}`);
-		},
-		createSourceIdentifier(value) {
-			return DCommon.pipe(
-				value,
-				DString.replace(
-					/[^a-zA-Z0-9]/g,
-					({ matchedValue }) => DCommon.pipe(
-						matchedValue.charCodeAt(0).toString(36),
-						DString.padStart(4, "0"),
-					),
-				),
-				DString.prepend("Duplojs_"),
-				GO.AST.createIdentifier,
+			const currentDependencyFilePath = DCommon.pipe(
+				path,
+				DPath.createAbsolute,
+				DEither.unwrapRight,
+			);
+
+			if (DEither.isLeft(currentDependencyFilePath)) {
+				return DEither.none();
+			}
+
+			if (currentDependencyFilePath === file.currentFilePath) {
+				return DEither.none();
+			}
+
+			file.dependencyFiles.add(currentDependencyFilePath);
+			return DEither.some(
+				context.createSourceIdentifier(currentDependencyFilePath),
 			);
 		},
+		generateIdentifier: () => GO.AST.createIdentifier(`Generated_${transpilation.increment()}`),
+		createSourceIdentifier: (value) => DCommon.pipe(
+			value,
+			DString.replace(
+				/[^a-zA-Z0-9]/g,
+				({ matchedValue }) => DCommon.pipe(
+					matchedValue.charCodeAt(0).toString(36),
+					DString.padStart(4, "0"),
+				),
+			),
+			DString.prepend("Duplojs_"),
+			GO.AST.createIdentifier,
+		),
 	};
 
 	return context;

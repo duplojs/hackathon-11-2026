@@ -1,34 +1,28 @@
 import type { Checker } from "typescript/async";
 import type { SharedDependency } from "../sharedDependency";
-
-export interface Dependencies {
-	readonly dependencies: ReadonlySet<SharedDependency>;
-	push(sharedDependency: SharedDependency): void;
-}
+import type * as DPath from "@duplojs/lang/path";
 
 export interface TranspilationContext {
 	readonly typeChecker: Checker;
-	readonly sharedDependencies: Dependencies;
+	readonly projectWorkDirectory: string & DPath.Absolute;
+	readonly sharedDependencies: Set<SharedDependency>;
 	increment(): number;
 }
 
-function createDependencies() {
-	const dependencies = new Set<SharedDependency>();
-
-	return {
-		dependencies,
-		push(sharedDependency: SharedDependency) {
-			dependencies.add(sharedDependency);
-		},
-	};
+export interface CreateTranspilationContextParams {
+	typeChecker: Checker;
+	projectWorkDirectory: string & DPath.Absolute;
 }
 
-export function createTranspilationContext(typeChecker: Checker) {
+export function createTranspilationContext(
+	params: CreateTranspilationContextParams,
+) {
 	let index = 0;
 
 	const context: TranspilationContext = {
-		typeChecker,
-		sharedDependencies: createDependencies(),
+		typeChecker: params.typeChecker,
+		projectWorkDirectory: params.projectWorkDirectory,
+		sharedDependencies: new Set(),
 		increment() {
 			index += 1;
 

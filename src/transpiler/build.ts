@@ -9,6 +9,7 @@ import type { createTypescriptInstance } from "./createTypescriptInstance";
 import { createTranspilationContext } from "./context/transpilation";
 import { transformSourceFile } from "./transformSourceFile";
 import { createFile, type CreateFileParams } from "./createFile";
+import { sharedDependencyPackageName } from "./sharedDependency";
 
 export function build(
 	typescriptInstance: DInvocation.GetEvidenceResult<
@@ -17,7 +18,10 @@ export function build(
 	>,
 	input: string & DPath.Absolute,
 ) {
-	const context = createTranspilationContext(typescriptInstance.project.checker);
+	const context = createTranspilationContext({
+		typeChecker: typescriptInstance.project.checker,
+		projectWorkDirectory: typescriptInstance.workDirectory,
+	});
 
 	return DGenerator.asyncLoopAccumulator(
 		DGenerator.loopAccumulatorFrom<{
@@ -31,15 +35,15 @@ export function build(
 			const path = DArray.first(accumulator.pending);
 
 			if (path === undefined) {
-				if (context.sharedDependencies.dependencies.size === 0) {
+				if (context.sharedDependencies.size === 0) {
 					return exit();
 				}
 
 				const file = DCommon.pipe(
-					context.sharedDependencies.dependencies,
+					context.sharedDependencies,
 					DGenerator.reduce(
 						DGenerator.reduceFrom<CreateFileParams>({
-							packageName: GO.AST.createIdentifier("shard_dependencies"),
+							packageName: sharedDependencyPackageName,
 							imports: [],
 							topLevelDeclaration: [],
 							init: [],
@@ -62,7 +66,7 @@ export function build(
 				return exit(
 					DEither.right("build-shared-dependencies-file", {
 						file,
-						outputPath: DPath.declarePath("shared_dependencies.generated.go"),
+						outputPath: DPath.declarePath(`${sharedDependencyPackageName.value}.go`),
 					}),
 				);
 			}
@@ -103,7 +107,7 @@ export function build(
 
 			return next(
 				{
-					pending: [...pendingRest, ...result.context.file.dependencies],
+					pending: [...pendingRest, ...result.context.file.dependencyFiles],
 					built: accumulator.built,
 				},
 				DEither.right("build-source-file", {

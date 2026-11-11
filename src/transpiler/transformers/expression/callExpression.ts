@@ -45,7 +45,7 @@ export const callExpressionTransformer: Transformer<GO.AST.CallExpression> = cre
 			});
 		}
 
-		const calleeIdentifier = context.createIdentifier();
+		const calleeIdentifier = context.generateIdentifier();
 		const argumentsList = await DCommon.asyncPipe(
 			node.arguments,
 			DGenerator.asyncReduce(
@@ -69,7 +69,7 @@ export const callExpressionTransformer: Transformer<GO.AST.CallExpression> = cre
 						return exit(argument);
 					}
 
-					const identifier = context.createIdentifier();
+					const identifier = context.generateIdentifier();
 					return next({
 						arguments: DArray.push(lastValue.arguments, identifier),
 						before: [

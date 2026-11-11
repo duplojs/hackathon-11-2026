@@ -1,4 +1,4 @@
-import type * as GO from "@go";
+import * as GO from "@go";
 import * as DArray from "@duplojs/lang/array";
 import * as DCommon from "@duplojs/lang/common";
 import * as DEither from "@duplojs/lang/either";
@@ -10,9 +10,9 @@ import { createFileContext } from "./context/file";
 import type { TranspilationContext } from "./context/transpilation";
 import { sourceFileTransformers } from "./transformers";
 import { createFile } from "./createFile";
+import * as DPath from "@duplojs/lang/path";
 
 interface TransformedFileContent {
-	imports: GO.AST.GoFile["imports"];
 	topLevelDeclarations: GO.AST.GoFile["topLevelDeclarations"];
 	init: readonly GO.AST.Statement[];
 }
@@ -21,14 +21,20 @@ export async function transformSourceFile(
 	sourceFile: SourceFile,
 	transpilationContext: TranspilationContext,
 ) {
-	const fileContext = createFileContext(sourceFile);
+	const fileContext = DCommon.pipe(
+		createFileContext(sourceFile),
+		DEither.unwrapRight,
+	);
+
+	if (DEither.isLeft(fileContext)) {
+		return fileContext;
+	}
 	const context = createBuildContext(transpilationContext, fileContext);
 
 	const content = await DCommon.asyncPipe(
 		sourceFile.statements,
 		DGenerator.asyncReduce(
 			DGenerator.reduceFrom<TransformedFileContent>({
-				imports: [],
 				topLevelDeclarations: [],
 				init: [],
 			}),
@@ -48,14 +54,12 @@ export async function transformSourceFile(
 
 				if (DModeling.hasTagGroup(result, "declaration")) {
 					return next({
-						imports: lastValue.imports,
 						topLevelDeclarations: DArray.push(lastValue.topLevelDeclarations, result),
 						init,
 					});
 				}
 
 				return next({
-					imports: lastValue.imports,
 					topLevelDeclarations: lastValue.topLevelDeclarations,
 					init: DArray.push(init, result),
 				});
@@ -67,11 +71,28 @@ export async function transformSourceFile(
 		return content;
 	}
 
+	const imports = DCommon.pipe(
+		fileContext.dependencyFiles,
+		DGenerator.map(
+			(path) => GO.AST.importDeclaration({
+				path: DPath.computeRelative(
+					fileContext.currentFilePath,
+					path,
+				),
+			}),
+		),
+		DGenerator.concat(fileContext.imports),
+		DArray.from,
+	);
+
 	return DEither.success({
 		file: createFile({
-			packageName: context.createSourceIdentifier(sourceFile.path),
-			imports: content.imports,
-			topLevelDeclaration: content.topLevelDeclarations,
+			packageName: context.createSourceIdentifier(fileContext.currentFilePath),
+			imports,
+			topLevelDeclaration: DArray.concat(
+				content.topLevelDeclarations,
+				DArray.from(fileContext.topLevelDeclarations),
+			),
 			init: content.init,
 		}),
 		context,
