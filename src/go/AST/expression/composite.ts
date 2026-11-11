@@ -32,7 +32,7 @@ export function keyedElement<
 	},
 ) {
 	return DModeling.createTaggedObjectFactory<KeyedElement<GenericKey>>(
-		"node-literal-element-keyed",
+		"[node]:literal-element-keyed",
 	)(properties);
 }
 
@@ -47,7 +47,7 @@ export interface ArrayLiteral extends _Expression<"literal-array"> {
 
 export const arrayLiteral = DModeling.createTaggedObjectFactory<
 	ArrayLiteral
->("node-expression-literal-array");
+>("[node][expression]:literal-array");
 
 export type SliceLiteralType = TypeReference | SliceType;
 
@@ -60,7 +60,7 @@ export interface SliceLiteral extends _Expression<"literal-slice"> {
 
 export const sliceLiteral = DModeling.createTaggedObjectFactory<
 	SliceLiteral
->("node-expression-literal-slice");
+>("[node][expression]:literal-slice");
 
 export type MapLiteralType = TypeReference | MapType;
 
@@ -71,7 +71,7 @@ export interface MapLiteral extends _Expression<"literal-map"> {
 
 export const mapLiteral = DModeling.createTaggedObjectFactory<
 	MapLiteral
->("node-expression-literal-map");
+>("[node][expression]:literal-map");
 
 export type StructLiteralType = TypeReference | StructType;
 
@@ -85,4 +85,4 @@ export interface StructLiteral extends _Expression<"literal-struct"> {
 
 export const structLiteral = DModeling.createTaggedObjectFactory<
 	StructLiteral
->("node-expression-literal-struct");
+>("[node][expression]:literal-struct");

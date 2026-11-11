@@ -14,4 +14,4 @@ export interface ChannelType extends _Type<"channel"> {
 
 export const channelType = DModeling.createTaggedObjectFactory<
 	ChannelType
->("node-type-channel");
+>("[node][type]:channel");

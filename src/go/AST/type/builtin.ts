@@ -33,7 +33,7 @@ export interface BuiltinTypeReference<
 
 export function builtinTypeReference<GenericName extends BuiltinTypeName>(value: GenericName) {
 	return DModeling.taggedObject<BuiltinTypeReference<GenericName>>(
-		"node-type-reference-builtin",
+		"[node]:type-reference-builtin",
 		{ value },
 	);
 }

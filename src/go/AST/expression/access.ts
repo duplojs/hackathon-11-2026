@@ -20,7 +20,7 @@ export function selectorExpression<
 	},
 ) {
 	return DModeling.createTaggedObjectFactory<SelectorExpression<GenericTarget>>(
-		"node-expression-selector",
+		"[node][expression]:selector",
 	)(properties);
 }
 
@@ -33,7 +33,7 @@ export interface MethodExpression extends _Expression<"method"> {
 
 export const methodExpression = DModeling.createTaggedObjectFactory<
 	MethodExpression
->("node-expression-method");
+>("[node][expression]:method");
 
 export interface IndexExpression extends _Expression<"index"> {
 	target: Expression;
@@ -42,7 +42,7 @@ export interface IndexExpression extends _Expression<"index"> {
 
 export const indexExpression = DModeling.createTaggedObjectFactory<
 	IndexExpression
->("node-expression-index");
+>("[node][expression]:index");
 
 export interface SliceExpression extends _Expression<"slice"> {
 	target: Expression;
@@ -52,7 +52,7 @@ export interface SliceExpression extends _Expression<"slice"> {
 
 export const sliceExpression = DModeling.createTaggedObjectFactory<
 	SliceExpression
->("node-expression-slice");
+>("[node][expression]:slice");
 
 export interface FullSliceExpression extends _Expression<"slice-full"> {
 	target: Expression;
@@ -63,7 +63,7 @@ export interface FullSliceExpression extends _Expression<"slice-full"> {
 
 export const fullSliceExpression = DModeling.createTaggedObjectFactory<
 	FullSliceExpression
->("node-expression-slice-full");
+>("[node][expression]:slice-full");
 
 export type TypeAssertionType = TypeReference | Type;
 
@@ -74,4 +74,4 @@ export interface TypeAssertionExpression extends _Expression<"type-assertion"> {
 
 export const typeAssertionExpression = DModeling.createTaggedObjectFactory<
 	TypeAssertionExpression
->("node-expression-type-assertion");
+>("[node][expression]:type-assertion");

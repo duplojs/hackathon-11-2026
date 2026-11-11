@@ -32,6 +32,6 @@ export type Expression = (
 
 export interface _Expression<
 	GenericNodeName extends string = string,
-> extends _Node<`expression-${GenericNodeName}`> {
+> extends _Node<GenericNodeName, "expression"> {
 
 }

@@ -22,6 +22,6 @@ export type Declaration = (
 
 export interface _Declaration<
 	GenericNodeName extends string = string,
-> extends _Node<`declaration-${GenericNodeName}`> {
+> extends _Node<GenericNodeName, "declaration"> {
 
 }

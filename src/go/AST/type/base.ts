@@ -21,6 +21,6 @@ export type Type = (
 
 export interface _Type<
 	GenericNodeName extends string = string,
-> extends _Node<`type-${GenericNodeName}`> {
+> extends _Node<GenericNodeName, "type"> {
 
 }

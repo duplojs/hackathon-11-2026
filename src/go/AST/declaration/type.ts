@@ -24,7 +24,7 @@ export interface TypeDeclaration extends _Declaration<"type-declaration"> {
 
 export const typeDefinition = DModeling.createTaggedObjectFactory<
 	TypeDeclaration
->("node-declaration-type-declaration");
+>("[node][declaration]:type-declaration");
 
 export interface TypeAliasDeclaration extends _Declaration<"type-alias-declaration"> {
 	identifier: Identifier;
@@ -34,4 +34,4 @@ export interface TypeAliasDeclaration extends _Declaration<"type-alias-declarati
 
 export const typeAlias = DModeling.createTaggedObjectFactory<
 	TypeAliasDeclaration
->("node-declaration-type-alias-declaration");
+>("[node][declaration]:type-alias-declaration");

@@ -15,7 +15,7 @@ export interface ExpressionSwitchCase extends _Node<"switch-case-expression"> {
 
 export const expressionSwitchCase = DModeling.createTaggedObjectFactory<
 	ExpressionSwitchCase
->("node-switch-case-expression");
+>("[node]:switch-case-expression");
 
 export interface DefaultCase extends _Node<"case-default"> {
 	statements: readonly Statement[];
@@ -23,7 +23,7 @@ export interface DefaultCase extends _Node<"case-default"> {
 
 export const defaultCase = DModeling.createTaggedObjectFactory<
 	DefaultCase
->("node-case-default");
+>("[node]:case-default");
 
 export type ExpressionSwitchClause = ExpressionSwitchCase | DefaultCase;
 
@@ -40,7 +40,7 @@ export interface ExpressionSwitchStatementWithoutDefault extends _Statement<"swi
 
 export const expressionSwitchStatementWithoutDefault = DModeling.createTaggedObjectFactory<
 	ExpressionSwitchStatementWithoutDefault
->("node-statement-switch-expression-without-default");
+>("[node][statement]:switch-expression-without-default");
 
 export interface ExpressionSwitchStatementWithDefault extends _Statement<"switch-expression-with-default"> {
 	initializer?: SimpleStatement;
@@ -53,7 +53,7 @@ export interface ExpressionSwitchStatementWithDefault extends _Statement<"switch
 
 export const expressionSwitchStatementWithDefault = DModeling.createTaggedObjectFactory<
 	ExpressionSwitchStatementWithDefault
->("node-statement-switch-expression-with-default");
+>("[node][statement]:switch-expression-with-default");
 
 export type TypeSwitchCaseType = TypeReference | Type | NilLiteral;
 
@@ -64,7 +64,7 @@ export interface TypeSwitchCase extends _Node<"switch-case-type"> {
 
 export const typeSwitchCase = DModeling.createTaggedObjectFactory<
 	TypeSwitchCase
->("node-switch-case-type");
+>("[node]:switch-case-type");
 
 export type TypeSwitchClause = TypeSwitchCase | DefaultCase;
 
@@ -83,7 +83,7 @@ export interface TypeSwitchStatementWithoutDefault extends _Statement<"switch-ty
 
 export const typeSwitchStatementWithoutDefault = DModeling.createTaggedObjectFactory<
 	TypeSwitchStatementWithoutDefault
->("node-statement-switch-type-without-default");
+>("[node][statement]:switch-type-without-default");
 
 export interface TypeSwitchStatementWithDefault extends _Statement<"switch-type-with-default"> {
 	initializer?: SimpleStatement;
@@ -96,4 +96,4 @@ export interface TypeSwitchStatementWithDefault extends _Statement<"switch-type-
 
 export const typeSwitchStatementWithDefault = DModeling.createTaggedObjectFactory<
 	TypeSwitchStatementWithDefault
->("node-statement-switch-type-with-default");
+>("[node][statement]:switch-type-with-default");

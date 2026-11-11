@@ -35,10 +35,22 @@ import { type PointerType } from "./type/pointer";
 import { type PackageTypeReference, type GenericTypeReference } from "./type/reference";
 import { type SliceType } from "./type/slice";
 import { type StructField, type StructEmbeddedField, type StructType } from "./type/struct";
+import type * as DCommon from "@duplojs/lang/common";
 
 export interface _Node<
 	GenericNodeName extends string = string,
-> extends DModeling.ObjectTag<`node-${GenericNodeName}`> {
+	GenericSubGroup extends string = never,
+> extends DModeling.ObjectTagWithGroups<
+		[
+			"node",
+			...(
+				DCommon.IsNever<GenericSubGroup> extends true
+					? []
+					: [GenericSubGroup]
+			),
+		],
+		GenericNodeName
+	> {
 
 }
 

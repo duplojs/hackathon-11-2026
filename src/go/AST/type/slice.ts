@@ -13,4 +13,4 @@ export interface SliceType extends _Type<"slice"> {
 
 export const sliceType = DModeling.createTaggedObjectFactory<
 	SliceType
->("node-type-slice");
+>("[node][type]:slice");

@@ -16,4 +16,4 @@ export interface FunctionLiteral extends _Expression<"literal-function"> {
 
 export const functionLiteral = DModeling.createTaggedObjectFactory<
 	FunctionLiteral
->("node-expression-literal-function");
+>("[node][expression]:literal-function");

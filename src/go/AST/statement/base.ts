@@ -41,6 +41,6 @@ export type Statement = (
 
 export interface _Statement<
 	GenericNodeName extends string = string,
-> extends _Node<`statement-${GenericNodeName}`> {
+> extends _Node<GenericNodeName, "statement"> {
 
 }

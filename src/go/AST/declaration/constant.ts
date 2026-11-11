@@ -14,4 +14,4 @@ export interface ConstantDeclaration extends _Declaration<"constant"> {
 
 export const constantDeclaration = DModeling.createTaggedObjectFactory<
 	ConstantDeclaration
->("node-declaration-constant");
+>("[node][declaration]:constant");

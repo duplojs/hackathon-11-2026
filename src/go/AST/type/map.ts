@@ -28,4 +28,4 @@ export interface MapType extends _Type<"map"> {
 
 export const mapType = DModeling.createTaggedObjectFactory<
 	MapType
->("node-type-map");
+>("[node][type]:map");

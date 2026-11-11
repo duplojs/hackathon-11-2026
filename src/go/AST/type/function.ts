@@ -34,4 +34,4 @@ export interface FunctionType extends _Type<"function"> {
 
 export const functionType = DModeling.createTaggedObjectFactory<
 	FunctionType
->("node-type-function");
+>("[node][type]:function");

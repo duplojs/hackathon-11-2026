@@ -26,4 +26,4 @@ export interface TypeConstraint extends _Node<"type-constraint"> {
 
 export const typeConstraint = DModeling.createTaggedObjectFactory<
 	TypeConstraint
->("node-type-constraint");
+>("[node]:type-constraint");

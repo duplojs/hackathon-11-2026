@@ -27,7 +27,7 @@ export interface InterfaceMethod extends _Node<"interface-method"> {
 
 export const interfaceMethod = DModeling.createTaggedObjectFactory<
 	InterfaceMethod
->("node-interface-method");
+>("[node]:interface-method");
 
 export interface InterfaceUnion extends _Node<"interface-union"> {
 	terms: readonly InterfaceUnionTerm[] & DArray.MinElements<1>;
@@ -35,7 +35,7 @@ export interface InterfaceUnion extends _Node<"interface-union"> {
 
 export const typeUnion = DModeling.createTaggedObjectFactory<
 	InterfaceUnion
->("node-interface-union");
+>("[node]:interface-union");
 
 export type InterfaceElement = (
 	| InterfaceMethod
@@ -51,4 +51,4 @@ export interface InterfaceType extends _Type<"interface"> {
 
 export const interfaceType = DModeling.createTaggedObjectFactory<
 	InterfaceType
->("node-type-interface");
+>("[node][type]:interface");

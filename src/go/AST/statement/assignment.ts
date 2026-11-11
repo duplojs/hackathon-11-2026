@@ -20,7 +20,7 @@ export interface AssignmentStatement extends _Statement<"assignment"> {
 
 export const assignmentStatement = DModeling.createTaggedObjectFactory<
 	AssignmentStatement
->("node-statement-assignment");
+>("[node][statement]:assignment");
 
 export type CompoundAssignmentOperator = (
 	| "+=" | "-=" | "*=" | "/=" | "%="
@@ -35,7 +35,7 @@ export interface CompoundAssignmentStatement extends _Statement<"assignment-comp
 
 export const compoundAssignmentStatement = DModeling.createTaggedObjectFactory<
 	CompoundAssignmentStatement
->("node-statement-assignment-compound");
+>("[node][statement]:assignment-compound");
 
 export interface ShortVariableDeclarationStatement extends _Statement<"variable-short"> {
 	identifier: Identifier;
@@ -44,4 +44,4 @@ export interface ShortVariableDeclarationStatement extends _Statement<"variable-
 
 export const shortVariableDeclarationStatement = DModeling.createTaggedObjectFactory<
 	ShortVariableDeclarationStatement
->("node-statement-variable-short");
+>("[node][statement]:variable-short");

@@ -11,4 +11,4 @@ export interface ExpressionStatement extends _Statement<"expression"> {
 
 export const expressionStatement = DModeling.createTaggedObjectFactory<
 	ExpressionStatement
->("node-statement-expression");
+>("[node][statement]:expression");

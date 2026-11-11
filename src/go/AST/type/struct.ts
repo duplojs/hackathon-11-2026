@@ -23,7 +23,7 @@ export interface StructField extends _Node<"struct-field"> {
 
 export const structField = DModeling.createTaggedObjectFactory<
 	StructField
->("node-struct-field");
+>("[node]:struct-field");
 
 export interface StructEmbeddedField extends _Node<"struct-embedded-field"> {
 	typeReference: StructEmbeddedFieldType;
@@ -32,7 +32,7 @@ export interface StructEmbeddedField extends _Node<"struct-embedded-field"> {
 
 export const structEmbeddedField = DModeling.createTaggedObjectFactory<
 	StructEmbeddedField
->("node-struct-embedded-field");
+>("[node]:struct-embedded-field");
 
 export type StructMember = StructField | StructEmbeddedField;
 
@@ -42,4 +42,4 @@ export interface StructType extends _Type<"struct"> {
 
 export const structType = DModeling.createTaggedObjectFactory<
 	StructType
->("node-type-struct");
+>("[node][type]:struct");

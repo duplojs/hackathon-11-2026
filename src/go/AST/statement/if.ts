@@ -12,4 +12,4 @@ export interface IfStatement extends _Statement<"if"> {
 
 export const ifStatement = DModeling.createTaggedObjectFactory<
 	IfStatement
->("node-statement-if");
+>("[node][statement]:if");

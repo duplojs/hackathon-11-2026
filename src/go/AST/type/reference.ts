@@ -19,7 +19,7 @@ export interface PackageTypeReference extends _Node<"type-reference-package"> {
 
 export const packageTypeReference = DModeling.createTaggedObjectFactory<
 	PackageTypeReference
->("node-type-reference-package");
+>("[node]:type-reference-package");
 
 export type GenericTypeTarget = (
 	| Identifier
@@ -38,5 +38,5 @@ export interface GenericTypeReference extends _Node<"type-reference-generic"> {
 
 export const genericTypeReference = DModeling.createTaggedObjectFactory<
 	GenericTypeReference
->("node-type-reference-generic");
+>("[node]:type-reference-generic");
 

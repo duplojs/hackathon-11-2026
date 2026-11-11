@@ -9,4 +9,4 @@ export interface SendStatement extends _Statement<"send"> {
 
 export const sendStatement = DModeling.createTaggedObjectFactory<
 	SendStatement
->("node-statement-send");
+>("[node][statement]:send");

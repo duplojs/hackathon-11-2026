@@ -17,4 +17,4 @@ export interface InstantiationExpression extends _Expression<"instantiation"> {
 
 export const instantiationExpression = DModeling.createTaggedObjectFactory<
 	InstantiationExpression
->("node-expression-instantiation");
+>("[node][expression]:instantiation");

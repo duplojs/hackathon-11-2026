@@ -17,7 +17,7 @@ export interface VariableDeclarationZeroValue extends _Declaration<"variable-zer
 
 export const variableDeclarationZeroValue = DModeling.createTaggedObjectFactory<
 	VariableDeclarationZeroValue
->("node-declaration-variable-zero-value");
+>("[node][declaration]:variable-zero-value");
 
 export interface VariableDeclarationInitialized extends _Declaration<"variable-initialized"> {
 	identifier: Identifier;
@@ -27,4 +27,4 @@ export interface VariableDeclarationInitialized extends _Declaration<"variable-i
 
 export const variableDeclarationInitialized = DModeling.createTaggedObjectFactory<
 	VariableDeclarationInitialized
->("node-declaration-variable-initialized");
+>("[node][declaration]:variable-initialized");

@@ -17,4 +17,4 @@ export interface ArrayType extends _Type<"array"> {
 
 export const arrayType = DModeling.createTaggedObjectFactory<
 	ArrayType
->("node-type-array");
+>("[node][type]:array");

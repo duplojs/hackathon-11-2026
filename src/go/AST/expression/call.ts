@@ -27,6 +27,6 @@ export function callExpression<
 	},
 ) {
 	return DModeling.createTaggedObjectFactory<CallExpression<GenericCallee>>(
-		"node-expression-call",
+		"[node][expression]:call",
 	)(properties);
 }

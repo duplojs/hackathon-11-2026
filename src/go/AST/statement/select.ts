@@ -15,7 +15,7 @@ export interface SelectReceiveAssignment extends _Node<"select-receive-assignmen
 
 export const selectReceiveAssignment = DModeling.createTaggedObjectFactory<
 	SelectReceiveAssignment
->("node-select-receive-assignment");
+>("[node]:select-receive-assignment");
 
 export interface SelectReceiveDeclaration extends _Node<"select-receive-declaration"> {
 	value: Identifier;
@@ -25,7 +25,7 @@ export interface SelectReceiveDeclaration extends _Node<"select-receive-declarat
 
 export const selectReceiveDeclaration = DModeling.createTaggedObjectFactory<
 	SelectReceiveDeclaration
->("node-select-receive-declaration");
+>("[node]:select-receive-declaration");
 
 export type SelectCommunication = (
 	| SendStatement
@@ -41,7 +41,7 @@ export interface SelectCase extends _Node<"select-case"> {
 
 export const selectCase = DModeling.createTaggedObjectFactory<
 	SelectCase
->("node-select-case");
+>("[node]:select-case");
 
 export type SelectClause = SelectCase | DefaultCase;
 
@@ -56,7 +56,7 @@ export interface SelectStatementWithoutDefault extends _Statement<"select-withou
 
 export const selectStatementWithoutDefault = DModeling.createTaggedObjectFactory<
 	SelectStatementWithoutDefault
->("node-statement-select-without-default");
+>("[node][statement]:select-without-default");
 
 export interface SelectStatementWithDefault extends _Statement<"select-with-default"> {
 	casesBeforeDefault: readonly SelectCase[];
@@ -66,4 +66,4 @@ export interface SelectStatementWithDefault extends _Statement<"select-with-defa
 
 export const selectStatementWithDefault = DModeling.createTaggedObjectFactory<
 	SelectStatementWithDefault
->("node-statement-select-with-default");
+>("[node][statement]:select-with-default");

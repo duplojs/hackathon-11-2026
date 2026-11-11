@@ -23,6 +23,6 @@ export function conversionExpression<
 	},
 ) {
 	return DModeling.createTaggedObjectFactory<ConversionExpression<GenericType, GenericOperand>>(
-		"node-expression-conversion",
+		"[node][expression]:conversion",
 	)(properties);
 }

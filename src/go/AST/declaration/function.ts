@@ -41,7 +41,7 @@ export interface FunctionDeclaration extends _Declaration<"function"> {
 
 export const functionDeclaration = DModeling.createTaggedObjectFactory<
 	FunctionDeclaration
->("node-declaration-function");
+>("[node][declaration]:function");
 
 export interface MethodDeclaration extends _Declaration<"method"> {
 	identifier: Identifier;
@@ -55,4 +55,4 @@ export interface MethodDeclaration extends _Declaration<"method"> {
 
 export const methodDeclaration = DModeling.createTaggedObjectFactory<
 	MethodDeclaration
->("node-declaration-method");
+>("[node][declaration]:method");

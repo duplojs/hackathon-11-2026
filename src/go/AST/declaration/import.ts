@@ -10,4 +10,4 @@ export interface ImportDeclaration extends _Declaration<"import"> {
 
 export const importDeclaration = DModeling.createTaggedObjectFactory<
 	ImportDeclaration
->("node-declaration-import");
+>("[node][declaration]:import");

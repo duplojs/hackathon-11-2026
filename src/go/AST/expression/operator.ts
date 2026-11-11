@@ -29,7 +29,7 @@ export function unaryExpression<
 	},
 ) {
 	return DModeling.createTaggedObjectFactory<UnaryExpression<GenericOperand>>(
-		"node-expression-unary",
+		"[node][expression]:unary",
 	)(properties);
 }
 
@@ -52,7 +52,7 @@ export function binaryExpression<
 	},
 ) {
 	return DModeling.createTaggedObjectFactory<BinaryExpression<GenericLeft | GenericRight>>(
-		"node-expression-binary",
+		"[node][expression]:binary",
 	)(properties);
 }
 
@@ -70,7 +70,7 @@ export interface AddressExpression extends _Expression<"address"> {
 
 export const addressExpression = DModeling.createTaggedObjectFactory<
 	AddressExpression
->("node-expression-address");
+>("[node][expression]:address");
 
 export interface DereferenceExpression extends _Expression<"dereference"> {
 	operand: Expression;
@@ -78,7 +78,7 @@ export interface DereferenceExpression extends _Expression<"dereference"> {
 
 export const dereferenceExpression = DModeling.createTaggedObjectFactory<
 	DereferenceExpression
->("node-expression-dereference");
+>("[node][expression]:dereference");
 
 export interface ReceiveExpression extends _Expression<"receive"> {
 	operand: Expression;
@@ -86,4 +86,4 @@ export interface ReceiveExpression extends _Expression<"receive"> {
 
 export const receiveExpression = DModeling.createTaggedObjectFactory<
 	ReceiveExpression
->("node-expression-receive");
+>("[node][expression]:receive");

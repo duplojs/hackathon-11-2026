@@ -8,7 +8,7 @@ export interface GoStatement extends _Statement<"go"> {
 
 export const goStatement = DModeling.createTaggedObjectFactory<
 	GoStatement
->("node-statement-go");
+>("[node][statement]:go");
 
 export interface DeferStatement extends _Statement<"defer"> {
 	call: CallExpression;
@@ -16,4 +16,4 @@ export interface DeferStatement extends _Statement<"defer"> {
 
 export const deferStatement = DModeling.createTaggedObjectFactory<
 	DeferStatement
->("node-statement-defer");
+>("[node][statement]:defer");

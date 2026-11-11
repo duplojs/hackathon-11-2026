@@ -18,7 +18,7 @@ export interface IntegerLiteral extends _Expression<"literal-integer"> {
 
 export const integerLiteral = DModeling.createTaggedObjectFactory<
 	IntegerLiteral
->("node-expression-literal-integer");
+>("[node][expression]:literal-integer");
 
 export interface FloatLiteral extends _Expression<"literal-float"> {
 	// Écriture Go du nombre, conservée sans arrondi JavaScript.
@@ -27,7 +27,7 @@ export interface FloatLiteral extends _Expression<"literal-float"> {
 
 export const floatLiteral = DModeling.createTaggedObjectFactory<
 	FloatLiteral
->("node-expression-literal-float");
+>("[node][expression]:literal-float");
 
 export interface ImaginaryLiteral extends _Expression<"literal-imaginary"> {
 	// Écriture Go du coefficient, sans le suffixe i.
@@ -36,7 +36,7 @@ export interface ImaginaryLiteral extends _Expression<"literal-imaginary"> {
 
 export const imaginaryLiteral = DModeling.createTaggedObjectFactory<
 	ImaginaryLiteral
->("node-expression-literal-imaginary");
+>("[node][expression]:literal-imaginary");
 
 export interface RuneLiteral extends _Expression<"literal-rune"> {
 	// Un caractère Unicode décodé ; le printer ajoute les quotes et échappements.
@@ -45,7 +45,7 @@ export interface RuneLiteral extends _Expression<"literal-rune"> {
 
 export const runeLiteral = DModeling.createTaggedObjectFactory<
 	RuneLiteral
->("node-expression-literal-rune");
+>("[node][expression]:literal-rune");
 
 export type StringLiteralMode = "text" | "bytes";
 
@@ -59,7 +59,7 @@ export interface StringLiteral extends _Expression<"literal-string"> {
 
 export const stringLiteral = DModeling.createTaggedObjectFactory<
 	StringLiteral
->("node-expression-literal-string");
+>("[node][expression]:literal-string");
 
 export interface BooleanLiteral extends _Expression<"literal-boolean"> {
 	value: boolean;
@@ -67,7 +67,7 @@ export interface BooleanLiteral extends _Expression<"literal-boolean"> {
 
 export const booleanLiteral = DModeling.createTaggedObjectFactory<
 	BooleanLiteral
->("node-expression-literal-boolean");
+>("[node][expression]:literal-boolean");
 
 export interface NilLiteral extends _Expression<"literal-nil"> {
 
@@ -75,4 +75,4 @@ export interface NilLiteral extends _Expression<"literal-nil"> {
 
 export const nilLiteral = DModeling.createTaggedObjectFactory<
 	NilLiteral
->("node-expression-literal-nil");
+>("[node][expression]:literal-nil");

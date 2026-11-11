@@ -47,7 +47,7 @@ export async function transformSourceFile(
 				const declarations = [...lastValue.declarations, ...statement.topLevelDeclarations];
 				const init = [...lastValue.init, ...statement.before];
 
-				if (DModeling.hasTagValue(result, "node-declaration-function")) {
+				if (DModeling.hasTagValue(result, "[node][declaration]:function")) {
 					return next({
 						imports: lastValue.imports,
 						declarations: DArray.push(declarations, result),

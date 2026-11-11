@@ -6,5 +6,5 @@ export interface BlockStatement extends _Statement<"block"> {
 }
 
 export const blockStatement = DModeling.createTaggedObjectFactory<BlockStatement>(
-	"node-statement-block",
+	"[node][statement]:block",
 );

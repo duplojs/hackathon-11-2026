@@ -24,7 +24,7 @@ export interface ForStatement extends _Statement<"for"> {
 
 export const forStatement = DModeling.createTaggedObjectFactory<
 	ForStatement
->("node-statement-for");
+>("[node][statement]:for");
 
 export interface RangeAssignment extends _Node<"range-assignment"> {
 	key: AssignmentTarget;
@@ -33,7 +33,7 @@ export interface RangeAssignment extends _Node<"range-assignment"> {
 
 export const rangeAssignment = DModeling.createTaggedObjectFactory<
 	RangeAssignment
->("node-range-assignment");
+>("[node]:range-assignment");
 
 export interface RangeDeclaration extends _Node<"range-declaration"> {
 	key: Identifier;
@@ -42,7 +42,7 @@ export interface RangeDeclaration extends _Node<"range-declaration"> {
 
 export const rangeDeclaration = DModeling.createTaggedObjectFactory<
 	RangeDeclaration
->("node-range-declaration");
+>("[node]:range-declaration");
 
 export type RangeBinding = RangeAssignment | RangeDeclaration;
 
@@ -54,4 +54,4 @@ export interface RangeStatement extends _Statement<"range"> {
 
 export const rangeStatement = DModeling.createTaggedObjectFactory<
 	RangeStatement
->("node-statement-range");
+>("[node][statement]:range");

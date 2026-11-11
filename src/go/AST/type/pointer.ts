@@ -19,6 +19,6 @@ export function pointerType<
 	properties: { typeReference: GenericTarget },
 ) {
 	return DModeling.createTaggedObjectFactory<PointerType<GenericTarget>>(
-		"node-type-pointer",
+		"[node][type]:pointer",
 	)(properties);
 }
