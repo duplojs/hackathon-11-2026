@@ -8,7 +8,6 @@ import { statementTransformers } from "./index";
 
 interface TransformedBlock {
 	statements: readonly GO.AST.Statement[];
-	topLevelDeclarations: GO.AST.TopLevelDeclaration[];
 }
 
 export const blockTransformer: Transformer<GO.AST.BlockStatement> = createTransformer(
@@ -22,7 +21,6 @@ export const blockTransformer: Transformer<GO.AST.BlockStatement> = createTransf
 			DGenerator.asyncReduce(
 				DGenerator.reduceFrom<TransformedBlock>({
 					statements: [],
-					topLevelDeclarations: [],
 				}),
 				async({ item, lastValue, next, exit }) => {
 					const statement = await DCommon.asyncPipe(
@@ -36,7 +34,6 @@ export const blockTransformer: Transformer<GO.AST.BlockStatement> = createTransf
 
 					return next({
 						statements: [...lastValue.statements, ...statement.before, statement.result],
-						topLevelDeclarations: [...lastValue.topLevelDeclarations, ...statement.topLevelDeclarations],
 					});
 				},
 			),
@@ -47,7 +44,6 @@ export const blockTransformer: Transformer<GO.AST.BlockStatement> = createTransf
 
 		return context.success({
 			result: GO.AST.blockStatement({ statements: body.statements }),
-			topLevelDeclarations: body.topLevelDeclarations,
 		});
 	},
 );

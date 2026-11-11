@@ -1,4 +1,4 @@
-import * as GO from "@go";
+import type * as GO from "@go";
 import * as DArray from "@duplojs/lang/array";
 import * as DCommon from "@duplojs/lang/common";
 import * as DEither from "@duplojs/lang/either";
@@ -9,12 +9,12 @@ import { createBuildContext } from "./context/build";
 import { createFileContext } from "./context/file";
 import type { TranspilationContext } from "./context/transpilation";
 import { sourceFileTransformers } from "./transformers";
-import * as DPath from "@duplojs/lang/path";
+import { createFile } from "./createFile";
 
 interface TransformedFileContent {
 	imports: GO.AST.GoFile["imports"];
-	declarations: GO.AST.GoFile["declarations"];
-	init: GO.AST.GoFile["init"];
+	topLevelDeclarations: GO.AST.GoFile["topLevelDeclarations"];
+	init: readonly GO.AST.Statement[];
 }
 
 export async function transformSourceFile(
@@ -29,7 +29,7 @@ export async function transformSourceFile(
 		DGenerator.asyncReduce(
 			DGenerator.reduceFrom<TransformedFileContent>({
 				imports: [],
-				declarations: [],
+				topLevelDeclarations: [],
 				init: [],
 			}),
 			async({ item, lastValue, next, exit }) => {
@@ -44,20 +44,19 @@ export async function transformSourceFile(
 				}
 
 				const result = statement.result;
-				const declarations = [...lastValue.declarations, ...statement.topLevelDeclarations];
-				const init = [...lastValue.init, ...statement.before];
+				const init = DArray.concat(lastValue.init, statement.before);
 
-				if (DModeling.hasTagValue(result, "[node][declaration]:function")) {
+				if (DModeling.hasTagGroup(result, "declaration")) {
 					return next({
 						imports: lastValue.imports,
-						declarations: DArray.push(declarations, result),
+						topLevelDeclarations: DArray.push(lastValue.topLevelDeclarations, result),
 						init,
 					});
 				}
 
 				return next({
 					imports: lastValue.imports,
-					declarations,
+					topLevelDeclarations: lastValue.topLevelDeclarations,
 					init: DArray.push(init, result),
 				});
 			},
@@ -68,24 +67,12 @@ export async function transformSourceFile(
 		return content;
 	}
 
-	const packageNameResult = DEither.rightPipe(
-		sourceFile.fileName,
-		DPath.normalize,
-		DEither.toMaybe,
-		(value) => DPath.getBaseName(value, { removeExtension: true }),
-		DEither.toMaybe,
-	);
-
-	if (DEither.isLeft(packageNameResult)) {
-		return DEither.left("invalid-package-name", sourceFile);
-	}
-
-	const packageName = context.createSourceIdentifier(DEither.unwrapRight(packageNameResult));
-
 	return DEither.success({
-		file: GO.AST.goFile({
-			packageName,
-			...content,
+		file: createFile({
+			packageName: context.createSourceIdentifier(sourceFile.path),
+			imports: content.imports,
+			topLevelDeclaration: content.topLevelDeclarations,
+			init: content.init,
 		}),
 		context,
 	});

@@ -11,7 +11,6 @@ import { typeTransformers } from "../type";
 interface TransformedParameters {
 	parameters: readonly GO.AST.FunctionParameter[];
 	before: TransformationSuccessPayload<GO.AST.FunctionDeclaration>["before"];
-	topLevelDeclarations: GO.AST.TopLevelDeclaration[];
 }
 
 export const functionDeclarationTransformer: Transformer<GO.AST.FunctionDeclaration> = createTransformer(
@@ -40,7 +39,6 @@ export const functionDeclarationTransformer: Transformer<GO.AST.FunctionDeclarat
 				DGenerator.reduceFrom<TransformedParameters>({
 					parameters: [],
 					before: [],
-					topLevelDeclarations: [],
 				}),
 				async({ item: parameter, lastValue, next, exit }) => {
 					if (!TS.isIdentifier(parameter.name)) {
@@ -84,7 +82,6 @@ export const functionDeclarationTransformer: Transformer<GO.AST.FunctionDeclarat
 							[parameterIdentifier, type.result],
 						],
 						before: [...lastValue.before, ...type.before],
-						topLevelDeclarations: [...lastValue.topLevelDeclarations, ...type.topLevelDeclarations],
 					});
 				},
 			),
@@ -114,7 +111,6 @@ export const functionDeclarationTransformer: Transformer<GO.AST.FunctionDeclarat
 			: {
 				result: undefined,
 				before: [],
-				topLevelDeclarations: [],
 			};
 		if (DEither.isLeft(returnTypePayload)) {
 			return returnTypePayload;
@@ -138,11 +134,6 @@ export const functionDeclarationTransformer: Transformer<GO.AST.FunctionDeclarat
 				body: body.result,
 			}),
 			before: [...parameters.before, ...returnTypePayload.before, ...body.before],
-			topLevelDeclarations: [
-				...parameters.topLevelDeclarations,
-				...returnTypePayload.topLevelDeclarations,
-				...body.topLevelDeclarations,
-			],
 		});
 	},
 );

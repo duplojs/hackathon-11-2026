@@ -49,7 +49,6 @@ export const binaryExpressionTransformer: Transformer<GO.AST.BinaryExpression> =
 				right: right.result,
 			}),
 			before: left.before,
-			topLevelDeclarations: [...left.topLevelDeclarations, ...right.topLevelDeclarations],
 		});
 	},
 );

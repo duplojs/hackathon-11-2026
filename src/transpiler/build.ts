@@ -6,31 +6,9 @@ import type * as DInvocation from "@duplojs/lang/invocation";
 import * as DPath from "@duplojs/lang/path";
 import * as GO from "@go";
 import type { createTypescriptInstance } from "./createTypescriptInstance";
-import { createTranspilationContext, type Dependencies } from "./context/transpilation";
+import { createTranspilationContext } from "./context/transpilation";
 import { transformSourceFile } from "./transformSourceFile";
-
-function createDependenciesFile(dependencies: Dependencies) {
-	const content = DCommon.pipe(
-		dependencies.dependencies,
-		DGenerator.reduce(
-			DGenerator.reduceFrom<Pick<GO.AST.GoFile, "imports" | "declarations" | "init">>({
-				imports: [],
-				declarations: [],
-				init: [],
-			}),
-			({ item, lastValue, next }) => next({
-				imports: [...lastValue.imports, ...item.imports],
-				declarations: [...lastValue.declarations, ...item.topLevelDeclarations],
-				init: [...lastValue.init, ...item.init],
-			}),
-		),
-	);
-
-	return GO.AST.goFile({
-		packageName: GO.AST.createIdentifier("generated"),
-		...content,
-	});
-}
+import { createFile, type CreateFileParams } from "./createFile";
 
 export function build(
 	typescriptInstance: DInvocation.GetEvidenceResult<
@@ -53,13 +31,37 @@ export function build(
 			const path = DArray.first(accumulator.pending);
 
 			if (path === undefined) {
+				if (context.sharedDependencies.dependencies.size === 0) {
+					return exit();
+				}
+
+				const file = DCommon.pipe(
+					context.sharedDependencies.dependencies,
+					DGenerator.reduce(
+						DGenerator.reduceFrom<CreateFileParams>({
+							packageName: GO.AST.createIdentifier("shard_dependencies"),
+							imports: [],
+							topLevelDeclaration: [],
+							init: [],
+						}),
+						({ item, lastValue, nextWithObject }) => nextWithObject(
+							lastValue,
+							{
+								imports: DArray.concat(lastValue.imports, item.imports),
+								topLevelDeclaration: DArray.concat(
+									lastValue.topLevelDeclaration,
+									item.topLevelDeclarations,
+								),
+								init: DArray.concat(lastValue.init, item.init),
+							},
+						),
+					),
+					createFile,
+				);
+
 				return exit(
-					DEither.right("build-app-file", {
-						file: createDependenciesFile(context.main),
-						outputPath: DPath.declarePath("main.generated.go"),
-					}),
 					DEither.right("build-shared-dependencies-file", {
-						file: createDependenciesFile(context.sharedDependencies),
+						file,
 						outputPath: DPath.declarePath("shared_dependencies.generated.go"),
 					}),
 				);

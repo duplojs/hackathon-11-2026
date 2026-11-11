@@ -10,7 +10,6 @@ import { transformExpression } from "../helpers";
 interface TransformedArguments {
 	arguments: readonly GO.AST.Identifier[];
 	before: TransformationSuccessPayload<GO.AST.CallExpression>["before"];
-	topLevelDeclarations: GO.AST.TopLevelDeclaration[];
 }
 
 export const callExpressionTransformer: Transformer<GO.AST.CallExpression> = createTransformer(
@@ -59,7 +58,6 @@ export const callExpressionTransformer: Transformer<GO.AST.CallExpression> = cre
 							initializer: callee.result,
 						}),
 					],
-					topLevelDeclarations: callee.topLevelDeclarations,
 				}),
 				async({ item, lastValue, next, exit }) => {
 					const argument = await DCommon.asyncPipe(
@@ -82,10 +80,6 @@ export const callExpressionTransformer: Transformer<GO.AST.CallExpression> = cre
 								initializer: argument.result,
 							}),
 						],
-						topLevelDeclarations: [
-							...lastValue.topLevelDeclarations,
-							...argument.topLevelDeclarations,
-						],
 					});
 				},
 			),
@@ -100,7 +94,6 @@ export const callExpressionTransformer: Transformer<GO.AST.CallExpression> = cre
 				arguments: argumentsList.arguments,
 			}),
 			before: argumentsList.before,
-			topLevelDeclarations: argumentsList.topLevelDeclarations,
 		});
 	},
 );

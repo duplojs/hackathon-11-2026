@@ -14,7 +14,6 @@ export interface TransformationSuccessPayload<
 		| GO.AST.Statement
 		| GO.AST.LocalDeclaration
 	)[];
-	topLevelDeclarations: GO.AST.TopLevelDeclaration[];
 }
 
 export type TransformationSuccess<

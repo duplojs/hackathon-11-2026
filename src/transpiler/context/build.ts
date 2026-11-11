@@ -1,4 +1,3 @@
-import * as DArray from "@duplojs/lang/array";
 import * as DCommon from "@duplojs/lang/common";
 import * as DEither from "@duplojs/lang/either";
 import type * as DObject from "@duplojs/lang/object";
@@ -30,7 +29,7 @@ export interface BuildContext {
 	success<GenericGoNode extends GO.AST.Node>(
 		payload: DObject.PartialKeys<
 			TransformationSuccessPayload<GenericGoNode>,
-			"before" | "topLevelDeclarations"
+			"before"
 		>
 	): TransformationSuccess<GenericGoNode>;
 	notSupport(content: unknown): TransformationNotSupported;
@@ -52,7 +51,6 @@ export function createBuildContext(
 		success: (payload) => DEither.right("transformation-success", {
 			...payload,
 			before: payload.before ?? [],
-			topLevelDeclarations: payload.topLevelDeclarations ?? [],
 		}),
 		notSupport: (content) => DEither.left("transformation-not-supported", content),
 		async registerDependency(node) {

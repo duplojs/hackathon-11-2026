@@ -8,7 +8,6 @@ export interface Dependencies {
 
 export interface TranspilationContext {
 	readonly typeChecker: Checker;
-	readonly main: Dependencies;
 	readonly sharedDependencies: Dependencies;
 	increment(): number;
 }
@@ -29,7 +28,6 @@ export function createTranspilationContext(typeChecker: Checker) {
 
 	const context: TranspilationContext = {
 		typeChecker,
-		main: createDependencies(),
 		sharedDependencies: createDependencies(),
 		increment() {
 			index += 1;
