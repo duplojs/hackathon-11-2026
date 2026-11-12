@@ -1,6 +1,6 @@
 import * as DArray from "@duplojs/lang/array";
 import * as DPrinter from "@duplojs/lang/printer";
-import { type Node } from "../AST/base";
+import { type Node } from "../AST";
 import { type PrinterContext } from "./context";
 
 export function renderNodeLines(

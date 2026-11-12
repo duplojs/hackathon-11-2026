@@ -1,7 +1,7 @@
 import * as DArray from "@duplojs/lang/array";
 import * as DPrinter from "@duplojs/lang/printer";
-import { type TypeParameter } from "../../AST/type/function";
-import { type PrinterContext } from "../context";
+import { type TypeParameter } from "../../AST/type";
+import { type PrinterContext } from "..";
 
 export function renderTypeParameters(parameters: readonly TypeParameter[], context: PrinterContext) {
 	// La virgule finale distingue notamment [T *C,] d'une longueur de tableau.

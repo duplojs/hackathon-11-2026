@@ -1,5 +1,5 @@
-import { type SelectCase } from "../../AST/statement/select";
-import { createNodePrinter } from "../createNodePrinter";
+import { type SelectCase } from "../../AST/statement";
+import { createNodePrinter } from "..";
 import { renderCaseBody } from "./renderCaseBody";
 
 export const printSelectCase = createNodePrinter<SelectCase>(

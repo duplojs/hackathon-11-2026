@@ -1,7 +1,7 @@
 import * as DPrinter from "@duplojs/lang/printer";
-import { type Expression } from "../../AST/expression/base";
-import { type SimpleStatement } from "../../AST/statement/base";
-import { type PrinterContext } from "../context";
+import { type Expression } from "../../AST/expression";
+import { type SimpleStatement } from "../../AST/statement";
+import { type PrinterContext } from "..";
 
 export function renderExpressionSwitchHeader(
 	initializer: SimpleStatement | undefined,

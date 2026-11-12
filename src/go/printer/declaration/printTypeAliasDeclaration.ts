@@ -1,6 +1,6 @@
-import { type TypeAliasDeclaration } from "../../AST/declaration/type";
-import { createNodePrinter } from "../createNodePrinter";
-import { renderTypeParameters } from "../type/renderTypeParameters";
+import { type TypeAliasDeclaration } from "../../AST/common";
+import { createNodePrinter } from "..";
+import { renderTypeParameters } from "../type";
 
 export const printTypeAliasDeclaration = createNodePrinter<TypeAliasDeclaration>(
 	(node, context) => `type ${context.renderNode(node.identifier)}${renderTypeParameters(node.generic ?? [], context)} = ${context.renderNode(node.type)}`,

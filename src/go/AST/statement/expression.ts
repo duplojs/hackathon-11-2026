@@ -1,14 +1,13 @@
 import * as DModeling from "@duplojs/lang/modeling";
-import { type CallExpression } from "../expression/call";
-import { type ReceiveExpression } from "../expression/operator";
-import { type _Statement } from "./base";
+import { type StatementGroup } from "./base";
+import { type CallExpression, type ReceiveExpression } from "../expression";
 
 export type StatementExpression = CallExpression | ReceiveExpression;
 
-export interface ExpressionStatement extends _Statement<"expression"> {
+export interface ExpressionStatement extends DModeling.ObjectTagWithGroup<"expression", StatementGroup> {
 	expression: StatementExpression;
 }
 
 export const expressionStatement = DModeling.createTaggedObjectFactory<
 	ExpressionStatement
->("[node][statement]:expression");
+>("[node][statement]expression");

@@ -1,5 +1,5 @@
-import { type TypeConstraint } from "../../AST/type/constraint";
-import { createNodePrinter } from "../createNodePrinter";
+import { type TypeConstraint } from "../../AST/common";
+import { createNodePrinter } from "..";
 
 export const printTypeConstraint = createNodePrinter<TypeConstraint>(
 	(node, context) => `~${context.renderNode(node.typeReference)}`,

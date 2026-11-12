@@ -1,5 +1,5 @@
-import { type DeferStatement } from "../../AST/statement/call";
-import { createNodePrinter } from "../createNodePrinter";
+import { type DeferStatement } from "../../AST/statement";
+import { createNodePrinter } from "..";
 
 export const printDeferStatement = createNodePrinter<DeferStatement>(
 	(node, context) => `defer ${context.renderNode(node.call)}`,

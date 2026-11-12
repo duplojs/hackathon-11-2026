@@ -25,3 +25,4 @@ export * from "./printBinaryExpression";
 export * from "./printAddressExpression";
 export * from "./printDereferenceExpression";
 export * from "./printReceiveExpression";
+export * from "./renderOperand";

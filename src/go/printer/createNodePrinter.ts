@@ -1,4 +1,4 @@
-import { type Node } from "../AST/base";
+import { type Node } from "../AST";
 import { type PrinterContext } from "./context";
 
 export function createNodePrinter<GenericNode extends Node>(

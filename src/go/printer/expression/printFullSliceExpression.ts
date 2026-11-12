@@ -1,5 +1,5 @@
-import { type FullSliceExpression } from "../../AST/expression/access";
-import { createNodePrinter } from "../createNodePrinter";
+import { type FullSliceExpression } from "../../AST/expression";
+import { createNodePrinter } from "..";
 import { renderOperand } from "./renderOperand";
 
 export const printFullSliceExpression = createNodePrinter<FullSliceExpression>(

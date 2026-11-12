@@ -17,13 +17,13 @@
   "packageManager": "pnpm@12.18.0",
   "type": "module",
   "dependencies": {
-    "@duplojs/lang": "0.1.0-beta.9",
-    "@duplojs/server": "0.1.0-beta.9",
+    "@duplojs/lang": "0.1.0-beta.10",
+    "@duplojs/server": "0.1.0-beta.10",
     "typescript": "7.1.0-beta"
   },
   "devDependencies": {
-    "@duplojs/agents-kit": "0.1.0-beta.9",
-    "@duplojs/code-config": "0.1.0-beta.9",
+    "@duplojs/agents-kit": "0.1.0-beta.10",
+    "@duplojs/code-config": "0.1.0-beta.10",
     "@types/node": "24.19.2",
     "tsx": "4.23.15"
   }

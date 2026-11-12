@@ -1,6 +1,6 @@
 import * as DPrinter from "@duplojs/lang/printer";
-import { type RangeStatement } from "../../AST/statement/for";
-import { createNodePrinter } from "../createNodePrinter";
+import { type RangeStatement } from "../../AST/statement";
+import { createNodePrinter } from "..";
 
 export const printRangeStatement = createNodePrinter<RangeStatement>(
 	(node, context) => DPrinter.renderLine([

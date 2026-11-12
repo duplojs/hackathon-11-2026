@@ -1,7 +1,7 @@
 import * as DArray from "@duplojs/lang/array";
 import * as DPrinter from "@duplojs/lang/printer";
-import { type CallExpression } from "../../AST/expression/call";
-import { createNodePrinter } from "../createNodePrinter";
+import { type CallExpression } from "../../AST/expression";
+import { createNodePrinter } from "..";
 import { renderOperand } from "./renderOperand";
 
 export const printCallExpression = createNodePrinter<CallExpression>(

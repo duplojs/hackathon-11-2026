@@ -1,13 +1,14 @@
-import { type _Node } from "../base";
-import { type Identifier } from "../identifier";
-import { type IndexExpression, type MethodExpression, type SelectorExpression, type SliceExpression, type FullSliceExpression, type TypeAssertionExpression } from "./access";
-import { type CallExpression } from "./call";
-import { type CompositeLiteral } from "./composite";
-import { type ConversionExpression } from "./conversion";
+import type * as DModeling from "@duplojs/lang/modeling";
+import { type NodeGroup } from "..";
+import { type Identifier } from "../common";
 import { type FunctionLiteral } from "./function";
 import { type InstantiationExpression } from "./instantiation";
+import { type CallExpression } from "./call";
+import { type CompositeLiteral } from "./composite";
+import { type UnaryExpression, type BinaryExpression, type AddressExpression, type DereferenceExpression, type ReceiveExpression } from "./operator";
+import { type SelectorExpression, type MethodExpression, type IndexExpression, type SliceExpression, type FullSliceExpression, type TypeAssertionExpression } from "./access";
+import { type ConversionExpression } from "./conversion";
 import { type Literal } from "./literal";
-import { type AddressExpression, type BinaryExpression, type DereferenceExpression, type ReceiveExpression, type UnaryExpression } from "./operator";
 
 export type Expression = (
 	| Identifier
@@ -30,8 +31,7 @@ export type Expression = (
 	| TypeAssertionExpression
 );
 
-export interface _Expression<
-	GenericNodeName extends string = string,
-> extends _Node<GenericNodeName, "expression"> {
-
-}
+export type ExpressionGroup = readonly [
+	NodeGroup,
+	DModeling.ObjectTagGroup<"expression">,
+];

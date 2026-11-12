@@ -1,7 +1,6 @@
 import * as DPrinter from "@duplojs/lang/printer";
-import { type Statement } from "../../AST/statement/base";
-import { type PrinterContext } from "../context";
-import { renderNodeLines } from "../renderNodeLines";
+import { type Statement } from "../../AST/statement";
+import { type PrinterContext, renderNodeLines } from "..";
 
 export function renderCaseBody(header: string, statements: readonly Statement[], context: PrinterContext) {
 	return DPrinter.renderParagraph([

@@ -1,13 +1,12 @@
 import * as DModeling from "@duplojs/lang/modeling";
+import { type Identifier } from "../common";
+import { type DeclarationGroup } from "./base";
 
-import { type Identifier } from "../identifier";
-import { type _Declaration } from "./base";
-
-export interface ImportDeclaration extends _Declaration<"import"> {
+export interface ImportDeclaration extends DModeling.ObjectTagWithGroup<"import", DeclarationGroup> {
 	path: string;
 	alias?: Identifier | ".";
 }
 
 export const importDeclaration = DModeling.createTaggedObjectFactory<
 	ImportDeclaration
->("[node][declaration]:import");
+>("[node][declaration]import");

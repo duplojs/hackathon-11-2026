@@ -1,5 +1,5 @@
 import * as DPrinter from "@duplojs/lang/printer";
-import { type GoFile } from "../AST/file";
+import { type GoFile } from "../AST/common";
 import { createNodePrinter } from "./createNodePrinter";
 import { renderNodeList } from "./renderNodeList";
 import { renderNodeLines } from "./renderNodeLines";

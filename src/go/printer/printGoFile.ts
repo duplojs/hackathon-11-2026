@@ -1,4 +1,4 @@
-import { type GoFile } from "../AST/file";
+import { type GoFile } from "../AST/common";
 import { renderNode } from "./renderNode";
 
 export function printGoFile(file: GoFile) {

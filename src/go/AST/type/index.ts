@@ -1,12 +1,9 @@
 export * from "./array";
 export type * from "./base";
-export * from "./builtin";
 export * from "./channel";
-export * from "./constraint";
 export * from "./function";
 export * from "./interface";
 export * from "./map";
 export * from "./pointer";
-export * from "./reference";
 export * from "./slice";
 export * from "./struct";

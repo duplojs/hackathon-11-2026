@@ -11,10 +11,7 @@ export interface TransformationSuccessPayload<
 	GenericGoNode extends GO.AST.Node,
 > {
 	result: GenericGoNode;
-	before: readonly (
-		| GO.AST.Statement
-		| GO.AST.LocalDeclaration
-	)[];
+	before: readonly GO.AST.Statement[];
 }
 
 export type TransformationSuccess<

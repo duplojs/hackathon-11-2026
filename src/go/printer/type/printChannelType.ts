@@ -1,5 +1,5 @@
-import { type ChannelType } from "../../AST/type/channel";
-import { createNodePrinter } from "../createNodePrinter";
+import { type ChannelType } from "../../AST/type";
+import { createNodePrinter } from "..";
 
 export const printChannelType = createNodePrinter<ChannelType>(
 	(node, context) => {

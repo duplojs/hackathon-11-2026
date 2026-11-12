@@ -1,6 +1,19 @@
 export type * from "./base";
-export * from "./constant";
+export {
+	constantDeclaration,
+	type ConstantDeclaration,
+	type ConstantExpression,
+	type TypeAliasDeclaration,
+	type TypeAliasType,
+	type TypeDeclaration,
+	type TypeDefinitionType,
+	type VariableDeclarationInitialized,
+	type VariableDeclarationZeroValue,
+	type VariableType,
+	typeAlias,
+	typeDefinition,
+	variableDeclarationInitialized,
+	variableDeclarationZeroValue,
+} from "../common";
 export * from "./function";
 export * from "./import";
-export * from "./type";
-export * from "./variable";

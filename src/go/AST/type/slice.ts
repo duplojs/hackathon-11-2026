@@ -1,16 +1,16 @@
 import * as DModeling from "@duplojs/lang/modeling";
-import { type _Type, type Type } from "./base";
-import { type TypeReference } from "./reference";
+import { type TypeReference } from "../common";
+import { type Type, type TypeGroup } from "./base";
 
 export type SliceElementType = (
 	| TypeReference
 	| Type
 );
 
-export interface SliceType extends _Type<"slice"> {
+export interface SliceType extends DModeling.ObjectTagWithGroup<"slice", TypeGroup> {
 	elementType: SliceElementType;
 }
 
 export const sliceType = DModeling.createTaggedObjectFactory<
 	SliceType
->("[node][type]:slice");
+>("[node][type]slice");

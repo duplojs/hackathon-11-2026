@@ -1,9 +1,9 @@
 import * as DModeling from "@duplojs/lang/modeling";
-import { type _Node } from "./base";
+import { type NodeGroup } from "..";
 
 export interface Identifier<
 	GenericValue extends string = string,
-> extends _Node<"identifier", never> {
+> extends DModeling.ObjectTagWithGroup<"identifier", NodeGroup> {
 	readonly value: GenericValue;
 }
 
@@ -13,7 +13,7 @@ export function createIdentifier<
 	value: GenericValue,
 ): Identifier<GenericValue> {
 	return DModeling.taggedObject(
-		"[node]:identifier",
+		"[node]identifier",
 		{
 			value,
 		},

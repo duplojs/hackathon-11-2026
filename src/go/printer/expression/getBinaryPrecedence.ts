@@ -1,4 +1,4 @@
-import { type BinaryOperator } from "../../AST/expression/operator";
+import { type BinaryOperator } from "../../AST/expression";
 
 export function getBinaryPrecedence(operator: BinaryOperator) {
 	const precedence = {

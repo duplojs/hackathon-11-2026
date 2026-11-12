@@ -1,9 +1,9 @@
 import * as DPrinter from "@duplojs/lang/printer";
-import { type Expression } from "../../AST/expression/base";
-import { type Identifier } from "../../AST/identifier";
-import { type SimpleStatement } from "../../AST/statement/base";
-import { type PrinterContext } from "../context";
-import { renderOperand } from "../expression/renderOperand";
+import { type Expression } from "../../AST/expression";
+import { type Identifier } from "../../AST/common";
+import { type SimpleStatement } from "../../AST/statement";
+import { type PrinterContext } from "..";
+import { renderOperand } from "../expression";
 
 export function renderTypeSwitchHeader(
 	initializer: SimpleStatement | undefined,

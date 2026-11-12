@@ -1,17 +1,17 @@
 import * as DModeling from "@duplojs/lang/modeling";
-import { type _Type, type Type } from "./base";
-import { type TypeReference } from "./reference";
+import { type TypeReference } from "../common";
+import { type Type, type TypeGroup } from "./base";
 
 export type ChannelElementType = (
 	| TypeReference
 	| Type
 );
 
-export interface ChannelType extends _Type<"channel"> {
+export interface ChannelType extends DModeling.ObjectTagWithGroup<"channel", TypeGroup> {
 	elementType: ChannelElementType;
 	direction: "bidirectional" | "send" | "receive";
 }
 
 export const channelType = DModeling.createTaggedObjectFactory<
 	ChannelType
->("[node][type]:channel");
+>("[node][type]channel");

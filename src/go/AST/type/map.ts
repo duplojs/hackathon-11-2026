@@ -1,11 +1,11 @@
 import * as DModeling from "@duplojs/lang/modeling";
+import { type TypeReference } from "../common";
+import { type StructType } from "./struct";
+import { type Type, type TypeGroup } from "./base";
 import { type ArrayType } from "./array";
-import { type _Type, type Type } from "./base";
+import { type PointerType } from "./pointer";
 import { type ChannelType } from "./channel";
 import { type InterfaceType } from "./interface";
-import { type PointerType } from "./pointer";
-import { type TypeReference } from "./reference";
-import { type StructType } from "./struct";
 
 export type MapKeyType = (
 	| TypeReference
@@ -21,11 +21,11 @@ export type MapValueType = (
 	| Type
 );
 
-export interface MapType extends _Type<"map"> {
+export interface MapType extends DModeling.ObjectTagWithGroup<"map", TypeGroup> {
 	keyType: MapKeyType;
 	valueType: MapValueType;
 }
 
 export const mapType = DModeling.createTaggedObjectFactory<
 	MapType
->("[node][type]:map");
+>("[node][type]map");

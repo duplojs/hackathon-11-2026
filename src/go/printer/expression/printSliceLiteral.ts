@@ -1,5 +1,5 @@
-import { type SliceLiteral } from "../../AST/expression/composite";
-import { createNodePrinter } from "../createNodePrinter";
+import { type SliceLiteral } from "../../AST/expression";
+import { createNodePrinter } from "..";
 import { renderCompositeElements } from "./renderCompositeElements";
 
 export const printSliceLiteral = createNodePrinter<SliceLiteral>(

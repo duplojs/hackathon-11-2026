@@ -1,6 +1,6 @@
 import * as DPrinter from "@duplojs/lang/printer";
-import { type IfStatement } from "../../AST/statement/if";
-import { createNodePrinter } from "../createNodePrinter";
+import { type IfStatement } from "../../AST/statement";
+import { createNodePrinter } from "..";
 
 export const printIfStatement = createNodePrinter<IfStatement>(
 	(node, context) => DPrinter.renderLine([

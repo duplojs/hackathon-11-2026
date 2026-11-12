@@ -1,6 +1,5 @@
-import { type ExpressionSwitchStatementWithDefault } from "../../AST/statement/switch";
-import { createNodePrinter } from "../createNodePrinter";
-import { renderBracedNodes } from "../renderBracedNodes";
+import { type ExpressionSwitchStatementWithDefault } from "../../AST/statement";
+import { createNodePrinter, renderBracedNodes } from "..";
 import { renderExpressionSwitchHeader } from "./renderExpressionSwitchHeader";
 
 export const printExpressionSwitchStatementWithDefault = createNodePrinter<ExpressionSwitchStatementWithDefault>(

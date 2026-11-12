@@ -2,7 +2,7 @@ import * as DEither from "@duplojs/lang/either";
 import * as DPath from "@duplojs/lang/path";
 
 export const goModulePath = "duplojs.local/transpiled";
-export const goModuleContent = `module ${goModulePath}\n\ngo 1.18\n`;
+export const goModuleContent = `module ${goModulePath}\n\ngo 1.27.4\n`;
 
 export function createSourcePackageLayout(
 	projectWorkDirectory: string & DPath.Absolute,

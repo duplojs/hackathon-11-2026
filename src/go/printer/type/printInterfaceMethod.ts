@@ -1,5 +1,5 @@
-import { type InterfaceMethod } from "../../AST/type/interface";
-import { createNodePrinter } from "../createNodePrinter";
+import { type InterfaceMethod } from "../../AST/type";
+import { createNodePrinter } from "..";
 import { renderParameters } from "./renderParameters";
 import { renderReturnTypes } from "./renderReturnTypes";
 

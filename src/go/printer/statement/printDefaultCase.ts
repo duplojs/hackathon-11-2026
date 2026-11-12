@@ -1,5 +1,5 @@
-import { type DefaultCase } from "../../AST/statement/switch";
-import { createNodePrinter } from "../createNodePrinter";
+import { type DefaultCase } from "../../AST/common";
+import { createNodePrinter } from "..";
 import { renderCaseBody } from "./renderCaseBody";
 
 export const printDefaultCase = createNodePrinter<DefaultCase>(

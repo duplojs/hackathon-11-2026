@@ -1,7 +1,6 @@
 import * as DPrinter from "@duplojs/lang/printer";
-import { type StructEmbeddedField } from "../../AST/type/struct";
-import { createNodePrinter } from "../createNodePrinter";
-import { escapeQuotedValue } from "../escapeQuotedValue";
+import { type StructEmbeddedField } from "../../AST/type";
+import { createNodePrinter, escapeQuotedValue } from "..";
 
 export const printStructEmbeddedField = createNodePrinter<StructEmbeddedField>(
 	(node, context) => DPrinter.renderLine([

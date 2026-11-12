@@ -1,6 +1,5 @@
-import { type TypeSwitchStatementWithDefault } from "../../AST/statement/switch";
-import { createNodePrinter } from "../createNodePrinter";
-import { renderBracedNodes } from "../renderBracedNodes";
+import { type TypeSwitchStatementWithDefault } from "../../AST/statement";
+import { createNodePrinter, renderBracedNodes } from "..";
 import { renderTypeSwitchHeader } from "./renderTypeSwitchHeader";
 
 export const printTypeSwitchStatementWithDefault = createNodePrinter<TypeSwitchStatementWithDefault>(

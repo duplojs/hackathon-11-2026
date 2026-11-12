@@ -1,9 +1,7 @@
 import * as DModeling from "@duplojs/lang/modeling";
-import { type Identifier } from "../identifier";
-import { type _Type, type Type } from "./base";
-import { type TypeConstraint } from "./constraint";
+import { type Identifier, type TypeReference, type TypeConstraint } from "../common";
 import { type InterfaceUnion } from "./interface";
-import { type TypeReference } from "./reference";
+import { type Type, type TypeGroup } from "./base";
 
 export type FunctionParameterType = (
 	| TypeReference
@@ -26,7 +24,7 @@ export type FunctionParameter = readonly [identifier: Identifier, typeReference:
 
 export type TypeParameter = readonly [identifier: Identifier, constraint: TypeParameterConstraint];
 
-export interface FunctionType extends _Type<"function"> {
+export interface FunctionType extends DModeling.ObjectTagWithGroup<"function", TypeGroup> {
 	parameters: readonly FunctionParameter[];
 	variadicParameter?: FunctionParameter;
 	returnTypes: readonly FunctionReturnType[];
@@ -34,4 +32,4 @@ export interface FunctionType extends _Type<"function"> {
 
 export const functionType = DModeling.createTaggedObjectFactory<
 	FunctionType
->("[node][type]:function");
+>("[node][type]function");

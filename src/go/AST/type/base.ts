@@ -1,12 +1,13 @@
-import { type _Node } from "../base";
-import { type ArrayType } from "./array";
-import { type ChannelType } from "./channel";
-import { type FunctionType } from "./function";
-import { type InterfaceType } from "./interface";
-import { type MapType } from "./map";
-import { type PointerType, type PointerTarget } from "./pointer";
-import { type SliceType } from "./slice";
+import type * as DModeling from "@duplojs/lang/modeling";
+import { type NodeGroup } from "..";
 import { type StructType } from "./struct";
+import { type FunctionType } from "./function";
+import { type ArrayType } from "./array";
+import { type PointerTarget, type PointerType } from "./pointer";
+import { type MapType } from "./map";
+import { type ChannelType } from "./channel";
+import { type InterfaceType } from "./interface";
+import { type SliceType } from "./slice";
 
 export type Type = (
 	| ArrayType
@@ -19,8 +20,7 @@ export type Type = (
 	| StructType
 );
 
-export interface _Type<
-	GenericNodeName extends string = string,
-> extends _Node<GenericNodeName, "type"> {
-
-}
+export type TypeGroup = readonly [
+	NodeGroup,
+	DModeling.ObjectTagGroup<"type">,
+];

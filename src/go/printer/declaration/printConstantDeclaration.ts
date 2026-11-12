@@ -1,6 +1,6 @@
 import * as DPrinter from "@duplojs/lang/printer";
-import { type ConstantDeclaration } from "../../AST/declaration/constant";
-import { createNodePrinter } from "../createNodePrinter";
+import { type ConstantDeclaration } from "../../AST/common";
+import { createNodePrinter } from "..";
 
 export const printConstantDeclaration = createNodePrinter<ConstantDeclaration>(
 	(node, context) => DPrinter.renderLine([

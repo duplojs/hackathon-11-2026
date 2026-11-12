@@ -1,5 +1,5 @@
-import { type ArrayLiteral } from "../../AST/expression/composite";
-import { createNodePrinter } from "../createNodePrinter";
+import { type ArrayLiteral } from "../../AST/expression";
+import { createNodePrinter } from "..";
 import { renderCompositeElements } from "./renderCompositeElements";
 
 export const printArrayLiteral = createNodePrinter<ArrayLiteral>(

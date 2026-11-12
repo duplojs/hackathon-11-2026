@@ -1,5 +1,5 @@
-import { type BinaryExpression } from "../../AST/expression/operator";
-import { createNodePrinter } from "../createNodePrinter";
+import { type BinaryExpression } from "../../AST/expression";
+import { createNodePrinter } from "..";
 import { getBinaryPrecedence } from "./getBinaryPrecedence";
 import { renderOperand } from "./renderOperand";
 

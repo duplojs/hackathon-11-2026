@@ -1,12 +1,11 @@
 import * as DModeling from "@duplojs/lang/modeling";
-import { type Identifier } from "../identifier";
-import { type Type } from "../type/base";
-import { type TypeReference } from "../type/reference";
-import { type _Expression, type Expression } from "./base";
+import { type Identifier, type TypeReference } from "../common";
+import { type Type } from "../type";
+import { type Expression, type ExpressionGroup } from "./base";
 
 export interface SelectorExpression<
 	GenericTarget extends Expression = Expression,
-> extends _Expression<"selector"> {
+> extends DModeling.ObjectTagWithGroup<"selector", ExpressionGroup> {
 	target: GenericTarget;
 	identifier: Identifier;
 }
@@ -20,31 +19,31 @@ export function selectorExpression<
 	},
 ) {
 	return DModeling.createTaggedObjectFactory<SelectorExpression<GenericTarget>>(
-		"[node][expression]:selector",
+		"[node][expression]selector",
 	)(properties);
 }
 
 export type MethodExpressionReceiver = TypeReference | Type;
 
-export interface MethodExpression extends _Expression<"method"> {
+export interface MethodExpression extends DModeling.ObjectTagWithGroup<"method", ExpressionGroup> {
 	receiverType: MethodExpressionReceiver;
 	identifier: Identifier;
 }
 
 export const methodExpression = DModeling.createTaggedObjectFactory<
 	MethodExpression
->("[node][expression]:method");
+>("[node][expression]method");
 
-export interface IndexExpression extends _Expression<"index"> {
+export interface IndexExpression extends DModeling.ObjectTagWithGroup<"index", ExpressionGroup> {
 	target: Expression;
 	index: Expression;
 }
 
 export const indexExpression = DModeling.createTaggedObjectFactory<
 	IndexExpression
->("[node][expression]:index");
+>("[node][expression]index");
 
-export interface SliceExpression extends _Expression<"slice"> {
+export interface SliceExpression extends DModeling.ObjectTagWithGroup<"slice", ExpressionGroup> {
 	target: Expression;
 	low?: Expression;
 	high?: Expression;
@@ -52,9 +51,9 @@ export interface SliceExpression extends _Expression<"slice"> {
 
 export const sliceExpression = DModeling.createTaggedObjectFactory<
 	SliceExpression
->("[node][expression]:slice");
+>("[node][expression]slice");
 
-export interface FullSliceExpression extends _Expression<"slice-full"> {
+export interface FullSliceExpression extends DModeling.ObjectTagWithGroup<"slice-full", ExpressionGroup> {
 	target: Expression;
 	low?: Expression;
 	high: Expression;
@@ -63,15 +62,15 @@ export interface FullSliceExpression extends _Expression<"slice-full"> {
 
 export const fullSliceExpression = DModeling.createTaggedObjectFactory<
 	FullSliceExpression
->("[node][expression]:slice-full");
+>("[node][expression]slice-full");
 
 export type TypeAssertionType = TypeReference | Type;
 
-export interface TypeAssertionExpression extends _Expression<"type-assertion"> {
+export interface TypeAssertionExpression extends DModeling.ObjectTagWithGroup<"type-assertion", ExpressionGroup> {
 	target: Expression;
 	typeReference: TypeAssertionType;
 }
 
 export const typeAssertionExpression = DModeling.createTaggedObjectFactory<
 	TypeAssertionExpression
->("[node][expression]:type-assertion");
+>("[node][expression]type-assertion");

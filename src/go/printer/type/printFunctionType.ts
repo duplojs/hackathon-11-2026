@@ -1,5 +1,5 @@
-import { type FunctionType } from "../../AST/type/function";
-import { createNodePrinter } from "../createNodePrinter";
+import { type FunctionType } from "../../AST/type";
+import { createNodePrinter } from "..";
 import { renderParameters } from "./renderParameters";
 import { renderReturnTypes } from "./renderReturnTypes";
 

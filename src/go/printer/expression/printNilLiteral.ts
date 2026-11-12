@@ -1,5 +1,5 @@
-import { type NilLiteral } from "../../AST/expression/literal";
-import { createNodePrinter } from "../createNodePrinter";
+import { type NilLiteral } from "../../AST/expression";
+import { createNodePrinter } from "..";
 
 export const printNilLiteral = createNodePrinter<NilLiteral>(
 	() => "nil",

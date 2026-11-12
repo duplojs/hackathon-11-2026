@@ -1,6 +1,6 @@
 import * as DModeling from "@duplojs/lang/modeling";
-import { type _Type, type Type } from "./base";
-import { type TypeReference } from "./reference";
+import { type TypeReference } from "../common";
+import { type Type, type TypeGroup } from "./base";
 
 export type PointerTarget = (
 	| TypeReference
@@ -9,7 +9,7 @@ export type PointerTarget = (
 
 export interface PointerType<
 	GenericTarget extends PointerTarget = PointerTarget,
-> extends _Type<"pointer"> {
+> extends DModeling.ObjectTagWithGroup<"pointer", TypeGroup> {
 	typeReference: GenericTarget;
 }
 
@@ -19,6 +19,6 @@ export function pointerType<
 	properties: { typeReference: GenericTarget },
 ) {
 	return DModeling.createTaggedObjectFactory<PointerType<GenericTarget>>(
-		"[node][type]:pointer",
+		"[node][type]pointer",
 	)(properties);
 }

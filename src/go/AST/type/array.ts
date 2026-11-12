@@ -1,7 +1,7 @@
 import * as DModeling from "@duplojs/lang/modeling";
-import { type ConstantExpression } from "../expression/constant";
-import { type _Type, type Type } from "./base";
-import { type TypeReference } from "./reference";
+import { type TypeReference } from "../common";
+import { type Type, type TypeGroup } from "./base";
+import { type ConstantExpression } from "../expression";
 
 export type ArrayLength = ConstantExpression;
 
@@ -10,11 +10,11 @@ export type ArrayElementType = (
 	| Type
 );
 
-export interface ArrayType extends _Type<"array"> {
+export interface ArrayType extends DModeling.ObjectTagWithGroup<"array", TypeGroup> {
 	length: ArrayLength;
 	elementType: ArrayElementType;
 }
 
 export const arrayType = DModeling.createTaggedObjectFactory<
 	ArrayType
->("[node][type]:array");
+>("[node][type]array");

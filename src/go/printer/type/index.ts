@@ -1,5 +1,4 @@
 export * from "./printArrayType";
-export * from "./printBuiltinTypeReference";
 export * from "./printChannelType";
 export * from "./printTypeConstraint";
 export * from "./printFunctionType";
@@ -14,3 +13,6 @@ export * from "./printSliceType";
 export * from "./printStructField";
 export * from "./printStructEmbeddedField";
 export * from "./printStructType";
+export * from "./renderParameters";
+export * from "./renderReturnTypes";
+export * from "./renderTypeParameters";

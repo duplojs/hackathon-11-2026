@@ -1,15 +1,17 @@
-import { type _Node } from "../base";
-import { type LocalDeclaration } from "../declaration/base";
-import { type AssignmentStatement, type CompoundAssignmentStatement, type ShortVariableDeclarationStatement } from "./assignment";
-import { type BlockStatement } from "./block";
-import { type GoStatement, type DeferStatement } from "./call";
-import { type SendStatement } from "./channel";
-import { type ExpressionStatement } from "./expression";
-import { type ForStatement, type RangeStatement } from "./for";
+import type * as DModeling from "@duplojs/lang/modeling";
+import { type NodeGroup } from "..";
 import { type IfStatement } from "./if";
-import { type BreakStatement, type ContinueStatement, type FallthroughStatement, type GotoStatement, type LabeledStatement, type ReturnStatement } from "./jump";
+import { type ExpressionStatement } from "./expression";
+import { type GoStatement, type DeferStatement } from "./call";
+import { type BlockStatement } from "./block";
 import { type SelectStatement } from "./select";
+import { type ForStatement } from "./for";
+import { type RangeStatement } from "./range";
+import { type AssignmentStatement, type CompoundAssignmentStatement, type ShortVariableDeclarationStatement } from "./assignment";
 import { type ExpressionSwitchStatement, type TypeSwitchStatement } from "./switch";
+import { type ReturnStatement, type BreakStatement, type ContinueStatement, type GotoStatement, type FallthroughStatement, type LabeledStatement } from "./jump";
+import { type SendStatement } from "./channel";
+import { type VariableDeclarationZeroValue, type VariableDeclarationInitialized, type TypeDeclaration, type TypeAliasDeclaration, type ConstantDeclaration } from "../common";
 
 export type SimpleStatement = (
 	| ExpressionStatement
@@ -20,7 +22,11 @@ export type SimpleStatement = (
 );
 
 export type Statement = (
-	| LocalDeclaration
+	| VariableDeclarationZeroValue
+	| VariableDeclarationInitialized
+	| ConstantDeclaration
+	| TypeDeclaration
+	| TypeAliasDeclaration
 	| SimpleStatement
 	| BlockStatement
 	| GoStatement
@@ -39,8 +45,7 @@ export type Statement = (
 	| SelectStatement
 );
 
-export interface _Statement<
-	GenericNodeName extends string = string,
-> extends _Node<GenericNodeName, "statement"> {
-
-}
+export type StatementGroup = readonly [
+	NodeGroup,
+	DModeling.ObjectTagGroup<"statement">,
+];

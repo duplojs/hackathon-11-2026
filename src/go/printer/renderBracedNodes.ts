@@ -1,5 +1,5 @@
 import * as DPrinter from "@duplojs/lang/printer";
-import { type Node } from "../AST/base";
+import { type Node } from "../AST";
 import { type PrinterContext } from "./context";
 import { renderNodeLines } from "./renderNodeLines";
 

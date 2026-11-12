@@ -1,10 +1,8 @@
 import * as DModeling from "@duplojs/lang/modeling";
 import type * as DArray from "@duplojs/lang/array";
-import { type Identifier } from "../identifier";
-import { type IndexExpression, type SelectorExpression } from "../expression/access";
-import { type Expression } from "../expression/base";
-import { type DereferenceExpression } from "../expression/operator";
-import { type _Statement } from "./base";
+import { type StatementGroup } from "./base";
+import { type Identifier } from "../common";
+import { type Expression, type DereferenceExpression, type SelectorExpression, type IndexExpression } from "../expression";
 
 export type AssignmentTarget = (
 	| Identifier
@@ -13,21 +11,21 @@ export type AssignmentTarget = (
 	| DereferenceExpression
 );
 
-export interface AssignmentStatement extends _Statement<"assignment"> {
+export interface AssignmentStatement extends DModeling.ObjectTagWithGroup<"assignment", StatementGroup> {
 	targets: readonly AssignmentTarget[] & DArray.MinElements<1>;
 	values: readonly Expression[] & DArray.MinElements<1>;
 }
 
 export const assignmentStatement = DModeling.createTaggedObjectFactory<
 	AssignmentStatement
->("[node][statement]:assignment");
+>("[node][statement]assignment");
 
 export type CompoundAssignmentOperator = (
 	| "+=" | "-=" | "*=" | "/=" | "%="
 	| "&=" | "|=" | "^=" | "&^=" | "<<=" | ">>="
 );
 
-export interface CompoundAssignmentStatement extends _Statement<"assignment-compound"> {
+export interface CompoundAssignmentStatement extends DModeling.ObjectTagWithGroup<"assignment-compound", StatementGroup> {
 	operator: CompoundAssignmentOperator;
 	target: AssignmentTarget;
 	value: Expression;
@@ -35,13 +33,13 @@ export interface CompoundAssignmentStatement extends _Statement<"assignment-comp
 
 export const compoundAssignmentStatement = DModeling.createTaggedObjectFactory<
 	CompoundAssignmentStatement
->("[node][statement]:assignment-compound");
+>("[node][statement]assignment-compound");
 
-export interface ShortVariableDeclarationStatement extends _Statement<"variable-short"> {
+export interface ShortVariableDeclarationStatement extends DModeling.ObjectTagWithGroup<"variable-short", StatementGroup> {
 	identifier: Identifier;
 	initializer: Expression;
 }
 
 export const shortVariableDeclarationStatement = DModeling.createTaggedObjectFactory<
 	ShortVariableDeclarationStatement
->("[node][statement]:variable-short");
+>("[node][statement]variable-short");

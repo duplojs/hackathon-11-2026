@@ -1,10 +1,9 @@
-import { type Identifier } from "../identifier";
-import { type TypeReference } from "../type/reference";
-import { type SelectorExpression } from "./access";
+import { type Identifier, type TypeReference } from "../common";
 import { type CallExpression } from "./call";
+import { type UnaryExpression, type BinaryExpression } from "./operator";
+import { type SelectorExpression } from "./access";
 import { type ConversionExpression } from "./conversion";
 import { type ConstantLiteral } from "./literal";
-import { type BinaryExpression, type UnaryExpression } from "./operator";
 
 // Les noms et appels peuvent désigner des constantes ou des built-ins constants.
 // Leur résolution et la valeur constante du résultat relèvent du compilateur Go.

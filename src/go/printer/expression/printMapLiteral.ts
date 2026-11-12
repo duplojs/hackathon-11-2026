@@ -1,5 +1,5 @@
-import { type MapLiteral } from "../../AST/expression/composite";
-import { createNodePrinter } from "../createNodePrinter";
+import { type MapLiteral } from "../../AST/expression";
+import { createNodePrinter } from "..";
 import { renderCompositeElements } from "./renderCompositeElements";
 
 export const printMapLiteral = createNodePrinter<MapLiteral>(

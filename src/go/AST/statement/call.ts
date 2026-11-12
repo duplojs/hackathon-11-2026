@@ -1,19 +1,19 @@
 import * as DModeling from "@duplojs/lang/modeling";
-import { type CallExpression } from "../expression/call";
-import { type _Statement } from "./base";
+import { type StatementGroup } from "./base";
+import { type CallExpression } from "../expression";
 
-export interface GoStatement extends _Statement<"go"> {
+export interface GoStatement extends DModeling.ObjectTagWithGroup<"go", StatementGroup> {
 	call: CallExpression;
 }
 
 export const goStatement = DModeling.createTaggedObjectFactory<
 	GoStatement
->("[node][statement]:go");
+>("[node][statement]go");
 
-export interface DeferStatement extends _Statement<"defer"> {
+export interface DeferStatement extends DModeling.ObjectTagWithGroup<"defer", StatementGroup> {
 	call: CallExpression;
 }
 
 export const deferStatement = DModeling.createTaggedObjectFactory<
 	DeferStatement
->("[node][statement]:defer");
+>("[node][statement]defer");

@@ -1,7 +1,7 @@
 import * as DArray from "@duplojs/lang/array";
 import * as DPrinter from "@duplojs/lang/printer";
-import { type FunctionParameter } from "../../AST/type/function";
-import { type PrinterContext } from "../context";
+import { type FunctionParameter } from "../../AST/type";
+import { type PrinterContext } from "..";
 
 export function renderParameters(
 	parameters: readonly FunctionParameter[],

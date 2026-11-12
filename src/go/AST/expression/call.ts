@@ -1,13 +1,13 @@
 import * as DModeling from "@duplojs/lang/modeling";
-import { type Type } from "../type/base";
-import { type TypeReference } from "../type/reference";
-import { type _Expression, type Expression } from "./base";
+import { type TypeReference } from "../common";
+import { type Type } from "../type";
+import { type Expression, type ExpressionGroup } from "./base";
 
 export type CallTypeArgument = TypeReference | Type;
 
 export interface CallExpression<
 	GenericCallee extends Expression = Expression,
-> extends _Expression<"call"> {
+> extends DModeling.ObjectTagWithGroup<"call", ExpressionGroup> {
 	callee: GenericCallee;
 	// Premier argument de type pour les built-ins comme make et new.
 	typeArgument?: CallTypeArgument;
@@ -27,6 +27,6 @@ export function callExpression<
 	},
 ) {
 	return DModeling.createTaggedObjectFactory<CallExpression<GenericCallee>>(
-		"[node][expression]:call",
+		"[node][expression]call",
 	)(properties);
 }

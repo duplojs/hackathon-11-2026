@@ -1,6 +1,6 @@
 import * as DPrinter from "@duplojs/lang/printer";
-import { type ForStatement } from "../../AST/statement/for";
-import { createNodePrinter } from "../createNodePrinter";
+import { type ForStatement } from "../../AST/statement";
+import { createNodePrinter } from "..";
 
 export const printForStatement = createNodePrinter<ForStatement>(
 	(node, context) => {

@@ -1,11 +1,8 @@
 import * as DModeling from "@duplojs/lang/modeling";
-import { type Identifier } from "../identifier";
-import { type Type } from "../type/base";
-import { type FunctionParameter, type TypeParameter } from "../type/function";
-import { type PointerType } from "../type/pointer";
-import { type GenericTypeReference, type TypeReference } from "../type/reference";
-import { type BlockStatement } from "../statement/block";
-import { type _Declaration } from "./base";
+import { type BlockStatement } from "../statement";
+import { type Identifier, type TypeReference, type GenericTypeReference } from "../common";
+import { type FunctionParameter, type TypeParameter, type Type, type PointerType } from "../type";
+import { type DeclarationGroup } from "./base";
 
 export type FunctionDeclarationReturnType = (
 	| TypeReference
@@ -30,7 +27,7 @@ export type MethodReceiverType = (
 
 export type MethodReceiver = readonly [identifier: Identifier, typeReference: MethodReceiverType];
 
-export interface FunctionDeclaration extends _Declaration<"function"> {
+export interface FunctionDeclaration extends DModeling.ObjectTagWithGroup<"function", DeclarationGroup> {
 	identifier: Identifier;
 	generic: readonly TypeParameter[];
 	parameters: readonly FunctionParameter[];
@@ -41,9 +38,9 @@ export interface FunctionDeclaration extends _Declaration<"function"> {
 
 export const functionDeclaration = DModeling.createTaggedObjectFactory<
 	FunctionDeclaration
->("[node][declaration]:function");
+>("[node][declaration]function");
 
-export interface MethodDeclaration extends _Declaration<"method"> {
+export interface MethodDeclaration extends DModeling.ObjectTagWithGroup<"method", DeclarationGroup> {
 	identifier: Identifier;
 	receiver: MethodReceiver;
 	generic: readonly TypeParameter[];
@@ -55,4 +52,4 @@ export interface MethodDeclaration extends _Declaration<"method"> {
 
 export const methodDeclaration = DModeling.createTaggedObjectFactory<
 	MethodDeclaration
->("[node][declaration]:method");
+>("[node][declaration]method");

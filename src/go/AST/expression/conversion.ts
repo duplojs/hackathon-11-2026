@@ -1,14 +1,14 @@
 import * as DModeling from "@duplojs/lang/modeling";
-import { type Type } from "../type/base";
-import { type TypeReference } from "../type/reference";
-import { type _Expression, type Expression } from "./base";
+import { type TypeReference } from "../common";
+import { type Type } from "../type";
+import { type Expression, type ExpressionGroup } from "./base";
 
 export type ConversionType = TypeReference | Type;
 
 export interface ConversionExpression<
 	GenericType extends ConversionType = ConversionType,
 	GenericOperand extends Expression = Expression,
-> extends _Expression<"conversion"> {
+> extends DModeling.ObjectTagWithGroup<"conversion", ExpressionGroup> {
 	typeReference: GenericType;
 	operand: GenericOperand;
 }
@@ -23,6 +23,6 @@ export function conversionExpression<
 	},
 ) {
 	return DModeling.createTaggedObjectFactory<ConversionExpression<GenericType, GenericOperand>>(
-		"[node][expression]:conversion",
+		"[node][expression]conversion",
 	)(properties);
 }

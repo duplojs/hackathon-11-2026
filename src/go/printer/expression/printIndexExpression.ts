@@ -1,5 +1,5 @@
-import { type IndexExpression } from "../../AST/expression/access";
-import { createNodePrinter } from "../createNodePrinter";
+import { type IndexExpression } from "../../AST/expression";
+import { createNodePrinter } from "..";
 import { renderOperand } from "./renderOperand";
 
 export const printIndexExpression = createNodePrinter<IndexExpression>(

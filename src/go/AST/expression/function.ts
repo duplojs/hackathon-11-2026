@@ -1,13 +1,12 @@
 import * as DModeling from "@duplojs/lang/modeling";
-import { type BlockStatement } from "../statement/block";
-import { type Type } from "../type/base";
-import { type FunctionParameter } from "../type/function";
-import { type TypeReference } from "../type/reference";
-import { type _Expression } from "./base";
+import { type BlockStatement } from "../statement";
+import { type TypeReference } from "../common";
+import { type FunctionParameter, type Type } from "../type";
+import { type ExpressionGroup } from "./base";
 
 export type FunctionLiteralReturnType = TypeReference | Type;
 
-export interface FunctionLiteral extends _Expression<"literal-function"> {
+export interface FunctionLiteral extends DModeling.ObjectTagWithGroup<"literal-function", ExpressionGroup> {
 	parameters: readonly FunctionParameter[];
 	variadicParameter?: FunctionParameter;
 	returnTypes: readonly FunctionLiteralReturnType[];
@@ -16,4 +15,4 @@ export interface FunctionLiteral extends _Expression<"literal-function"> {
 
 export const functionLiteral = DModeling.createTaggedObjectFactory<
 	FunctionLiteral
->("[node][expression]:literal-function");
+>("[node][expression]literal-function");

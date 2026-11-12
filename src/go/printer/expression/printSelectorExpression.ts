@@ -1,5 +1,5 @@
-import { type SelectorExpression } from "../../AST/expression/access";
-import { createNodePrinter } from "../createNodePrinter";
+import { type SelectorExpression } from "../../AST/expression";
+import { createNodePrinter } from "..";
 import { renderSelectorTarget } from "./renderSelectorTarget";
 
 export const printSelectorExpression = createNodePrinter<SelectorExpression>(
