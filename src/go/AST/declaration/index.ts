@@ -16,4 +16,3 @@ export {
 	variableDeclarationZeroValue,
 } from "../common";
 export * from "./function";
-export * from "./import";

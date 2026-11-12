@@ -4,13 +4,13 @@ import * as GO from "@go";
 export interface CreateFileParams {
 	packageName: GO.AST.Identifier;
 	imports: readonly GO.AST.ImportDeclaration[];
-	topLevelDeclaration: readonly GO.AST.TopLevelDeclaration[];
+	declarations: readonly GO.AST.Declaration[];
 	init: readonly GO.AST.Statement[];
 }
 
 export function createFile(params: CreateFileParams) {
 	const declarations = DArray.push(
-		params.topLevelDeclaration,
+		params.declarations,
 		GO.AST.functionDeclaration({
 			identifier: GO.AST.createIdentifier("init"),
 			generic: [],
@@ -25,6 +25,6 @@ export function createFile(params: CreateFileParams) {
 	return GO.AST.goFile({
 		packageName: params.packageName,
 		imports: params.imports,
-		topLevelDeclarations: declarations,
+		declarations,
 	});
 }

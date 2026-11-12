@@ -1,6 +1,7 @@
 import * as DPrinter from "@duplojs/lang/printer";
-import { type ImportDeclaration } from "../../AST/declaration";
-import { createNodePrinter, escapeQuotedValue } from "..";
+import { type ImportDeclaration } from "../AST/common";
+import { createNodePrinter } from "./createNodePrinter";
+import { escapeQuotedValue } from "./escapeQuotedValue";
 
 export const printImportDeclaration = createNodePrinter<ImportDeclaration>(
 	(node, context) => {

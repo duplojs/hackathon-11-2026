@@ -57,7 +57,7 @@ export function build(
 								alias: GO.AST.createIdentifier("_"),
 							}),
 						],
-						topLevelDeclarations: [
+						declarations: [
 							GO.AST.functionDeclaration({
 								identifier: GO.AST.createIdentifier("main"),
 								generic: [],
@@ -84,16 +84,16 @@ export function build(
 						DGenerator.reduceFrom<CreateFileParams>({
 							packageName: sharedDependencyPackageName,
 							imports: [],
-							topLevelDeclaration: [],
+							declarations: [],
 							init: [],
 						}),
 						({ item, lastValue, nextWithObject }) => nextWithObject(
 							lastValue,
 							{
 								imports: DArray.concat(lastValue.imports, item.imports),
-								topLevelDeclaration: DArray.concat(
-									lastValue.topLevelDeclaration,
-									item.topLevelDeclarations,
+								declarations: DArray.concat(
+									lastValue.declarations,
+									item.declarations,
 								),
 								init: DArray.concat(lastValue.init, item.init),
 							},

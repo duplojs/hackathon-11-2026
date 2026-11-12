@@ -9,7 +9,7 @@ export const printFile = createNodePrinter<GoFile>(
 		const sections = [
 			`package ${context.renderNode(node.packageName)}`,
 			node.imports.length > 0 && renderNodeLines(node.imports, context),
-			node.topLevelDeclarations.length > 0 && renderNodeList(node.topLevelDeclarations, context, "\n\n"),
+			node.declarations.length > 0 && renderNodeList(node.declarations, context, "\n\n"),
 		];
 		return `${DPrinter.renderLine(sections, { joinCharacter: "\n\n" })}\n`;
 	},

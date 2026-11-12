@@ -13,7 +13,7 @@ import { createFile } from "./createFile";
 import { createSourcePackageLayout } from "./sourcePackage";
 
 interface TransformedFileContent {
-	topLevelDeclarations: GO.AST.GoFile["topLevelDeclarations"];
+	declarations: GO.AST.GoFile["declarations"];
 	init: readonly GO.AST.Statement[];
 }
 
@@ -35,7 +35,7 @@ export async function transformSourceFile(
 		sourceFile.statements,
 		DGenerator.asyncReduce(
 			DGenerator.reduceFrom<TransformedFileContent>({
-				topLevelDeclarations: [],
+				declarations: [],
 				init: [],
 			}),
 			async({ item, lastValue, next, exit }) => {
@@ -58,13 +58,13 @@ export async function transformSourceFile(
 
 				if (DModeling.hasTagGroup(result, "declaration")) {
 					return next({
-						topLevelDeclarations: DArray.push(lastValue.topLevelDeclarations, result),
+						declarations: DArray.push(lastValue.declarations, result),
 						init,
 					});
 				}
 
 				return next({
-					topLevelDeclarations: lastValue.topLevelDeclarations,
+					declarations: lastValue.declarations,
 					init: DArray.push(init, result),
 				});
 			},
@@ -100,9 +100,9 @@ export async function transformSourceFile(
 		file: createFile({
 			packageName: context.createSourceIdentifier(fileContext.currentFilePath),
 			imports: DArray.concat(dependencyImports, DArray.from(fileContext.imports)),
-			topLevelDeclaration: DArray.concat(
-				content.topLevelDeclarations,
-				DArray.from(fileContext.topLevelDeclarations),
+			declarations: DArray.concat(
+				content.declarations,
+				DArray.from(fileContext.declarations),
 			),
 			init: content.init,
 		}),

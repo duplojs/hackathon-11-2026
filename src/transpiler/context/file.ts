@@ -8,7 +8,7 @@ export interface FileContext {
 	readonly sourceFile: SourceFile;
 	readonly currentFilePath: string & DPath.Absolute;
 	readonly dependencyFiles: Set<string & DPath.Absolute>;
-	readonly topLevelDeclarations: Set<GO.AST.TopLevelDeclaration>;
+	readonly declarations: Set<GO.AST.Declaration>;
 	readonly imports: Set<GO.AST.ImportDeclaration>;
 }
 
@@ -27,7 +27,7 @@ export function createFileContext(sourceFile: SourceFile) {
 		sourceFile,
 		currentFilePath,
 		dependencyFiles: new Set(),
-		topLevelDeclarations: new Set(),
+		declarations: new Set(),
 		imports: new Set(),
 	};
 

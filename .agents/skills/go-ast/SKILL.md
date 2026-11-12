@@ -19,14 +19,24 @@ L'AST est situé dans `src/go/AST/`.
 
 Il est organisé en domaines :
 
-- `declaration/` : déclarations de variables, constantes, fonctions, méthodes, types et imports.
+- `declaration/` : union `Declaration`, groupe de tags `DeclarationGroup` et nœuds de fonctions et méthodes.
 - `expression/` : expressions, opérations, appels et accès aux valeurs.
 - `statement/` : instructions, affectations et structures de contrôle.
 - `type/` : constructions de types Go.
-- `base.ts` et les structures communes : éléments transversaux.
-- `file.ts` : représentation d'un fichier Go.
+- `common/` : nœuds transversaux, dont les imports, les identifiants, les références de types et les déclarations également utilisables comme instructions.
+- `base.ts` : union exhaustive `Node` et groupe de tags `NodeGroup`.
+- `common/goFile.ts` : représentation d'un fichier Go.
 
-Chaque nœud doit appartenir à un domaine cohérent avec la grammaire de Go.
+Chaque nœud doit appartenir à un domaine cohérent avec son usage. Les déclarations
+de variables, constantes et types sont définies dans `common/` et réexportées
+par `declaration/` et `statement/`.
+
+`Declaration`, défini dans `declaration/base.ts`, regroupe les déclarations
+acceptées dans `GoFile.declarations`, sans règle de placement entre leurs
+catégories. `GoFile.imports` contient séparément les `ImportDeclaration`, définis
+dans `common/import.ts`. Un import porte uniquement le tag `[node]import` et
+n'appartient pas à `Declaration` : le fichier impose son placement avant les
+déclarations.
 
 ## 1. Unions exhaustives
 
@@ -37,21 +47,23 @@ export type Declaration =
   | VariableDeclarationZeroValue
   | VariableDeclarationInitialized
   | ConstantDeclaration
-  | TypeDefinition
-  | TypeAlias;
+  | TypeDeclaration
+  | TypeAliasDeclaration
+  | FunctionDeclaration
+  | MethodDeclaration;
 ```
 
-Les interfaces génériques comme `_Declaration`, `_Expression`, `_Type` et `_Node` servent uniquement à définir des contrats communs.
-
-Elles ne doivent pas remplacer les unions concrètes lors de la composition d'un AST.
+Les groupes de tags `NodeGroup`, `DeclarationGroup`, `ExpressionGroup`,
+`StatementGroup` et `TypeGroup` décrivent l'appartenance des nœuds. Ils ne
+remplacent pas les unions concrètes dans les propriétés de l'AST.
 
 Lorsqu'un nœud est ajouté, l'union correspondante doit être mise à jour.
 
 Composer les sélections locales à partir de groupes sémantiques identifiés :
 
-- `Type`, défini dans `type/base.ts` à côté de `_Type`, regroupe toutes les
+- `Type`, défini dans `type/base.ts`, regroupe toutes les
   constructions de types.
-- `TypeReference`, défini dans `type/reference.ts`, regroupe exactement
+- `TypeReference`, défini dans `common/typeReference.ts`, regroupe exactement
   `Identifier`, `PackageTypeReference` et `GenericTypeReference`. Il n'inclut
   pas les constructions de `Type`.
 
@@ -87,16 +99,20 @@ Si une union est actuellement définie avec `never`, il s'agit d'une implémenta
 
 Chaque nœud concret possède une interface et une factory.
 
-Respecter le mécanisme `createFactory` existant.
+Utiliser `DModeling.createTaggedObjectFactory` et les groupes de tags existants.
 
 ```ts
-export interface ExampleDeclaration extends _Declaration<"example"> {
+import * as DModeling from "@duplojs/lang/modeling";
+import { type Identifier } from "../common";
+import { type DeclarationGroup } from "./base";
+
+export interface ExampleDeclaration extends DModeling.ObjectTagWithGroup<"example", DeclarationGroup> {
   identifier: Identifier;
 }
 
-export const exampleDeclaration = createFactory<
+export const exampleDeclaration = DModeling.createTaggedObjectFactory<
   ExampleDeclaration
->("node-declaration-example");
+>("[node][declaration]example");
 ```
 
 Conventions :
@@ -105,7 +121,7 @@ Conventions :
 - Un discriminant unique porté par `ObjectTag`.
 - Une factory pour chaque nœud concret.
 - Ne pas introduire de classes.
-- Ne pas remplacer `createFactory`.
+- Conserver les tags et leur ordre, cohérents avec les groupes de l'interface.
 - Respecter les conventions de nommage existantes.
 
 ## 3. Composition des nœuds

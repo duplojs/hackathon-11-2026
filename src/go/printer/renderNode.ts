@@ -5,6 +5,7 @@ import * as DeclarationPrinter from "./declaration";
 import * as ExpressionPrinter from "./expression";
 import { printFile } from "./printFile";
 import { printIdentifier } from "./printIdentifier";
+import { printImportDeclaration } from "./printImportDeclaration";
 import * as StatementPrinter from "./statement";
 import * as TypePrinter from "./type";
 
@@ -17,7 +18,6 @@ export function renderNode(node: Node, depth = 0): string {
 		"[node][declaration][statement]constant": DeclarationPrinter.printConstantDeclaration(context),
 		"[node][declaration]function": DeclarationPrinter.printFunctionDeclaration(context),
 		"[node][declaration]method": DeclarationPrinter.printMethodDeclaration(context),
-		"[node][declaration]import": DeclarationPrinter.printImportDeclaration(context),
 		"[node][declaration][statement]type": DeclarationPrinter.printTypeDeclaration(context),
 		"[node][declaration][statement]type-alias": DeclarationPrinter.printTypeAliasDeclaration(context),
 		"[node][declaration][statement]variable-zero-value": DeclarationPrinter.printVariableDeclarationZeroValue(context),
@@ -51,6 +51,7 @@ export function renderNode(node: Node, depth = 0): string {
 		"[node][expression]receive": ExpressionPrinter.printReceiveExpression(context),
 		"[node]file": printFile(context),
 		"[node]identifier": printIdentifier(context),
+		"[node]import": printImportDeclaration(context),
 		"[node][statement]assignment": StatementPrinter.printAssignmentStatement(context),
 		"[node][statement]assignment-compound": StatementPrinter.printCompoundAssignmentStatement(context),
 		"[node][statement]variable-short": StatementPrinter.printShortVariableDeclarationStatement(context),

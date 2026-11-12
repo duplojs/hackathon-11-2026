@@ -3,6 +3,7 @@ export * from "./constantDeclaration";
 export * from "./defaultCase";
 export * from "./goFile";
 export * from "./identifier";
+export * from "./import";
 export * from "./typeConstraint";
 export * from "./typeDeclaration";
 export * from "./typeReference";

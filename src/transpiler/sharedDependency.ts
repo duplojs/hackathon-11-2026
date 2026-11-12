@@ -4,7 +4,7 @@ import { goModulePath } from "./sourcePackage";
 
 export interface SharedDependency extends DModeling.ObjectTag<"SharedDependency"> {
 	readonly imports: readonly GO.AST.ImportDeclaration[];
-	readonly topLevelDeclarations: readonly GO.AST.TopLevelDeclaration[];
+	readonly declarations: readonly GO.AST.Declaration[];
 	readonly init: readonly GO.AST.Statement[];
 }
 

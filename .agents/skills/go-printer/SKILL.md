@@ -33,18 +33,19 @@ de tous les nœuds concrets de l'AST. Ce fichier importe chaque type de nœud
 depuis son module avec des imports de types. Réexporter `Node` par l'index
 de l'AST, qui reste dédié aux réexports.
 
-Inclure les nœuds des quatre domaines ainsi que `GoFile`, `Identifier` et
+Inclure les nœuds des domaines `declaration`, `expression`, `statement`, `type`
+et `common`, dont `GoFile`, `Identifier`, `ImportDeclaration` et
 tous les nœuds auxiliaires taggés : champs, membres d'interface, contraintes,
 éléments de littéraux composites, clauses, liaisons, etc. Vérifier les
-définitions réelles pour couvrir tous les nœuds. `GoFile` et `Identifier`
-appartiennent à `Node` même s'ils n'étendent pas `_Node`.
+définitions réelles pour couvrir tous les nœuds. `ImportDeclaration` porte le
+tag `[node]import`, sans appartenir au groupe `declaration`.
 
 La fonction générale accepte `Node`. Chaque fonction créée par la factory
 transforme un seul type de nœud concret appartenant à `Node` ; sa contrainte
-générique s'appuie sur `Node`. Ne jamais accepter `_Node`, `_Declaration`,
-`_Expression`, `_Statement` ou `_Type` comme substitut à cette union ou à
-ses membres concrets. Conserver les paramétrages structurels utiles des
-nœuds ; l'interdiction ne vise pas tous les génériques TypeScript.
+générique s'appuie sur `Node`. Ne pas remplacer cette union ou ses membres
+concrets par un contrat de groupe de tags. Conserver les paramétrages
+structurels utiles des nœuds ; l'interdiction ne vise pas tous les génériques
+TypeScript.
 
 Les unions grammaticales existantes continuent à contraindre les propriétés
 de l'AST. Le printer ne les élargit pas et ne crée pas un dispatcher de rendu
@@ -96,8 +97,12 @@ Ranger les spécialisations de la factory et leurs renderers dans
 - `type/` : constructions et références de types.
 
 Chaque domaine contient les fonctions créées par la factory pour ses nœuds.
-Placer les nœuds transversaux, comme le fichier et l'identifiant, à un endroit
-commun cohérent. Garder le contrat de contexte, la factory commune et la
+Placer les renderers transversaux à la racine du printer : `printFile.ts`,
+`printIdentifier.ts` et `printImportDeclaration.ts` rendent les nœuds
+correspondants de `AST/common/`. `printFile` rend le package, puis
+`GoFile.imports`, puis `GoFile.declarations`, en conservant l'ordre de chaque
+liste. Les imports restent séparés du domaine des déclarations.
+Garder le contrat de contexte, la factory commune et la
 boucle exhaustive dans les modules transversaux du printer. Les dossiers
 organisent les renderers ; ils n'introduisent pas de dispatchers de domaine.
 
