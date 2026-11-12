@@ -13,9 +13,17 @@ Ne pas modifier le système des transformers pour y parvenir : ni `factory.ts`, 
 
 Si une traduction exige un outil absent des contrats existants, signaler précisément le besoin, son usage et ce qui bloque. Ne pas implémenter cet outil de sa propre initiative, étendre le contexte ou contourner la limite par un helper dans `transformers/`.
 
+## Validation TypeScript acquise
+
+Le build et les transformers partent du principe que le compilateur TypeScript a déjà validé le programme avec la configuration du projet. Considérer les opérations rencontrées comme valides du point de vue de TypeScript. Ne pas refaire ses contrôles de typage, d'état des variables, de nullabilité ou de compatibilité des opérandes et des arguments, ni ajouter des gardes d'exécution pour revérifier ces garanties.
+
+Pour une addition acceptée par TypeScript, traduire l'opération sans exiger à nouveau la preuve que les deux opérandes sont des `string` ou satisfont une autre condition de validité TypeScript. Consulter le checker uniquement lorsque ses informations servent à choisir la représentation ou la sémantique Go adaptée, par exemple pour distinguer addition numérique et concaténation, sans transformer cette consultation en une seconde validation du programme.
+
+Conserver les gardes qui identifient le nœud, le symbole et le domaine pris en charge, ainsi que les refus liés aux limites réelles de traduction vers Go. La validité TypeScript ne garantit pas qu'un transformer existe déjà pour toute opération. Cette hypothèse de validation préalable ne demande pas de modifier le build ou le système des transformers.
+
 ## Responsabilité et granularité des transformers
 
-Chaque transformer porte une tâche précise : reconnaître la forme ou l'opération qu'il prend en charge, vérifier sa compatibilité, puis effectuer sa traduction. Garder cette logique lisible dans le transformer concerné. Ne pas regrouper plusieurs opérations indépendantes dans une grande fonction configurable ni créer une abstraction générique pour anticiper d'autres cas.
+Chaque transformer porte une tâche précise : reconnaître la forme ou l'opération qu'il prend en charge, déterminer si elle relève de son périmètre de traduction, puis effectuer sa traduction. Garder cette logique lisible dans le transformer concerné. Ne pas regrouper plusieurs opérations indépendantes dans une grande fonction configurable ni créer une abstraction générique pour anticiper d'autres cas.
 
 La spécialisation porte sur l'opération, pas sur le code de l'exemple à traduire. Concevoir sa prise en charge pour les variations valides de cette opération : noms locaux et alias d'import, valeurs et formes d'arguments, types compatibles et contexte d'utilisation. Déduire ces informations du nœud, du checker et des transformations enfants ; ne pas figer les noms, valeurs ou structures d'un exemple. Cette généralité reste dans le périmètre de l'opération prise en charge et ne justifie ni un transformer universel ni une factorisation supplémentaire.
 
