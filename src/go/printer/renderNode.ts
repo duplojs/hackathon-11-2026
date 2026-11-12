@@ -4,6 +4,7 @@ import { createPrinterContext } from "./createPrinterContext";
 import * as DeclarationPrinter from "./declaration";
 import * as ExpressionPrinter from "./expression";
 import { printFile } from "./printFile";
+import { printFunctionArgument } from "./printFunctionArgument";
 import { printIdentifier } from "./printIdentifier";
 import { printImportDeclaration } from "./printImportDeclaration";
 import * as StatementPrinter from "./statement";
@@ -15,6 +16,7 @@ export function renderNode(node: Node, depth = 0): string {
 		(child, childDepth = depth) => renderNode(child, childDepth),
 	);
 	return DPattern.matchWithTaggedObject(node, {
+		"[node]function-argument": printFunctionArgument(context),
 		"[node][declaration][statement]constant": DeclarationPrinter.printConstantDeclaration(context),
 		"[node][declaration]function": DeclarationPrinter.printFunctionDeclaration(context),
 		"[node][declaration]method": DeclarationPrinter.printMethodDeclaration(context),

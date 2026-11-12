@@ -1,7 +1,7 @@
 import * as DModeling from "@duplojs/lang/modeling";
 import { type BlockStatement } from "../statement";
-import { type Identifier, type TypeReference, type GenericTypeReference } from "../common";
-import { type FunctionParameter, type TypeParameter, type Type, type PointerType } from "../type";
+import { type Identifier, type TypeReference, type GenericTypeReference, type FunctionArgument } from "../common";
+import { type TypeParameter, type Type, type PointerType } from "../type";
 import { type DeclarationGroup } from "./base";
 
 export type FunctionDeclarationReturnType = (
@@ -30,8 +30,8 @@ export type MethodReceiver = readonly [identifier: Identifier, typeReference: Me
 export interface FunctionDeclaration extends DModeling.ObjectTagWithGroup<"function", DeclarationGroup> {
 	identifier: Identifier;
 	generic: readonly TypeParameter[];
-	parameters: readonly FunctionParameter[];
-	variadicParameter?: FunctionParameter;
+	arguments: readonly FunctionArgument[];
+	variadicArgument?: FunctionArgument;
 	returnTypes: readonly FunctionDeclarationReturnType[];
 	body: BlockStatement;
 }
@@ -44,8 +44,8 @@ export interface MethodDeclaration extends DModeling.ObjectTagWithGroup<"method"
 	identifier: Identifier;
 	receiver: MethodReceiver;
 	generic: readonly TypeParameter[];
-	parameters: readonly FunctionParameter[];
-	variadicParameter?: FunctionParameter;
+	arguments: readonly FunctionArgument[];
+	variadicArgument?: FunctionArgument;
 	returnTypes: readonly MethodDeclarationReturnType[];
 	body: BlockStatement;
 }

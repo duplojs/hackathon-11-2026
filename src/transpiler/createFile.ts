@@ -15,7 +15,7 @@ export function createFile(params: CreateFileParams) {
 			identifier: GoAST.createIdentifier("init"),
 			generic: [],
 			returnTypes: [],
-			parameters: [],
+			arguments: [],
 			body: GoAST.createBlockStatement({
 				statements: params.init,
 			}),

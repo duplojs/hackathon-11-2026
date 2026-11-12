@@ -61,7 +61,7 @@ export function build(
 							GoAST.createFunctionDeclaration({
 								identifier: GoAST.createIdentifier("main"),
 								generic: [],
-								parameters: [],
+								arguments: [],
 								returnTypes: [],
 								body: GoAST.createBlockStatement({ statements: [] }),
 							}),

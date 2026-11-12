@@ -1,12 +1,7 @@
 import * as DModeling from "@duplojs/lang/modeling";
-import { type Identifier, type TypeReference, type TypeConstraint } from "../common";
+import { type Identifier, type TypeReference, type TypeConstraint, type FunctionArgument } from "../common";
 import { type InterfaceUnion } from "./interface";
 import { type Type, type TypeGroup } from "./base";
-
-export type FunctionParameterType = (
-	| TypeReference
-	| Type
-);
 
 export type FunctionReturnType = (
 	| TypeReference
@@ -20,13 +15,11 @@ export type TypeParameterConstraint = (
 	| InterfaceUnion
 );
 
-export type FunctionParameter = readonly [identifier: Identifier, typeReference: FunctionParameterType];
-
 export type TypeParameter = readonly [identifier: Identifier, constraint: TypeParameterConstraint];
 
 export interface FunctionType extends DModeling.ObjectTagWithGroup<"function", TypeGroup> {
-	parameters: readonly FunctionParameter[];
-	variadicParameter?: FunctionParameter;
+	arguments: readonly FunctionArgument[];
+	variadicArgument?: FunctionArgument;
 	returnTypes: readonly FunctionReturnType[];
 }
 

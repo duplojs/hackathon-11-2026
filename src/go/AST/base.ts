@@ -5,10 +5,12 @@ import { type VariableDeclarationZeroValue, type VariableDeclarationInitialized,
 import { type StructField, type StructEmbeddedField, type InterfaceUnion, type InterfaceMethod, type StructType, type FunctionType, type ArrayType, type PointerType, type MapType, type ChannelType, type InterfaceType, type SliceType } from "./type";
 import { type KeyedElement, type FunctionLiteral, type InstantiationExpression, type CallExpression, type ArrayLiteral, type SliceLiteral, type MapLiteral, type StructLiteral, type UnaryExpression, type BinaryExpression, type AddressExpression, type DereferenceExpression, type ReceiveExpression, type SelectorExpression, type MethodExpression, type IndexExpression, type SliceExpression, type FullSliceExpression, type TypeAssertionExpression, type ConversionExpression, type IntegerLiteral, type FloatLiteral, type ImaginaryLiteral, type RuneLiteral, type StringLiteral, type BooleanLiteral, type NilLiteral } from "./expression";
 import { type FunctionDeclaration, type MethodDeclaration } from "./declaration";
+import { type FunctionArgument } from "./common/functionArgument";
 
 export type NodeGroup = DModeling.ObjectTagGroup<"node">;
 
 export type Node = (
+	| FunctionArgument
 	| ConstantDeclaration
 	| FunctionDeclaration
 	| MethodDeclaration
