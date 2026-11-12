@@ -123,7 +123,13 @@ export function transform<
 				DEither.left("notfound-transformer", {
 					kind: TsAST.SyntaxKind[data.kind],
 					parentKind: data.parent ? TsAST.SyntaxKind[data.parent.kind] : undefined,
-					text: data.getText(),
+					text: DCommon.pipe(
+						DEither.safeCallback(() => data.getText()),
+						DEither.whenIsRightOtherwise(
+							DCommon.forward,
+							() => "DisplayError",
+						),
+					),
 					getNode: () => data,
 					filePath: context.file.currentFilePath,
 					projectWorkDirectory: context.transpilation.projectWorkDirectory,

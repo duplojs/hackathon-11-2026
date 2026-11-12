@@ -5,6 +5,7 @@ import { statementTransformers } from "./statement";
 export * from "./declaration";
 export * from "./duplojs";
 export * from "./expression";
+export * from "./shared";
 export * from "./statement";
 export * from "./type";
 
