@@ -9,6 +9,6 @@ export interface RangeStatement extends DModeling.ObjectTagWithGroup<"range", St
 	body: BlockStatement;
 }
 
-export const rangeStatement = DModeling.createTaggedObjectFactory<
+export const createRangeStatement = DModeling.createTaggedObjectFactory<
 	RangeStatement
 >("[node][statement]range");

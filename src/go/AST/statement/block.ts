@@ -5,6 +5,6 @@ export interface BlockStatement extends DModeling.ObjectTagWithGroup<"block", St
 	statements: readonly Statement[];
 }
 
-export const blockStatement = DModeling.createTaggedObjectFactory<BlockStatement>(
+export const createBlockStatement = DModeling.createTaggedObjectFactory<BlockStatement>(
 	"[node][statement]block",
 );

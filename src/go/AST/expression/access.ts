@@ -10,7 +10,7 @@ export interface SelectorExpression<
 	identifier: Identifier;
 }
 
-export function selectorExpression<
+export function createSelectorExpression<
 	GenericTarget extends Expression,
 >(
 	properties: {
@@ -18,9 +18,10 @@ export function selectorExpression<
 		identifier: Identifier;
 	},
 ) {
-	return DModeling.createTaggedObjectFactory<SelectorExpression<GenericTarget>>(
+	return DModeling.taggedObject<SelectorExpression<GenericTarget>>(
 		"[node][expression]selector",
-	)(properties);
+		properties,
+	);
 }
 
 export type MethodExpressionReceiver = TypeReference | Type;
@@ -30,7 +31,7 @@ export interface MethodExpression extends DModeling.ObjectTagWithGroup<"method",
 	identifier: Identifier;
 }
 
-export const methodExpression = DModeling.createTaggedObjectFactory<
+export const createMethodExpression = DModeling.createTaggedObjectFactory<
 	MethodExpression
 >("[node][expression]method");
 
@@ -39,7 +40,7 @@ export interface IndexExpression extends DModeling.ObjectTagWithGroup<"index", E
 	index: Expression;
 }
 
-export const indexExpression = DModeling.createTaggedObjectFactory<
+export const createIndexExpression = DModeling.createTaggedObjectFactory<
 	IndexExpression
 >("[node][expression]index");
 
@@ -49,7 +50,7 @@ export interface SliceExpression extends DModeling.ObjectTagWithGroup<"slice", E
 	high?: Expression;
 }
 
-export const sliceExpression = DModeling.createTaggedObjectFactory<
+export const createSliceExpression = DModeling.createTaggedObjectFactory<
 	SliceExpression
 >("[node][expression]slice");
 
@@ -60,7 +61,7 @@ export interface FullSliceExpression extends DModeling.ObjectTagWithGroup<"slice
 	max: Expression;
 }
 
-export const fullSliceExpression = DModeling.createTaggedObjectFactory<
+export const createFullSliceExpression = DModeling.createTaggedObjectFactory<
 	FullSliceExpression
 >("[node][expression]slice-full");
 
@@ -71,6 +72,6 @@ export interface TypeAssertionExpression extends DModeling.ObjectTagWithGroup<"t
 	typeReference: TypeAssertionType;
 }
 
-export const typeAssertionExpression = DModeling.createTaggedObjectFactory<
+export const createTypeAssertionExpression = DModeling.createTaggedObjectFactory<
 	TypeAssertionExpression
 >("[node][expression]type-assertion");

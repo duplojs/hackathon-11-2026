@@ -7,6 +7,6 @@ export interface SendStatement extends DModeling.ObjectTagWithGroup<"send", Stat
 	value: Expression;
 }
 
-export const sendStatement = DModeling.createTaggedObjectFactory<
+export const createSendStatement = DModeling.createTaggedObjectFactory<
 	SendStatement
 >("[node][statement]send");

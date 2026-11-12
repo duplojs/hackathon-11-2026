@@ -15,7 +15,7 @@ export interface PackageTypeReference extends DModeling.ObjectTagWithGroup<"type
 	identifier: Identifier;
 }
 
-export const packageTypeReference = DModeling.createTaggedObjectFactory<
+export const createPackageTypeReference = DModeling.createTaggedObjectFactory<
 	PackageTypeReference
 >("[node]type-reference-package");
 
@@ -34,7 +34,7 @@ export interface GenericTypeReference extends DModeling.ObjectTagWithGroup<"type
 	typeArguments: readonly GenericTypeArgument[] & DArray.MinElements<1>;
 }
 
-export const genericTypeReference = DModeling.createTaggedObjectFactory<
+export const createGenericTypeReference = DModeling.createTaggedObjectFactory<
 	GenericTypeReference
 >("[node]type-reference-generic");
 

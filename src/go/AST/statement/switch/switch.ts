@@ -18,7 +18,7 @@ export interface ExpressionSwitchStatementWithoutDefault extends DModeling.Objec
 	cases: readonly ExpressionSwitchCase[];
 }
 
-export const expressionSwitchStatementWithoutDefault = DModeling.createTaggedObjectFactory<
+export const createExpressionSwitchStatementWithoutDefault = DModeling.createTaggedObjectFactory<
 	ExpressionSwitchStatementWithoutDefault
 >("[node][statement]switch-expression-without-default");
 
@@ -31,7 +31,7 @@ export interface ExpressionSwitchStatementWithDefault extends DModeling.ObjectTa
 	casesAfterDefault: readonly ExpressionSwitchCase[];
 }
 
-export const expressionSwitchStatementWithDefault = DModeling.createTaggedObjectFactory<
+export const createExpressionSwitchStatementWithDefault = DModeling.createTaggedObjectFactory<
 	ExpressionSwitchStatementWithDefault
 >("[node][statement]switch-expression-with-default");
 
@@ -50,7 +50,7 @@ export interface TypeSwitchStatementWithoutDefault extends DModeling.ObjectTagWi
 	cases: readonly TypeSwitchCase[];
 }
 
-export const typeSwitchStatementWithoutDefault = DModeling.createTaggedObjectFactory<
+export const createTypeSwitchStatementWithoutDefault = DModeling.createTaggedObjectFactory<
 	TypeSwitchStatementWithoutDefault
 >("[node][statement]switch-type-without-default");
 
@@ -63,6 +63,6 @@ export interface TypeSwitchStatementWithDefault extends DModeling.ObjectTagWithG
 	casesAfterDefault: readonly TypeSwitchCase[];
 }
 
-export const typeSwitchStatementWithDefault = DModeling.createTaggedObjectFactory<
+export const createTypeSwitchStatementWithDefault = DModeling.createTaggedObjectFactory<
 	TypeSwitchStatementWithDefault
 >("[node][statement]switch-type-with-default");

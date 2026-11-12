@@ -10,6 +10,6 @@ export interface IfStatement extends DModeling.ObjectTagWithGroup<"if", Statemen
 	elseBranch?: BlockStatement | IfStatement;
 }
 
-export const ifStatement = DModeling.createTaggedObjectFactory<
+export const createIfStatement = DModeling.createTaggedObjectFactory<
 	IfStatement
 >("[node][statement]if");

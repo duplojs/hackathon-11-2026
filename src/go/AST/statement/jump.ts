@@ -7,7 +7,7 @@ export interface ReturnStatement extends DModeling.ObjectTagWithGroup<"return", 
 	values: readonly Expression[];
 }
 
-export const returnStatement = DModeling.createTaggedObjectFactory<
+export const createReturnStatement = DModeling.createTaggedObjectFactory<
 	ReturnStatement
 >("[node][statement]return");
 
@@ -15,7 +15,7 @@ export interface BreakStatement extends DModeling.ObjectTagWithGroup<"break", St
 	label?: Identifier;
 }
 
-export const breakStatement = DModeling.createTaggedObjectFactory<
+export const createBreakStatement = DModeling.createTaggedObjectFactory<
 	BreakStatement
 >("[node][statement]break");
 
@@ -23,7 +23,7 @@ export interface ContinueStatement extends DModeling.ObjectTagWithGroup<"continu
 	label?: Identifier;
 }
 
-export const continueStatement = DModeling.createTaggedObjectFactory<
+export const createContinueStatement = DModeling.createTaggedObjectFactory<
 	ContinueStatement
 >("[node][statement]continue");
 
@@ -31,7 +31,7 @@ export interface GotoStatement extends DModeling.ObjectTagWithGroup<"goto", Stat
 	label: Identifier;
 }
 
-export const gotoStatement = DModeling.createTaggedObjectFactory<
+export const createGotoStatement = DModeling.createTaggedObjectFactory<
 	GotoStatement
 >("[node][statement]goto");
 
@@ -40,7 +40,7 @@ export interface FallthroughStatement extends DModeling.ObjectTagWithGroup<"fall
 
 }
 
-export const fallthroughStatement = DModeling.createTaggedObjectFactory<
+export const createFallthroughStatement = DModeling.createTaggedObjectFactory<
 	FallthroughStatement
 >("[node][statement]fallthrough");
 
@@ -49,6 +49,6 @@ export interface LabeledStatement extends DModeling.ObjectTagWithGroup<"labeled"
 	statement: Statement;
 }
 
-export const labeledStatement = DModeling.createTaggedObjectFactory<
+export const createLabeledStatement = DModeling.createTaggedObjectFactory<
 	LabeledStatement
 >("[node][statement]labeled");

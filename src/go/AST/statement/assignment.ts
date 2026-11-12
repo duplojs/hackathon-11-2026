@@ -16,7 +16,7 @@ export interface AssignmentStatement extends DModeling.ObjectTagWithGroup<"assig
 	values: readonly Expression[] & DArray.MinElements<1>;
 }
 
-export const assignmentStatement = DModeling.createTaggedObjectFactory<
+export const createAssignmentStatement = DModeling.createTaggedObjectFactory<
 	AssignmentStatement
 >("[node][statement]assignment");
 
@@ -31,7 +31,7 @@ export interface CompoundAssignmentStatement extends DModeling.ObjectTagWithGrou
 	value: Expression;
 }
 
-export const compoundAssignmentStatement = DModeling.createTaggedObjectFactory<
+export const createCompoundAssignmentStatement = DModeling.createTaggedObjectFactory<
 	CompoundAssignmentStatement
 >("[node][statement]assignment-compound");
 
@@ -40,6 +40,6 @@ export interface ShortVariableDeclarationStatement extends DModeling.ObjectTagWi
 	initializer: Expression;
 }
 
-export const shortVariableDeclarationStatement = DModeling.createTaggedObjectFactory<
+export const createShortVariableDeclarationStatement = DModeling.createTaggedObjectFactory<
 	ShortVariableDeclarationStatement
 >("[node][statement]variable-short");

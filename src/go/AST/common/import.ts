@@ -7,6 +7,6 @@ export interface ImportDeclaration extends DModeling.ObjectTagWithGroup<"import"
 	alias?: Identifier | ".";
 }
 
-export const importDeclaration = DModeling.createTaggedObjectFactory<
+export const createImportDeclaration = DModeling.createTaggedObjectFactory<
 	ImportDeclaration
 >("[node]import");

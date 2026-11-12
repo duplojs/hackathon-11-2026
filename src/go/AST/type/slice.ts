@@ -11,6 +11,6 @@ export interface SliceType extends DModeling.ObjectTagWithGroup<"slice", TypeGro
 	elementType: SliceElementType;
 }
 
-export const sliceType = DModeling.createTaggedObjectFactory<
+export const createSliceType = DModeling.createTaggedObjectFactory<
 	SliceType
 >("[node][type]slice");

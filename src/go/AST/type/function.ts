@@ -30,6 +30,6 @@ export interface FunctionType extends DModeling.ObjectTagWithGroup<"function", T
 	returnTypes: readonly FunctionReturnType[];
 }
 
-export const functionType = DModeling.createTaggedObjectFactory<
+export const createFunctionType = DModeling.createTaggedObjectFactory<
 	FunctionType
 >("[node][type]function");

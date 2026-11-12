@@ -15,6 +15,6 @@ export interface ArrayType extends DModeling.ObjectTagWithGroup<"array", TypeGro
 	elementType: ArrayElementType;
 }
 
-export const arrayType = DModeling.createTaggedObjectFactory<
+export const createArrayType = DModeling.createTaggedObjectFactory<
 	ArrayType
 >("[node][type]array");

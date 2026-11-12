@@ -16,7 +16,7 @@ export interface IntegerLiteral extends DModeling.ObjectTagWithGroup<"literal-in
 	value: bigint;
 }
 
-export const integerLiteral = DModeling.createTaggedObjectFactory<
+export const createIntegerLiteral = DModeling.createTaggedObjectFactory<
 	IntegerLiteral
 >("[node][expression]literal-integer");
 
@@ -25,7 +25,7 @@ export interface FloatLiteral extends DModeling.ObjectTagWithGroup<"literal-floa
 	value: string;
 }
 
-export const floatLiteral = DModeling.createTaggedObjectFactory<
+export const createFloatLiteral = DModeling.createTaggedObjectFactory<
 	FloatLiteral
 >("[node][expression]literal-float");
 
@@ -34,7 +34,7 @@ export interface ImaginaryLiteral extends DModeling.ObjectTagWithGroup<"literal-
 	value: string;
 }
 
-export const imaginaryLiteral = DModeling.createTaggedObjectFactory<
+export const createImaginaryLiteral = DModeling.createTaggedObjectFactory<
 	ImaginaryLiteral
 >("[node][expression]literal-imaginary");
 
@@ -43,7 +43,7 @@ export interface RuneLiteral extends DModeling.ObjectTagWithGroup<"literal-rune"
 	value: string;
 }
 
-export const runeLiteral = DModeling.createTaggedObjectFactory<
+export const createRuneLiteral = DModeling.createTaggedObjectFactory<
 	RuneLiteral
 >("[node][expression]literal-rune");
 
@@ -57,7 +57,7 @@ export interface StringLiteral extends DModeling.ObjectTagWithGroup<"literal-str
 	value: string;
 }
 
-export const stringLiteral = DModeling.createTaggedObjectFactory<
+export const createStringLiteral = DModeling.createTaggedObjectFactory<
 	StringLiteral
 >("[node][expression]literal-string");
 
@@ -65,7 +65,7 @@ export interface BooleanLiteral extends DModeling.ObjectTagWithGroup<"literal-bo
 	value: boolean;
 }
 
-export const booleanLiteral = DModeling.createTaggedObjectFactory<
+export const createBooleanLiteral = DModeling.createTaggedObjectFactory<
 	BooleanLiteral
 >("[node][expression]literal-boolean");
 
@@ -73,6 +73,6 @@ export interface NilLiteral extends DModeling.ObjectTagWithGroup<"literal-nil", 
 
 }
 
-export const nilLiteral = DModeling.createTaggedObjectFactory<
+export const createNilLiteral = DModeling.createTaggedObjectFactory<
 	NilLiteral
 >("[node][expression]literal-nil");

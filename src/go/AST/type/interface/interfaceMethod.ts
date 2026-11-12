@@ -15,6 +15,6 @@ export interface InterfaceMethod extends DModeling.ObjectTagWithGroup<"interface
 	returnTypes: readonly InterfaceMethodReturnType[];
 }
 
-export const interfaceMethod = DModeling.createTaggedObjectFactory<
+export const createInterfaceMethod = DModeling.createTaggedObjectFactory<
 	InterfaceMethod
 >("[node]interface-method");

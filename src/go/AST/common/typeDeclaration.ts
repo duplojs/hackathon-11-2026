@@ -25,7 +25,7 @@ export interface TypeDeclaration extends DModeling.ObjectTagWithGroup<
 	type: TypeDefinitionType;
 }
 
-export const typeDefinition = DModeling.createTaggedObjectFactory<
+export const createTypeDefinition = DModeling.createTaggedObjectFactory<
 	TypeDeclaration
 >("[node][declaration][statement]type");
 
@@ -38,6 +38,6 @@ export interface TypeAliasDeclaration extends DModeling.ObjectTagWithGroup<
 	type: TypeAliasType;
 }
 
-export const typeAlias = DModeling.createTaggedObjectFactory<
+export const createTypeAlias = DModeling.createTaggedObjectFactory<
 	TypeAliasDeclaration
 >("[node][declaration][statement]type-alias");

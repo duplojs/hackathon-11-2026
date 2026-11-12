@@ -11,18 +11,18 @@ export interface CreateFileParams {
 export function createFile(params: CreateFileParams) {
 	const declarations = DArray.push(
 		params.declarations,
-		GoAST.functionDeclaration({
+		GoAST.createFunctionDeclaration({
 			identifier: GoAST.createIdentifier("init"),
 			generic: [],
 			returnTypes: [],
 			parameters: [],
-			body: GoAST.blockStatement({
+			body: GoAST.createBlockStatement({
 				statements: params.init,
 			}),
 		}),
 	);
 
-	return GoAST.goFile({
+	return GoAST.createGoFile({
 		packageName: params.packageName,
 		imports: params.imports,
 		declarations,

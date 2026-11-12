@@ -20,7 +20,7 @@ export interface ArrayLiteral extends DModeling.ObjectTagWithGroup<"literal-arra
 	elements: readonly ArrayLiteralElement[];
 }
 
-export const arrayLiteral = DModeling.createTaggedObjectFactory<
+export const createArrayLiteral = DModeling.createTaggedObjectFactory<
 	ArrayLiteral
 >("[node][expression]literal-array");
 
@@ -33,7 +33,7 @@ export interface SliceLiteral extends DModeling.ObjectTagWithGroup<"literal-slic
 	elements: readonly SliceLiteralElement[];
 }
 
-export const sliceLiteral = DModeling.createTaggedObjectFactory<
+export const createSliceLiteral = DModeling.createTaggedObjectFactory<
 	SliceLiteral
 >("[node][expression]literal-slice");
 
@@ -44,7 +44,7 @@ export interface MapLiteral extends DModeling.ObjectTagWithGroup<"literal-map", 
 	elements: readonly KeyedElement[];
 }
 
-export const mapLiteral = DModeling.createTaggedObjectFactory<
+export const createMapLiteral = DModeling.createTaggedObjectFactory<
 	MapLiteral
 >("[node][expression]literal-map");
 
@@ -58,6 +58,6 @@ export interface StructLiteral extends DModeling.ObjectTagWithGroup<"literal-str
 	elements: readonly Expression[] | readonly KeyedElement<Identifier>[];
 }
 
-export const structLiteral = DModeling.createTaggedObjectFactory<
+export const createStructLiteral = DModeling.createTaggedObjectFactory<
 	StructLiteral
 >("[node][expression]literal-struct");

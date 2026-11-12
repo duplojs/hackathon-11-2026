@@ -93,7 +93,7 @@ export const numericLiteralTransformer: Transformer<GO.AST.FloatLiteral> = creat
 		}
 
 		return context.success({
-			result: GO.AST.floatLiteral({ value: node.text }),
+			result: GO.AST.createFloatLiteral({ value: node.text }),
 		});
 	},
 );
@@ -101,7 +101,7 @@ export const numericLiteralTransformer: Transformer<GO.AST.FloatLiteral> = creat
 
 Le contrat sur la constante coupe le cycle d'inférence entre le transformer, ses appels récursifs et les registres. Laisser `createTransformer` inférer son générique depuis ce contrat, sans le répéter sur la factory ni annoter le retour du callback. Conserver son générique par défaut `never` et son `NoInfer` sur le résultat. À l'intérieur, laisser les valeurs et retours s'inférer.
 
-Construire les nœuds Go via les factories existantes de l'AST. Spécialiser chaque transformer pour une forme ou une opération précise, indépendante d'un exemple particulier. Pour une API de bibliothèque, une fonction précise peut être cette opération ; la reconnaître par résolution de symboles. Consulter le checker pour les types inférés au lieu de les supposer à partir d'un exemple.
+Construire les nœuds Go via les factories `create…` existantes de l'AST. Spécialiser chaque transformer pour une forme ou une opération précise, indépendante d'un exemple particulier. Pour une API de bibliothèque, une fonction précise peut être cette opération ; la reconnaître par résolution de symboles. Consulter le checker pour les types inférés au lieu de les supposer à partir d'un exemple.
 
 Choisir les candidats selon la catégorie Go attendue : `expressionTransformers`, `typeTransformers`, `statementTransformers`, `declarationTransformers`, ou une liste plus restreinte. `sourceFileTransformers` compose déclarations et instructions. Une liste globale indifférenciée permettrait de produire un type là où une instruction est requise.
 
@@ -143,7 +143,7 @@ Lors de la traduction d'un bloc, consommer les préparations de chaque instructi
 Pour ajouter des éléments au niveau du package depuis un transformer, utiliser les ensembles du fichier :
 
 - `context.file.declarations.add(declaration)` pour une déclaration supplémentaire.
-- `context.file.imports.add(importDeclaration)` pour un import manuel.
+- `context.file.imports.add(GO.AST.createImportDeclaration({ path: importPath }))` pour un import manuel.
 
 Ces ajouts sont collectés directement lors de l'assemblage du fichier. Le payload ne transporte ni déclarations supplémentaires ni imports. Les déclarations ajoutées doivent avoir des noms et références cohérents et ne pas dépendre de variables hors de leur portée. Les ensembles de nœuds dédupliquent par identité d'objet, pas par contenu.
 

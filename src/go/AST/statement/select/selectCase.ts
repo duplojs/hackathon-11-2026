@@ -16,6 +16,6 @@ export interface SelectCase extends DModeling.ObjectTagWithGroup<"select-case", 
 	statements: readonly Statement[];
 }
 
-export const selectCase = DModeling.createTaggedObjectFactory<
+export const createSelectCase = DModeling.createTaggedObjectFactory<
 	SelectCase
 >("[node]select-case");

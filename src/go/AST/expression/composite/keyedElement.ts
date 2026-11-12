@@ -9,7 +9,7 @@ export interface KeyedElement<
 	value: Expression;
 }
 
-export function keyedElement<
+export function createKeyedElement<
 	GenericKey extends Expression,
 >(
 	properties: {
@@ -17,7 +17,8 @@ export function keyedElement<
 		value: Expression;
 	},
 ) {
-	return DModeling.createTaggedObjectFactory<KeyedElement<GenericKey>>(
+	return DModeling.taggedObject<KeyedElement<GenericKey>>(
 		"[node]literal-element-keyed",
-	)(properties);
+		properties,
+	);
 }

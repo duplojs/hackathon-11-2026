@@ -12,6 +12,6 @@ export interface ChannelType extends DModeling.ObjectTagWithGroup<"channel", Typ
 	direction: "bidirectional" | "send" | "receive";
 }
 
-export const channelType = DModeling.createTaggedObjectFactory<
+export const createChannelType = DModeling.createTaggedObjectFactory<
 	ChannelType
 >("[node][type]channel");

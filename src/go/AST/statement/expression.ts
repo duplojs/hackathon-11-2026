@@ -8,6 +8,6 @@ export interface ExpressionStatement extends DModeling.ObjectTagWithGroup<"expre
 	expression: StatementExpression;
 }
 
-export const expressionStatement = DModeling.createTaggedObjectFactory<
+export const createExpressionStatement = DModeling.createTaggedObjectFactory<
 	ExpressionStatement
 >("[node][statement]expression");

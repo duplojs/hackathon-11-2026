@@ -13,6 +13,6 @@ export interface FunctionLiteral extends DModeling.ObjectTagWithGroup<"literal-f
 	body: BlockStatement;
 }
 
-export const functionLiteral = DModeling.createTaggedObjectFactory<
+export const createFunctionLiteral = DModeling.createTaggedObjectFactory<
 	FunctionLiteral
 >("[node][expression]literal-function");

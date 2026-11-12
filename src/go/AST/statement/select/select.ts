@@ -14,7 +14,7 @@ export interface SelectStatementWithoutDefault extends DModeling.ObjectTagWithGr
 	cases: readonly SelectCase[];
 }
 
-export const selectStatementWithoutDefault = DModeling.createTaggedObjectFactory<
+export const createSelectStatementWithoutDefault = DModeling.createTaggedObjectFactory<
 	SelectStatementWithoutDefault
 >("[node][statement]select-without-default");
 
@@ -24,6 +24,6 @@ export interface SelectStatementWithDefault extends DModeling.ObjectTagWithGroup
 	casesAfterDefault: readonly SelectCase[];
 }
 
-export const selectStatementWithDefault = DModeling.createTaggedObjectFactory<
+export const createSelectStatementWithDefault = DModeling.createTaggedObjectFactory<
 	SelectStatementWithDefault
 >("[node][statement]select-with-default");

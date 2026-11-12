@@ -49,21 +49,21 @@ export function build(
 				}
 
 				const mainFile = DEither.right("build-main-file", {
-					content: GoPrinter.printGoFile(GoAST.goFile({
+					content: GoPrinter.printGoFile(GoAST.createGoFile({
 						packageName: GoAST.createIdentifier("main"),
 						imports: [
-							GoAST.importDeclaration({
+							GoAST.createImportDeclaration({
 								path: entryPackage.importPath,
 								alias: GoAST.createIdentifier("_"),
 							}),
 						],
 						declarations: [
-							GoAST.functionDeclaration({
+							GoAST.createFunctionDeclaration({
 								identifier: GoAST.createIdentifier("main"),
 								generic: [],
 								parameters: [],
 								returnTypes: [],
-								body: GoAST.blockStatement({ statements: [] }),
+								body: GoAST.createBlockStatement({ statements: [] }),
 							}),
 						],
 					})),

@@ -19,7 +19,7 @@ export interface StructField extends DModeling.ObjectTagWithGroup<"struct-field"
 	tag?: string;
 }
 
-export const structField = DModeling.createTaggedObjectFactory<
+export const createStructField = DModeling.createTaggedObjectFactory<
 	StructField
 >("[node]struct-field");
 
@@ -28,7 +28,7 @@ export interface StructEmbeddedField extends DModeling.ObjectTagWithGroup<"struc
 	tag?: string;
 }
 
-export const structEmbeddedField = DModeling.createTaggedObjectFactory<
+export const createStructEmbeddedField = DModeling.createTaggedObjectFactory<
 	StructEmbeddedField
 >("[node]struct-embedded-field");
 

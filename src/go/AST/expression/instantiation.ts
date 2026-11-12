@@ -14,6 +14,6 @@ export interface InstantiationExpression extends DModeling.ObjectTagWithGroup<"i
 	typeArguments: readonly InstantiationTypeArgument[] & DArray.MinElements<1>;
 }
 
-export const instantiationExpression = DModeling.createTaggedObjectFactory<
+export const createInstantiationExpression = DModeling.createTaggedObjectFactory<
 	InstantiationExpression
 >("[node][expression]instantiation");

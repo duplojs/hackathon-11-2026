@@ -13,6 +13,6 @@ export interface TypeSwitchCase extends DModeling.ObjectTagWithGroup<"switch-cas
 	statements: readonly Statement[];
 }
 
-export const typeSwitchCase = DModeling.createTaggedObjectFactory<
+export const createTypeSwitchCase = DModeling.createTaggedObjectFactory<
 	TypeSwitchCase
 >("[node]switch-case-type");

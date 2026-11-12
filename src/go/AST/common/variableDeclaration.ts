@@ -20,7 +20,7 @@ export interface VariableDeclarationZeroValue extends DModeling.ObjectTagWithGro
 	typeReference: VariableType;
 }
 
-export const variableDeclarationZeroValue = DModeling.createTaggedObjectFactory<
+export const createVariableDeclarationZeroValue = DModeling.createTaggedObjectFactory<
 	VariableDeclarationZeroValue
 >("[node][declaration][statement]variable-zero-value");
 
@@ -33,6 +33,6 @@ export interface VariableDeclarationInitialized extends DModeling.ObjectTagWithG
 	initializer: Expression;
 }
 
-export const variableDeclarationInitialized = DModeling.createTaggedObjectFactory<
+export const createVariableDeclarationInitialized = DModeling.createTaggedObjectFactory<
 	VariableDeclarationInitialized
 >("[node][declaration][statement]variable-initialized");

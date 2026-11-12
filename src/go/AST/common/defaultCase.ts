@@ -6,6 +6,6 @@ export interface DefaultCase extends DModeling.ObjectTagWithGroup<"case-default"
 	statements: readonly Statement[];
 }
 
-export const defaultCase = DModeling.createTaggedObjectFactory<
+export const createDefaultCase = DModeling.createTaggedObjectFactory<
 	DefaultCase
 >("[node]case-default");

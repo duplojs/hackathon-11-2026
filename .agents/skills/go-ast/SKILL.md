@@ -99,7 +99,12 @@ Si une union est actuellement définie avec `never`, il s'agit d'une implémenta
 
 Chaque nœud concret possède une interface et une factory.
 
-Utiliser `DModeling.createTaggedObjectFactory` et les groupes de tags existants.
+Utiliser `DModeling.createTaggedObjectFactory` pour les factories déclarées comme
+constantes, avec les groupes de tags existants. Pour une factory déclarée avec
+`function`, notamment pour conserver des paramètres génériques, appeler directement
+`DModeling.taggedObject<NodeConcret>(tag, properties)` dans son corps. Passer le
+tag en premier argument et les propriétés en second, sans créer une factory
+intermédiaire immédiatement appelée.
 
 ```ts
 import * as DModeling from "@duplojs/lang/modeling";
@@ -110,7 +115,7 @@ export interface ExampleDeclaration extends DModeling.ObjectTagWithGroup<"exampl
   identifier: Identifier;
 }
 
-export const exampleDeclaration = DModeling.createTaggedObjectFactory<
+export const createExampleDeclaration = DModeling.createTaggedObjectFactory<
   ExampleDeclaration
 >("[node][declaration]example");
 ```
@@ -119,7 +124,7 @@ Conventions :
 
 - Une interface par construction syntaxique.
 - Un discriminant unique porté par `ObjectTag`.
-- Une factory pour chaque nœud concret.
+- Une factory pour chaque nœud concret, nommée `create` suivi du nom existant en PascalCase, par exemple `createFunctionDeclaration` ou `createPointerType`.
 - Ne pas introduire de classes.
 - Conserver les tags et leur ordre, cohérents avec les groupes de l'interface.
 - Respecter les conventions de nommage existantes.
@@ -148,7 +153,7 @@ identiques. Lorsqu'un contexte impose des restrictions, définir sa sélection
 et son tuple localement, comme pour le receiver d'une méthode.
 
 Les pointeurs sont des constructions de `Type`. `PointerType` conserve le
-type de sa cible grâce à son paramètre générique et à la factory `pointerType`.
+type de sa cible grâce à son paramètre générique et à la factory `createPointerType`.
 En contexte général, la cible accepte `TypeReference | Type`, donc les
 pointeurs peuvent s'imbriquer. Un champ embarqué de struct accepte seulement
 `TypeReference | PointerType<TypeReference>` ; un receiver utilise sa sélection

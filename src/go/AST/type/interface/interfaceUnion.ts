@@ -14,6 +14,6 @@ export interface InterfaceUnion extends DModeling.ObjectTagWithGroup<"interface-
 	terms: readonly InterfaceUnionTerm[] & DArray.MinElements<1>;
 }
 
-export const typeUnion = DModeling.createTaggedObjectFactory<
+export const createTypeUnion = DModeling.createTaggedObjectFactory<
 	InterfaceUnion
 >("[node]interface-union");

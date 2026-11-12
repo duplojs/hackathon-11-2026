@@ -8,7 +8,7 @@ export interface RangeAssignment extends DModeling.ObjectTagWithGroup<"range-ass
 	value?: AssignmentTarget;
 }
 
-export const rangeAssignment = DModeling.createTaggedObjectFactory<
+export const createRangeAssignment = DModeling.createTaggedObjectFactory<
 	RangeAssignment
 >("[node]range-assignment");
 
@@ -17,7 +17,7 @@ export interface RangeDeclaration extends DModeling.ObjectTagWithGroup<"range-de
 	value?: Identifier;
 }
 
-export const rangeDeclaration = DModeling.createTaggedObjectFactory<
+export const createRangeDeclaration = DModeling.createTaggedObjectFactory<
 	RangeDeclaration
 >("[node]range-declaration");
 

@@ -20,7 +20,7 @@ export interface UnaryExpression<
 	operand: GenericOperand;
 }
 
-export function unaryExpression<
+export function createUnaryExpression<
 	GenericOperand extends Expression,
 >(
 	properties: {
@@ -28,9 +28,10 @@ export function unaryExpression<
 		operand: GenericOperand;
 	},
 ) {
-	return DModeling.createTaggedObjectFactory<UnaryExpression<GenericOperand>>(
+	return DModeling.taggedObject<UnaryExpression<GenericOperand>>(
 		"[node][expression]unary",
-	)(properties);
+		properties,
+	);
 }
 
 export interface BinaryExpression<
@@ -41,7 +42,7 @@ export interface BinaryExpression<
 	right: GenericOperand;
 }
 
-export function binaryExpression<
+export function createBinaryExpression<
 	GenericLeft extends Expression,
 	GenericRight extends Expression,
 >(
@@ -51,9 +52,10 @@ export function binaryExpression<
 		right: GenericRight;
 	},
 ) {
-	return DModeling.createTaggedObjectFactory<BinaryExpression<GenericLeft | GenericRight>>(
+	return DModeling.taggedObject<BinaryExpression<GenericLeft | GenericRight>>(
 		"[node][expression]binary",
-	)(properties);
+		properties,
+	);
 }
 
 export type AddressOperand = (
@@ -68,7 +70,7 @@ export interface AddressExpression extends DModeling.ObjectTagWithGroup<"address
 	operand: AddressOperand;
 }
 
-export const addressExpression = DModeling.createTaggedObjectFactory<
+export const createAddressExpression = DModeling.createTaggedObjectFactory<
 	AddressExpression
 >("[node][expression]address");
 
@@ -76,7 +78,7 @@ export interface DereferenceExpression extends DModeling.ObjectTagWithGroup<"der
 	operand: Expression;
 }
 
-export const dereferenceExpression = DModeling.createTaggedObjectFactory<
+export const createDereferenceExpression = DModeling.createTaggedObjectFactory<
 	DereferenceExpression
 >("[node][expression]dereference");
 
@@ -84,6 +86,6 @@ export interface ReceiveExpression extends DModeling.ObjectTagWithGroup<"receive
 	operand: Expression;
 }
 
-export const receiveExpression = DModeling.createTaggedObjectFactory<
+export const createReceiveExpression = DModeling.createTaggedObjectFactory<
 	ReceiveExpression
 >("[node][expression]receive");

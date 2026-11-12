@@ -20,6 +20,6 @@ export interface ForStatement extends DModeling.ObjectTagWithGroup<"for", Statem
 	body: BlockStatement;
 }
 
-export const forStatement = DModeling.createTaggedObjectFactory<
+export const createForStatement = DModeling.createTaggedObjectFactory<
 	ForStatement
 >("[node][statement]for");

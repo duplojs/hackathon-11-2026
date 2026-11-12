@@ -13,7 +13,7 @@ export interface ConversionExpression<
 	operand: GenericOperand;
 }
 
-export function conversionExpression<
+export function createConversionExpression<
 	GenericType extends ConversionType,
 	GenericOperand extends Expression,
 >(
@@ -22,7 +22,8 @@ export function conversionExpression<
 		operand: GenericOperand;
 	},
 ) {
-	return DModeling.createTaggedObjectFactory<ConversionExpression<GenericType, GenericOperand>>(
+	return DModeling.taggedObject<ConversionExpression<GenericType, GenericOperand>>(
 		"[node][expression]conversion",
-	)(properties);
+		properties,
+	);
 }

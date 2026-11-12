@@ -14,6 +14,6 @@ export const createSharedDependency = DModeling.createTaggedObjectFactory<Shared
 
 export const sharedDependencyPackageName = GoAST.createIdentifier("shard_dependencies");
 
-export const sharedDependencyImportDeclaration = GoAST.importDeclaration({
+export const sharedDependencyImportDeclaration = GoAST.createImportDeclaration({
 	path: `${goModulePath}/${sharedDependencyPackageName.value}`,
 });

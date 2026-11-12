@@ -17,6 +17,6 @@ export interface ConstantDeclaration extends DModeling.ObjectTagWithGroup<
 	initializer: ConstantExpression;
 }
 
-export const constantDeclaration = DModeling.createTaggedObjectFactory<
+export const createConstantDeclaration = DModeling.createTaggedObjectFactory<
 	ConstantDeclaration
 >("[node][declaration][statement]constant");

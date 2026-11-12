@@ -18,6 +18,6 @@ export interface TypeConstraint extends DModeling.ObjectTagWithGroup<"type-const
 	typeReference: TypeConstraintTarget;
 }
 
-export const typeConstraint = DModeling.createTaggedObjectFactory<
+export const createTypeConstraint = DModeling.createTaggedObjectFactory<
 	TypeConstraint
 >("[node]type-constraint");

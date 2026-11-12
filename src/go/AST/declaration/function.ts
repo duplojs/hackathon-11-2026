@@ -36,7 +36,7 @@ export interface FunctionDeclaration extends DModeling.ObjectTagWithGroup<"funct
 	body: BlockStatement;
 }
 
-export const functionDeclaration = DModeling.createTaggedObjectFactory<
+export const createFunctionDeclaration = DModeling.createTaggedObjectFactory<
 	FunctionDeclaration
 >("[node][declaration]function");
 
@@ -50,6 +50,6 @@ export interface MethodDeclaration extends DModeling.ObjectTagWithGroup<"method"
 	body: BlockStatement;
 }
 
-export const methodDeclaration = DModeling.createTaggedObjectFactory<
+export const createMethodDeclaration = DModeling.createTaggedObjectFactory<
 	MethodDeclaration
 >("[node][declaration]method");

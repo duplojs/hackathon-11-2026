@@ -6,6 +6,6 @@ export interface StructType extends DModeling.ObjectTagWithGroup<"struct", TypeG
 	fields: readonly StructMember[];
 }
 
-export const structType = DModeling.createTaggedObjectFactory<
+export const createStructType = DModeling.createTaggedObjectFactory<
 	StructType
 >("[node][type]struct");

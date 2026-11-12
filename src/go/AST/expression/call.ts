@@ -9,14 +9,12 @@ export interface CallExpression<
 	GenericCallee extends Expression = Expression,
 > extends DModeling.ObjectTagWithGroup<"call", ExpressionGroup> {
 	callee: GenericCallee;
-	// Premier argument de type pour les built-ins comme make et new.
 	typeArgument?: CallTypeArgument;
 	arguments: readonly Expression[];
-	// Argument final développé avec ... après les arguments ordinaires.
 	variadicArgument?: Expression;
 }
 
-export function callExpression<
+export function createCallExpression<
 	GenericCallee extends Expression,
 >(
 	properties: {
@@ -26,7 +24,8 @@ export function callExpression<
 		variadicArgument?: Expression;
 	},
 ) {
-	return DModeling.createTaggedObjectFactory<CallExpression<GenericCallee>>(
+	return DModeling.taggedObject<CallExpression<GenericCallee>>(
 		"[node][expression]call",
-	)(properties);
+		properties,
+	);
 }

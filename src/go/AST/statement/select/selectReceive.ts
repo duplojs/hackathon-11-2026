@@ -10,7 +10,7 @@ export interface SelectReceiveAssignment extends DModeling.ObjectTagWithGroup<"s
 	receive: ReceiveExpression;
 }
 
-export const selectReceiveAssignment = DModeling.createTaggedObjectFactory<
+export const createSelectReceiveAssignment = DModeling.createTaggedObjectFactory<
 	SelectReceiveAssignment
 >("[node]select-receive-assignment");
 
@@ -20,6 +20,6 @@ export interface SelectReceiveDeclaration extends DModeling.ObjectTagWithGroup<"
 	receive: ReceiveExpression;
 }
 
-export const selectReceiveDeclaration = DModeling.createTaggedObjectFactory<
+export const createSelectReceiveDeclaration = DModeling.createTaggedObjectFactory<
 	SelectReceiveDeclaration
 >("[node]select-receive-declaration");

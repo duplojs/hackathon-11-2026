@@ -6,7 +6,7 @@ export interface GoStatement extends DModeling.ObjectTagWithGroup<"go", Statemen
 	call: CallExpression;
 }
 
-export const goStatement = DModeling.createTaggedObjectFactory<
+export const createGoStatement = DModeling.createTaggedObjectFactory<
 	GoStatement
 >("[node][statement]go");
 
@@ -14,6 +14,6 @@ export interface DeferStatement extends DModeling.ObjectTagWithGroup<"defer", St
 	call: CallExpression;
 }
 
-export const deferStatement = DModeling.createTaggedObjectFactory<
+export const createDeferStatement = DModeling.createTaggedObjectFactory<
 	DeferStatement
 >("[node][statement]defer");

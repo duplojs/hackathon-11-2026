@@ -1,6 +1,6 @@
 export type * from "./base";
 export {
-	constantDeclaration,
+	createConstantDeclaration,
 	type ConstantDeclaration,
 	type ConstantExpression,
 	type TypeAliasDeclaration,
@@ -10,9 +10,9 @@ export {
 	type VariableDeclarationInitialized,
 	type VariableDeclarationZeroValue,
 	type VariableType,
-	typeAlias,
-	typeDefinition,
-	variableDeclarationInitialized,
-	variableDeclarationZeroValue,
+	createTypeAlias,
+	createTypeDefinition,
+	createVariableDeclarationInitialized,
+	createVariableDeclarationZeroValue,
 } from "../common";
 export * from "./function";

@@ -13,12 +13,13 @@ export interface PointerType<
 	typeReference: GenericTarget;
 }
 
-export function pointerType<
+export function createPointerType<
 	GenericTarget extends PointerTarget,
 >(
 	properties: { typeReference: GenericTarget },
 ) {
-	return DModeling.createTaggedObjectFactory<PointerType<GenericTarget>>(
+	return DModeling.taggedObject<PointerType<GenericTarget>>(
 		"[node][type]pointer",
-	)(properties);
+		properties,
+	);
 }

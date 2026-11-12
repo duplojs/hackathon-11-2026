@@ -16,6 +16,6 @@ export interface InterfaceType extends DModeling.ObjectTagWithGroup<"interface",
 	elements: readonly InterfaceElement[];
 }
 
-export const interfaceType = DModeling.createTaggedObjectFactory<
+export const createInterfaceType = DModeling.createTaggedObjectFactory<
 	InterfaceType
 >("[node][type]interface");

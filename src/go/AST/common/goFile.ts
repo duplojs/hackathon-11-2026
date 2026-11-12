@@ -10,6 +10,6 @@ export interface GoFile extends DModeling.ObjectTagWithGroup<"file", NodeGroup> 
 	declarations: readonly Declaration[];
 }
 
-export const goFile = DModeling.createTaggedObjectFactory<GoFile>(
+export const createGoFile = DModeling.createTaggedObjectFactory<GoFile>(
 	"[node]file",
 );

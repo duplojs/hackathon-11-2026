@@ -87,7 +87,7 @@ export async function transformSourceFile(
 				if (DEither.isLeft(sourcePackage)) {
 					return exit(sourcePackage);
 				}
-				return next(DArray.push(lastValue, GoAST.importDeclaration({ path: sourcePackage.importPath })));
+				return next(DArray.push(lastValue, GoAST.createImportDeclaration({ path: sourcePackage.importPath })));
 			},
 		),
 	);

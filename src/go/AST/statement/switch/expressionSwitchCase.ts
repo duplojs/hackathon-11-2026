@@ -9,6 +9,6 @@ export interface ExpressionSwitchCase extends DModeling.ObjectTagWithGroup<"swit
 	statements: readonly Statement[];
 }
 
-export const expressionSwitchCase = DModeling.createTaggedObjectFactory<
+export const createExpressionSwitchCase = DModeling.createTaggedObjectFactory<
 	ExpressionSwitchCase
 >("[node]switch-case-expression");

@@ -26,6 +26,6 @@ export interface MapType extends DModeling.ObjectTagWithGroup<"map", TypeGroup> 
 	valueType: MapValueType;
 }
 
-export const mapType = DModeling.createTaggedObjectFactory<
+export const createMapType = DModeling.createTaggedObjectFactory<
 	MapType
 >("[node][type]map");
