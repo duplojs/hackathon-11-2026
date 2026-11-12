@@ -1,4 +1,5 @@
 import * as DModeling from "@duplojs/lang/modeling";
+import * as DCommon from "@duplojs/lang/common";
 import type * as DArray from "@duplojs/lang/array";
 import { type StatementGroup } from "./base";
 import { type Identifier } from "../common";
@@ -20,10 +21,21 @@ export const createAssignmentStatement = DModeling.createTaggedObjectFactory<
 	AssignmentStatement
 >("[node][statement]assignment");
 
-export type CompoundAssignmentOperator = (
-	| "+=" | "-=" | "*=" | "/=" | "%="
-	| "&=" | "|=" | "^=" | "&^=" | "<<=" | ">>="
-);
+export const compoundAssignmentOperators = DCommon.createEnum([
+	"+=",
+	"-=",
+	"*=",
+	"/=",
+	"%=",
+	"&=",
+	"|=",
+	"^=",
+	"&^=",
+	"<<=",
+	">>=",
+]);
+
+export type CompoundAssignmentOperator = DCommon.GetEnumValue<typeof compoundAssignmentOperators>;
 
 export interface CompoundAssignmentStatement extends DModeling.ObjectTagWithGroup<"assignment-compound", StatementGroup> {
 	operator: CompoundAssignmentOperator;

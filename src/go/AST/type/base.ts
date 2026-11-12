@@ -1,5 +1,5 @@
 import type * as DModeling from "@duplojs/lang/modeling";
-import { type NodeGroup } from "..";
+import { type Identifier, type NodeGroup } from "..";
 import { type StructType } from "./struct";
 import { type FunctionType } from "./function";
 import { type ArrayType } from "./array";
@@ -10,6 +10,7 @@ import { type InterfaceType } from "./interface";
 import { type SliceType } from "./slice";
 
 export type Type = (
+	| Identifier
 	| ArrayType
 	| ChannelType
 	| FunctionType

@@ -1,4 +1,5 @@
 import * as DModeling from "@duplojs/lang/modeling";
+import * as DCommon from "@duplojs/lang/common";
 import { type ExpressionGroup } from "./base";
 
 export type ConstantLiteral = (
@@ -47,7 +48,12 @@ export const createRuneLiteral = DModeling.createTaggedObjectFactory<
 	RuneLiteral
 >("[node][expression]literal-rune");
 
-export type StringLiteralMode = "text" | "bytes";
+export const stringLiteralModes = DCommon.createEnum([
+	"text",
+	"bytes",
+]);
+
+export type StringLiteralMode = DCommon.GetEnumValue<typeof stringLiteralModes>;
 
 export interface StringLiteral extends DModeling.ObjectTagWithGroup<"literal-string", ExpressionGroup> {
 	mode?: StringLiteralMode;

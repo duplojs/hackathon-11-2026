@@ -1,17 +1,42 @@
 import * as DModeling from "@duplojs/lang/modeling";
+import * as DCommon from "@duplojs/lang/common";
 import { type Identifier } from "../common";
 import { type Expression, type ExpressionGroup } from "./base";
 import { type CompositeLiteral } from "./composite";
 import { type SelectorExpression, type IndexExpression } from "./access";
 
-export type UnaryOperator = "+" | "-" | "!" | "^";
+export const unaryOperators = DCommon.createEnum([
+	"+",
+	"-",
+	"!",
+	"^",
+]);
 
-export type BinaryOperator = (
-	| "+" | "-" | "*" | "/" | "%"
-	| "&" | "|" | "^" | "&^" | "<<" | ">>"
-	| "&&" | "||"
-	| "==" | "!=" | "<" | "<=" | ">" | ">="
-);
+export type UnaryOperator = DCommon.GetEnumValue<typeof unaryOperators>;
+
+export const binaryOperators = DCommon.createEnum([
+	"+",
+	"-",
+	"*",
+	"/",
+	"%",
+	"&",
+	"|",
+	"^",
+	"&^",
+	"<<",
+	">>",
+	"&&",
+	"||",
+	"==",
+	"!=",
+	"<",
+	"<=",
+	">",
+	">=",
+]);
+
+export type BinaryOperator = DCommon.GetEnumValue<typeof binaryOperators>;
 
 export interface UnaryExpression<
 	GenericOperand extends Expression = Expression,
