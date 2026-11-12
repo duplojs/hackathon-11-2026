@@ -2,21 +2,21 @@ import * as DCommon from "@duplojs/lang/common";
 import * as DEither from "@duplojs/lang/either";
 import * as DModeling from "@duplojs/lang/modeling";
 import type { GoAST } from "@go";
-import type { TsAST } from "@typescript";
+import { TsAST } from "@typescript";
 import type { BuildContext } from "./context/build";
 import * as DGenerator from "@duplojs/lang/generator";
 import type * as DArray from "@duplojs/lang/array";
 import type * as DPath from "@duplojs/lang/path";
 
 export interface TransformationSuccessPayload<
-	GenericGoNode extends GoAST.Node,
+	GenericGoNode extends GoAST.Node = GoAST.Node,
 > {
 	result: GenericGoNode;
 	before: readonly GoAST.Statement[];
 }
 
 export type TransformationSuccess<
-	GenericGoNode extends GoAST.Node,
+	GenericGoNode extends GoAST.Node = GoAST.Node,
 > = DEither.Right<
 	"transformation-success",
 	TransformationSuccessPayload<GenericGoNode>
@@ -28,16 +28,18 @@ export interface TransformationDiagnosticContext {
 }
 
 export interface TransformationErrorPayload extends TransformationDiagnosticContext {
-	readonly node: TsAST.Node;
-	readonly content: unknown;
-}
-
-export interface TransformationNotSupportedPayload extends TransformationDiagnosticContext {
+	readonly kind: string;
+	readonly parentKind: string | undefined;
+	readonly text: string;
+	getNode(): TsAST.Node;
 	readonly content: unknown;
 }
 
 export interface NotfoundTransformerPayload extends TransformationDiagnosticContext {
-	readonly node: TsAST.Node;
+	readonly kind: string;
+	readonly parentKind: string | undefined;
+	readonly text: string;
+	getNode(): TsAST.Node;
 }
 
 export type TransformationError = DEither.Left<
@@ -47,7 +49,7 @@ export type TransformationError = DEither.Left<
 
 export type TransformationNotSupported = DEither.Left<
 	"transformation-not-supported",
-	TransformationNotSupportedPayload
+	undefined
 >;
 
 export type NotfoundTransformer = DEither.Left<
@@ -119,7 +121,10 @@ export function transform<
 		DGenerator.asyncReduce(
 			DGenerator.reduceFrom<NotfoundTransformer>(
 				DEither.left("notfound-transformer", {
-					node: data,
+					kind: TsAST.SyntaxKind[data.kind],
+					parentKind: data.parent ? TsAST.SyntaxKind[data.parent.kind] : undefined,
+					text: data.getText(),
+					getNode: () => data,
 					filePath: context.file.currentFilePath,
 					projectWorkDirectory: context.transpilation.projectWorkDirectory,
 				}),

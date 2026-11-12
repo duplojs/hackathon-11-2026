@@ -3,7 +3,7 @@ import * as DEither from "@duplojs/lang/either";
 import type * as DObject from "@duplojs/lang/object";
 import * as DString from "@duplojs/lang/string";
 import { GoAST } from "@go";
-import type { TsAST } from "@typescript";
+import { TsAST } from "@typescript";
 import type { Symbol } from "typescript/async";
 import { transform, type Transformer, type TransformerResultNode, type NotfoundTransformer, type TransformationError, type TransformationNotSupported, type TransformationSuccess, type TransformationSuccessPayload, sharedDependencyImportDeclaration, sharedDependencyPackageName, type SharedDependency } from "@transformer";
 import type { FileContext } from "./file";
@@ -33,7 +33,7 @@ export interface BuildContext {
 			"before"
 		>
 	): TransformationSuccess<GenericGoNode>;
-	notSupport(content?: unknown): TransformationNotSupported;
+	notSupport(): TransformationNotSupported;
 	error(node: TsAST.Node, content?: unknown): TransformationError;
 	generateIdentifier(): GoAST.Identifier;
 	createSourceIdentifier(value: string): GoAST.Identifier;
@@ -58,7 +58,10 @@ export function createBuildContext(
 		file,
 		transform: (data, transformers) => transform(data, transformers, context),
 		error: (node, content) => DEither.left("transformation-error", {
-			node,
+			kind: TsAST.SyntaxKind[node.kind],
+			parentKind: node.parent ? TsAST.SyntaxKind[node.parent.kind] : undefined,
+			text: node.getText(),
+			getNode: () => node,
 			content,
 			filePath: file.currentFilePath,
 			projectWorkDirectory: transpilation.projectWorkDirectory,
@@ -67,11 +70,7 @@ export function createBuildContext(
 			...payload,
 			before: payload.before ?? [],
 		}),
-		notSupport: (content) => DEither.left("transformation-not-supported", {
-			content,
-			filePath: file.currentFilePath,
-			projectWorkDirectory: transpilation.projectWorkDirectory,
-		}),
+		notSupport: () => DEither.left("transformation-not-supported", undefined),
 		registerSharedDependency: (sharedDependency) => {
 			transpilation.sharedDependencies.add(sharedDependency);
 			file.imports.add(sharedDependencyImportDeclaration);
