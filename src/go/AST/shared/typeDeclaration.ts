@@ -1,8 +1,7 @@
 import * as DModeling from "@duplojs/lang/modeling";
 import { type NodeGroup } from "..";
 import { type StatementGroup } from "../statement";
-import { type Identifier } from "./identifier";
-import { type TypeReference } from "./typeReference";
+import { type Identifier, type TypeReference } from "../common";
 import { type TypeParameter, type Type } from "../type";
 import { type DeclarationGroup } from "../declaration";
 

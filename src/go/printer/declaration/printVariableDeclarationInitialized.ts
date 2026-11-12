@@ -1,5 +1,5 @@
 import * as DPrinter from "@duplojs/lang/printer";
-import { type VariableDeclarationInitialized } from "../../AST/common";
+import { type VariableDeclarationInitialized } from "../../AST/shared";
 import { createNodePrinter } from "..";
 
 export const printVariableDeclarationInitialized = createNodePrinter<VariableDeclarationInitialized>(

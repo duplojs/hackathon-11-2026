@@ -81,11 +81,3 @@ export interface DereferenceExpression extends DModeling.ObjectTagWithGroup<"der
 export const createDereferenceExpression = DModeling.createTaggedObjectFactory<
 	DereferenceExpression
 >("[node][expression]dereference");
-
-export interface ReceiveExpression extends DModeling.ObjectTagWithGroup<"receive", ExpressionGroup> {
-	operand: Expression;
-}
-
-export const createReceiveExpression = DModeling.createTaggedObjectFactory<
-	ReceiveExpression
->("[node][expression]receive");

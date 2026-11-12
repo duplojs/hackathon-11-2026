@@ -1,4 +1,4 @@
-import { type TypeAliasDeclaration } from "../../AST/common";
+import { type TypeAliasDeclaration } from "../../AST/shared";
 import { createNodePrinter } from "..";
 import { renderTypeParameters } from "../type";
 

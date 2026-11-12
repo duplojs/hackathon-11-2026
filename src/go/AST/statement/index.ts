@@ -1,4 +1,9 @@
 export {
+	createCallExpression,
+	type CallExpression,
+	type CallTypeArgument,
+	createReceiveExpression,
+	type ReceiveExpression,
 	createConstantDeclaration,
 	type ConstantDeclaration,
 	type ConstantExpression,
@@ -13,13 +18,12 @@ export {
 	createTypeDefinition,
 	createVariableDeclarationInitialized,
 	createVariableDeclarationZeroValue,
-} from "../common";
+} from "../shared";
 export * from "./assignment";
 export type * from "./base";
 export * from "./block";
 export * from "./call";
 export * from "./channel";
-export * from "./expression";
 export * from "./for";
 export * from "./range";
 export * from "./if";

@@ -1,7 +1,6 @@
 import type * as DModeling from "@duplojs/lang/modeling";
 import { type NodeGroup } from "..";
 import { type IfStatement } from "./if";
-import { type ExpressionStatement } from "./expression";
 import { type GoStatement, type DeferStatement } from "./call";
 import { type BlockStatement } from "./block";
 import { type SelectStatement } from "./select";
@@ -11,10 +10,11 @@ import { type AssignmentStatement, type CompoundAssignmentStatement, type ShortV
 import { type ExpressionSwitchStatement, type TypeSwitchStatement } from "./switch";
 import { type ReturnStatement, type BreakStatement, type ContinueStatement, type GotoStatement, type FallthroughStatement, type LabeledStatement } from "./jump";
 import { type SendStatement } from "./channel";
-import { type VariableDeclarationZeroValue, type VariableDeclarationInitialized, type TypeDeclaration, type TypeAliasDeclaration, type ConstantDeclaration } from "../common";
+import { type VariableDeclarationZeroValue, type VariableDeclarationInitialized, type TypeDeclaration, type TypeAliasDeclaration, type ConstantDeclaration, type CallExpression, type ReceiveExpression } from "../shared";
 
 export type SimpleStatement = (
-	| ExpressionStatement
+	| CallExpression
+	| ReceiveExpression
 	| SendStatement
 	| AssignmentStatement
 	| CompoundAssignmentStatement

@@ -1,4 +1,4 @@
-import { type VariableDeclarationZeroValue } from "../../AST/common";
+import { type VariableDeclarationZeroValue } from "../../AST/shared";
 import { createNodePrinter } from "..";
 
 export const printVariableDeclarationZeroValue = createNodePrinter<VariableDeclarationZeroValue>(

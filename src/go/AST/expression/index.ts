@@ -1,6 +1,12 @@
 export * from "./access";
 export type * from "./base";
-export * from "./call";
+export {
+	type CallExpression,
+	type CallTypeArgument,
+	type ReceiveExpression,
+	createCallExpression,
+	createReceiveExpression,
+} from "../shared";
 export * from "./composite";
 export type * from "./constant";
 export * from "./conversion";

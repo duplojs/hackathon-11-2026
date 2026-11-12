@@ -5,7 +5,6 @@ export * from "./printBlockStatement";
 export * from "./printGoStatement";
 export * from "./printDeferStatement";
 export * from "./printSendStatement";
-export * from "./printExpressionStatement";
 export * from "./printForStatement";
 export * from "./printRangeAssignment";
 export * from "./printRangeDeclaration";

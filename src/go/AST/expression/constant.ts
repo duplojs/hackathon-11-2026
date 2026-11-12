@@ -1,5 +1,5 @@
 import { type Identifier, type TypeReference } from "../common";
-import { type CallExpression } from "./call";
+import { type CallExpression } from "../shared";
 import { type UnaryExpression, type BinaryExpression } from "./operator";
 import { type SelectorExpression } from "./access";
 import { type ConversionExpression } from "./conversion";

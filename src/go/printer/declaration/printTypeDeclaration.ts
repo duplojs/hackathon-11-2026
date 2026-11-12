@@ -1,4 +1,4 @@
-import { type TypeDeclaration } from "../../AST/common";
+import { type TypeDeclaration } from "../../AST/shared";
 import { createNodePrinter } from "..";
 import { renderTypeParameters } from "../type";
 

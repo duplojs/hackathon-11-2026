@@ -14,5 +14,5 @@ export {
 	createTypeDefinition,
 	createVariableDeclarationInitialized,
 	createVariableDeclarationZeroValue,
-} from "../common";
+} from "../shared";
 export * from "./function";

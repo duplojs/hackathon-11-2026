@@ -12,7 +12,7 @@ export function getExpressionPrecedence(node: Expression, text: string) {
 			"[node][expression]unary",
 			"[node][expression]address",
 			"[node][expression]dereference",
-			"[node][expression]receive",
+			"[node][expression][statement]receive",
 		])
 		|| DString.startsWith(text, "-")
 		|| DString.startsWith(text, "+")
