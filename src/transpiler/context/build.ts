@@ -2,13 +2,12 @@ import * as DCommon from "@duplojs/lang/common";
 import * as DEither from "@duplojs/lang/either";
 import type * as DObject from "@duplojs/lang/object";
 import * as DString from "@duplojs/lang/string";
-import * as GO from "@go";
-import type * as TS from "typescript/ast";
+import { GoAST } from "@go";
+import type { TsAST } from "@typescript";
 import type { Symbol } from "typescript/async";
-import { transform, type Transformer, type TransformerResultNode, type NotfoundTransformer, type TransformationError, type TransformationNotSupported, type TransformationSuccess, type TransformationSuccessPayload } from "../factory";
+import { transform, type Transformer, type TransformerResultNode, type NotfoundTransformer, type TransformationError, type TransformationNotSupported, type TransformationSuccess, type TransformationSuccessPayload, sharedDependencyImportDeclaration, sharedDependencyPackageName, type SharedDependency } from "@transformer";
 import type { FileContext } from "./file";
 import type { TranspilationContext } from "./transpilation";
-import { sharedDependencyImportDeclaration, sharedDependencyPackageName, type SharedDependency } from "../sharedDependency";
 import * as DPath from "@duplojs/lang/path";
 import type * as DArray from "@duplojs/lang/array";
 import { resolveReference, resolveReferenceModule, type DependencyReference, type ResolvedReference, type ResolvedModuleReference } from "../resolvedReference";
@@ -21,24 +20,24 @@ export interface BuildContext {
 	transform<
 		GenericTransformers extends readonly Transformer[],
 	>(
-		data: TS.Node,
+		data: TsAST.Node,
 		transformers: GenericTransformers,
 	): Promise<
 		| TransformationSuccess<TransformerResultNode<DArray.Unwrap<GenericTransformers>>>
 		| TransformationError
 		| NotfoundTransformer
 	>;
-	success<GenericGoNode extends GO.AST.Node>(
+	success<GenericGoNode extends GoAST.Node>(
 		payload: DObject.PartialKeys<
 			TransformationSuccessPayload<GenericGoNode>,
 			"before"
 		>
 	): TransformationSuccess<GenericGoNode>;
 	notSupport(content?: unknown): TransformationNotSupported;
-	error(node: TS.Node, content?: unknown): TransformationError;
-	generateIdentifier(): GO.AST.Identifier;
-	createSourceIdentifier(value: string): GO.AST.Identifier;
-	registerSharedDependency(sharedDependency: SharedDependency): GO.AST.Identifier;
+	error(node: TsAST.Node, content?: unknown): TransformationError;
+	generateIdentifier(): GoAST.Identifier;
+	createSourceIdentifier(value: string): GoAST.Identifier;
+	registerSharedDependency(sharedDependency: SharedDependency): GoAST.Identifier;
 	resolveReference(
 		reference: DependencyReference | Symbol,
 	): Promise<DEither.Maybe<ResolvedReference>>;
@@ -47,7 +46,7 @@ export interface BuildContext {
 		moduleName: string,
 		entryPattern?: RegExp,
 	): Promise<DEither.Maybe<ResolvedModuleReference>>;
-	registerDependency(reference: ResolvedReference): DEither.Maybe<GO.AST.Identifier>;
+	registerDependency(reference: ResolvedReference): DEither.Maybe<GoAST.Identifier>;
 }
 
 export function createBuildContext(
@@ -116,7 +115,7 @@ export function createBuildContext(
 				context.createSourceIdentifier(currentDependencyFilePath),
 			);
 		},
-		generateIdentifier: () => GO.AST.createIdentifier(`Generated_${transpilation.increment()}`),
+		generateIdentifier: () => GoAST.createIdentifier(`Generated_${transpilation.increment()}`),
 		createSourceIdentifier: (value) => DCommon.pipe(
 			value,
 			DString.replace(
@@ -127,7 +126,7 @@ export function createBuildContext(
 				),
 			),
 			DString.prepend("Duplojs_"),
-			GO.AST.createIdentifier,
+			GoAST.createIdentifier,
 		),
 	};
 

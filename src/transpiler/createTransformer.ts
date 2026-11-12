@@ -1,22 +1,22 @@
 import * as DCommon from "@duplojs/lang/common";
 import * as DEither from "@duplojs/lang/either";
 import * as DModeling from "@duplojs/lang/modeling";
-import type * as GO from "@go";
-import type * as TS from "typescript/ast";
+import type { GoAST } from "@go";
+import type { TsAST } from "@typescript";
 import type { BuildContext } from "./context/build";
 import * as DGenerator from "@duplojs/lang/generator";
 import type * as DArray from "@duplojs/lang/array";
 import type * as DPath from "@duplojs/lang/path";
 
 export interface TransformationSuccessPayload<
-	GenericGoNode extends GO.AST.Node,
+	GenericGoNode extends GoAST.Node,
 > {
 	result: GenericGoNode;
-	before: readonly GO.AST.Statement[];
+	before: readonly GoAST.Statement[];
 }
 
 export type TransformationSuccess<
-	GenericGoNode extends GO.AST.Node,
+	GenericGoNode extends GoAST.Node,
 > = DEither.Right<
 	"transformation-success",
 	TransformationSuccessPayload<GenericGoNode>
@@ -28,7 +28,7 @@ export interface TransformationDiagnosticContext {
 }
 
 export interface TransformationErrorPayload extends TransformationDiagnosticContext {
-	readonly node: TS.Node;
+	readonly node: TsAST.Node;
 	readonly content: unknown;
 }
 
@@ -37,7 +37,7 @@ export interface TransformationNotSupportedPayload extends TransformationDiagnos
 }
 
 export interface NotfoundTransformerPayload extends TransformationDiagnosticContext {
-	readonly node: TS.Node;
+	readonly node: TsAST.Node;
 }
 
 export type TransformationError = DEither.Left<
@@ -56,10 +56,10 @@ export type NotfoundTransformer = DEither.Left<
 >;
 
 export interface Transformer<
-	GenericResultNode extends GO.AST.Node = GO.AST.Node,
+	GenericResultNode extends GoAST.Node = GoAST.Node,
 > extends DModeling.ObjectTag<"Transformer"> {
 	transformer(
-		data: TS.Node,
+		data: TsAST.Node,
 		context: BuildContext,
 	): DCommon.MaybePromise<
 		| TransformationSuccess<GenericResultNode>
@@ -74,17 +74,17 @@ export type TransformerResultNode<
 > = DEither.GetValue<
 	Extract<
 		Awaited<ReturnType<GenericTransformer["transformer"]>>,
-		TransformationSuccess<GO.AST.Node>
+		TransformationSuccess<GoAST.Node>
 	>
 >["result"];
 
 export function createTransformer<
-	GenericResultNode extends GO.AST.Node = never,
+	GenericResultNode extends GoAST.Node = never,
 >(
 	transformer: DCommon.IsNever<GenericResultNode> extends true
 		? never
 		: (
-			data: TS.Node,
+			data: TsAST.Node,
 			context: BuildContext,
 		) => DCommon.MaybePromise<
 			| TransformationSuccess<NoInfer<GenericResultNode>>
@@ -106,7 +106,7 @@ export function createTransformer<
 export function transform<
 	GenericTransformers extends readonly Transformer[],
 >(
-	data: TS.Node,
+	data: TsAST.Node,
 	transformers: GenericTransformers,
 	context: BuildContext,
 ): Promise<

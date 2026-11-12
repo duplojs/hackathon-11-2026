@@ -1,2 +1,2 @@
-export * as AST from "./AST";
-export * as Printer from "./printer";
+export * as GoAST from "./AST";
+export * as GoPrinter from "./printer";

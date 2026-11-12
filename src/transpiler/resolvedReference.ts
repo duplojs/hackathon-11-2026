@@ -3,14 +3,14 @@ import * as DEither from "@duplojs/lang/either";
 import * as DModeling from "@duplojs/lang/modeling";
 import * as DPath from "@duplojs/lang/path";
 import * as DString from "@duplojs/lang/string";
-import * as TS from "typescript/ast";
+import { TsAST } from "@typescript";
 import { Symbol, SymbolFlags, type Checker } from "typescript/async";
 
 export type DependencyReference =
-	| TS.Identifier
-	| TS.QualifiedName
-	| TS.PropertyAccessExpression
-	| TS.ElementAccessExpression;
+	| TsAST.Identifier
+	| TsAST.QualifiedName
+	| TsAST.PropertyAccessExpression
+	| TsAST.ElementAccessExpression;
 
 export interface ResolvedReference extends DModeling.ObjectTag<"ResolvedReference"> {
 	readonly node: DependencyReference | undefined;
@@ -30,10 +30,10 @@ const createResolvedReference = DModeling.createTaggedObjectFactory<ResolvedRefe
 async function resolveReferenceTarget(target: DependencyReference | Symbol, checker: Checker) {
 	const symbol = target instanceof Symbol
 		? target
-		: await (TS.isIdentifier(target) && TS.isShorthandPropertyAssignment(target.parent)
+		: await (TsAST.isIdentifier(target) && TsAST.isShorthandPropertyAssignment(target.parent)
 			? checker.getShorthandAssignmentValueSymbol(target.parent)
 			: checker.getSymbolAtLocation(
-				TS.isElementAccessExpression(target) && TS.isStringLiteral(target.argumentExpression)
+				TsAST.isElementAccessExpression(target) && TsAST.isStringLiteral(target.argumentExpression)
 					? target.argumentExpression
 					: target,
 			));

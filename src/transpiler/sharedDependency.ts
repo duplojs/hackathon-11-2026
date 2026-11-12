@@ -1,19 +1,19 @@
 import * as DModeling from "@duplojs/lang/modeling";
-import * as GO from "@go";
+import { GoAST } from "@go";
 import { goModulePath } from "./sourcePackage";
 
 export interface SharedDependency extends DModeling.ObjectTag<"SharedDependency"> {
-	readonly imports: readonly GO.AST.ImportDeclaration[];
-	readonly declarations: readonly GO.AST.Declaration[];
-	readonly init: readonly GO.AST.Statement[];
+	readonly imports: readonly GoAST.ImportDeclaration[];
+	readonly declarations: readonly GoAST.Declaration[];
+	readonly init: readonly GoAST.Statement[];
 }
 
 export const createSharedDependency = DModeling.createTaggedObjectFactory<SharedDependency>(
 	"SharedDependency",
 );
 
-export const sharedDependencyPackageName = GO.AST.createIdentifier("shard_dependencies");
+export const sharedDependencyPackageName = GoAST.createIdentifier("shard_dependencies");
 
-export const sharedDependencyImportDeclaration = GO.AST.importDeclaration({
+export const sharedDependencyImportDeclaration = GoAST.importDeclaration({
 	path: `${goModulePath}/${sharedDependencyPackageName.value}`,
 });

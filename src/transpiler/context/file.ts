@@ -1,18 +1,18 @@
 import * as DCommon from "@duplojs/lang/common";
 import * as DEither from "@duplojs/lang/either";
 import * as DPath from "@duplojs/lang/path";
-import type * as GO from "@go";
-import type { SourceFile } from "typescript/ast";
+import type { GoAST } from "@go";
+import type { TsAST } from "@typescript";
 
 export interface FileContext {
-	readonly sourceFile: SourceFile;
+	readonly sourceFile: TsAST.SourceFile;
 	readonly currentFilePath: string & DPath.Absolute;
 	readonly dependencyFiles: Set<string & DPath.Absolute>;
-	readonly declarations: Set<GO.AST.Declaration>;
-	readonly imports: Set<GO.AST.ImportDeclaration>;
+	readonly declarations: Set<GoAST.Declaration>;
+	readonly imports: Set<GoAST.ImportDeclaration>;
 }
 
-export function createFileContext(sourceFile: SourceFile) {
+export function createFileContext(sourceFile: TsAST.SourceFile) {
 	const currentFilePath = DCommon.pipe(
 		sourceFile.path,
 		DPath.createAbsolute,

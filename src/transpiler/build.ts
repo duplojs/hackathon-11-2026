@@ -4,12 +4,12 @@ import * as DEither from "@duplojs/lang/either";
 import * as DGenerator from "@duplojs/lang/generator";
 import type * as DInvocation from "@duplojs/lang/invocation";
 import * as DPath from "@duplojs/lang/path";
-import * as GO from "@go";
+import { GoAST, GoPrinter } from "@go";
 import type { createTypescriptInstance } from "./createTypescriptInstance";
 import { createTranspilationContext } from "./context/transpilation";
 import { transformSourceFile } from "./transformSourceFile";
 import { createFile, type CreateFileParams } from "./createFile";
-import { sharedDependencyPackageName } from "./sharedDependency";
+import { sharedDependencyPackageName } from "@transformer";
 import { createSourcePackageLayout, goModuleContent } from "./sourcePackage";
 
 export function build(
@@ -49,21 +49,21 @@ export function build(
 				}
 
 				const mainFile = DEither.right("build-main-file", {
-					content: GO.Printer.printGoFile(GO.AST.goFile({
-						packageName: GO.AST.createIdentifier("main"),
+					content: GoPrinter.printGoFile(GoAST.goFile({
+						packageName: GoAST.createIdentifier("main"),
 						imports: [
-							GO.AST.importDeclaration({
+							GoAST.importDeclaration({
 								path: entryPackage.importPath,
-								alias: GO.AST.createIdentifier("_"),
+								alias: GoAST.createIdentifier("_"),
 							}),
 						],
 						declarations: [
-							GO.AST.functionDeclaration({
-								identifier: GO.AST.createIdentifier("main"),
+							GoAST.functionDeclaration({
+								identifier: GoAST.createIdentifier("main"),
 								generic: [],
 								parameters: [],
 								returnTypes: [],
-								body: GO.AST.blockStatement({ statements: [] }),
+								body: GoAST.blockStatement({ statements: [] }),
 							}),
 						],
 					})),
@@ -104,7 +104,7 @@ export function build(
 
 				return exit(
 					DEither.right("build-shared-dependencies-file", {
-						content: GO.Printer.printGoFile(file),
+						content: GoPrinter.printGoFile(file),
 						outputPath: DPath.declarePath(
 							`${sharedDependencyPackageName.value}/${sharedDependencyPackageName.value}.go`,
 						),
@@ -156,7 +156,7 @@ export function build(
 					built: accumulator.built,
 				},
 				DEither.right("build-source-file", {
-					content: GO.Printer.printGoFile(result.file),
+					content: GoPrinter.printGoFile(result.file),
 					outputPath: sourcePackage.outputPath,
 				}),
 			);

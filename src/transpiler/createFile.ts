@@ -1,28 +1,28 @@
 import * as DArray from "@duplojs/lang/array";
-import * as GO from "@go";
+import { GoAST } from "@go";
 
 export interface CreateFileParams {
-	packageName: GO.AST.Identifier;
-	imports: readonly GO.AST.ImportDeclaration[];
-	declarations: readonly GO.AST.Declaration[];
-	init: readonly GO.AST.Statement[];
+	packageName: GoAST.Identifier;
+	imports: readonly GoAST.ImportDeclaration[];
+	declarations: readonly GoAST.Declaration[];
+	init: readonly GoAST.Statement[];
 }
 
 export function createFile(params: CreateFileParams) {
 	const declarations = DArray.push(
 		params.declarations,
-		GO.AST.functionDeclaration({
-			identifier: GO.AST.createIdentifier("init"),
+		GoAST.functionDeclaration({
+			identifier: GoAST.createIdentifier("init"),
 			generic: [],
 			returnTypes: [],
 			parameters: [],
-			body: GO.AST.blockStatement({
+			body: GoAST.blockStatement({
 				statements: params.init,
 			}),
 		}),
 	);
 
-	return GO.AST.goFile({
+	return GoAST.goFile({
 		packageName: params.packageName,
 		imports: params.imports,
 		declarations,

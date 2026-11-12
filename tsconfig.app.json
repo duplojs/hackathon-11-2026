@@ -4,6 +4,8 @@
 		"types": ["node"],
 		"paths": {
 			"@go": ["./src/go/index.ts"],
+			"@typescript": ["./src/typescript/index.ts"],
+			"@transformer": ["./src/transpiler/transformer.ts"],
 			"@transpiler": ["./src/transpiler/index.ts"],
 		}
 	},

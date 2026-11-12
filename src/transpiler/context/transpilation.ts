@@ -1,5 +1,5 @@
 import type { Checker } from "typescript/async";
-import type { SharedDependency } from "../sharedDependency";
+import type { SharedDependency } from "@transformer";
 import type * as DPath from "@duplojs/lang/path";
 
 export interface TranspilationContext {

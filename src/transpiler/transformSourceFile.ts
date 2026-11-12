@@ -1,10 +1,10 @@
-import * as GO from "@go";
+import { GoAST } from "@go";
 import * as DArray from "@duplojs/lang/array";
 import * as DCommon from "@duplojs/lang/common";
 import * as DEither from "@duplojs/lang/either";
 import * as DGenerator from "@duplojs/lang/generator";
 import * as DModeling from "@duplojs/lang/modeling";
-import * as TS from "typescript/ast";
+import { TsAST } from "@typescript";
 import { createBuildContext } from "./context/build";
 import { createFileContext } from "./context/file";
 import type { TranspilationContext } from "./context/transpilation";
@@ -13,12 +13,12 @@ import { createFile } from "./createFile";
 import { createSourcePackageLayout } from "./sourcePackage";
 
 interface TransformedFileContent {
-	declarations: GO.AST.GoFile["declarations"];
-	init: readonly GO.AST.Statement[];
+	declarations: GoAST.GoFile["declarations"];
+	init: readonly GoAST.Statement[];
 }
 
 export async function transformSourceFile(
-	sourceFile: TS.SourceFile,
+	sourceFile: TsAST.SourceFile,
 	transpilationContext: TranspilationContext,
 ) {
 	const fileContext = DCommon.pipe(
@@ -39,7 +39,7 @@ export async function transformSourceFile(
 				init: [],
 			}),
 			async({ item, lastValue, next, exit }) => {
-				if (TS.isImportDeclaration(item)) {
+				if (TsAST.isImportDeclaration(item)) {
 					return next(lastValue);
 				}
 
@@ -78,7 +78,7 @@ export async function transformSourceFile(
 	const dependencyImports = DCommon.pipe(
 		fileContext.dependencyFiles,
 		DGenerator.reduce(
-			DGenerator.reduceFrom<readonly GO.AST.ImportDeclaration[]>([]),
+			DGenerator.reduceFrom<readonly GoAST.ImportDeclaration[]>([]),
 			({ item, lastValue, next, exit }) => {
 				const sourcePackage = DCommon.pipe(
 					createSourcePackageLayout(transpilationContext.projectWorkDirectory, item),
@@ -87,7 +87,7 @@ export async function transformSourceFile(
 				if (DEither.isLeft(sourcePackage)) {
 					return exit(sourcePackage);
 				}
-				return next(DArray.push(lastValue, GO.AST.importDeclaration({ path: sourcePackage.importPath })));
+				return next(DArray.push(lastValue, GoAST.importDeclaration({ path: sourcePackage.importPath })));
 			},
 		),
 	);
