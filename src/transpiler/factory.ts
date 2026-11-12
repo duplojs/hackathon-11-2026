@@ -6,6 +6,7 @@ import type * as TS from "typescript/ast";
 import type { BuildContext } from "./context/build";
 import * as DGenerator from "@duplojs/lang/generator";
 import type * as DArray from "@duplojs/lang/array";
+import type * as DPath from "@duplojs/lang/path";
 
 export interface TransformationSuccessPayload<
 	GenericGoNode extends GO.AST.Node,
@@ -21,19 +22,37 @@ export type TransformationSuccess<
 	TransformationSuccessPayload<GenericGoNode>
 >;
 
+export interface TransformationDiagnosticContext {
+	readonly filePath: string & DPath.Absolute;
+	readonly projectWorkDirectory: string & DPath.Absolute;
+}
+
+export interface TransformationErrorPayload extends TransformationDiagnosticContext {
+	readonly node: TS.Node;
+	readonly content: unknown;
+}
+
+export interface TransformationNotSupportedPayload extends TransformationDiagnosticContext {
+	readonly content: unknown;
+}
+
+export interface NotfoundTransformerPayload extends TransformationDiagnosticContext {
+	readonly node: TS.Node;
+}
+
 export type TransformationError = DEither.Left<
 	"transformation-error",
-	unknown
+	TransformationErrorPayload
 >;
 
 export type TransformationNotSupported = DEither.Left<
 	"transformation-not-supported",
-	unknown
+	TransformationNotSupportedPayload
 >;
 
 export type NotfoundTransformer = DEither.Left<
 	"notfound-transformer",
-	unknown
+	NotfoundTransformerPayload
 >;
 
 export interface Transformer<
@@ -99,7 +118,11 @@ export function transform<
 		transformers,
 		DGenerator.asyncReduce(
 			DGenerator.reduceFrom<NotfoundTransformer>(
-				DEither.left("notfound-transformer", data),
+				DEither.left("notfound-transformer", {
+					node: data,
+					filePath: context.file.currentFilePath,
+					projectWorkDirectory: context.transpilation.projectWorkDirectory,
+				}),
 			),
 			async({
 				item,

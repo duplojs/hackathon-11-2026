@@ -34,8 +34,8 @@ export interface BuildContext {
 			"before"
 		>
 	): TransformationSuccess<GenericGoNode>;
-	notSupport(content: unknown): TransformationNotSupported;
-	error(content: unknown): TransformationError;
+	notSupport(content?: unknown): TransformationNotSupported;
+	error(node: TS.Node, content?: unknown): TransformationError;
 	generateIdentifier(): GO.AST.Identifier;
 	createSourceIdentifier(value: string): GO.AST.Identifier;
 	registerSharedDependency(sharedDependency: SharedDependency): GO.AST.Identifier;
@@ -58,12 +58,21 @@ export function createBuildContext(
 		transpilation,
 		file,
 		transform: (data, transformers) => transform(data, transformers, context),
-		error: (content) => DEither.left("transformation-error", content),
+		error: (node, content) => DEither.left("transformation-error", {
+			node,
+			content,
+			filePath: file.currentFilePath,
+			projectWorkDirectory: transpilation.projectWorkDirectory,
+		}),
 		success: (payload) => DEither.right("transformation-success", {
 			...payload,
 			before: payload.before ?? [],
 		}),
-		notSupport: (content) => DEither.left("transformation-not-supported", content),
+		notSupport: (content) => DEither.left("transformation-not-supported", {
+			content,
+			filePath: file.currentFilePath,
+			projectWorkDirectory: transpilation.projectWorkDirectory,
+		}),
 		registerSharedDependency: (sharedDependency) => {
 			transpilation.sharedDependencies.add(sharedDependency);
 			file.imports.add(sharedDependencyImportDeclaration);
