@@ -7,12 +7,13 @@ import * as DEither from "@duplojs/lang/either";
 import * as DArray from "@duplojs/lang/array";
 
 export const callExpressionTransformer: Transformer<GoAST.CallExpression> = createTransformer(
-	async(nodeStatement, context) => {
-		if (!TsAST.isExpressionStatement(nodeStatement) || !TsAST.isCallExpression(nodeStatement.expression)) {
+	async(rawNode, context) => {
+		const node = TsAST.isExpressionStatement(rawNode)
+			? rawNode.expression
+			: rawNode;
+		if (!TsAST.isCallExpression(node)) {
 			return context.notSupport();
 		}
-
-		const node = nodeStatement.expression;
 
 		const callee = await DCommon.asyncPipe(
 			context.transform(node.expression, expressionTransformers.value),

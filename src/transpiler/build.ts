@@ -79,12 +79,11 @@ export function build(
 					return exit(mainFile, moduleFile);
 				}
 
-				const sharedDependencies = new Set(DGenerator.concat(
-					defaultSharedDependencies.value,
-					context.sharedDependencies,
-				));
 				const file = DCommon.pipe(
-					sharedDependencies,
+					DGenerator.concat(
+						defaultSharedDependencies.value,
+						context.sharedDependencies,
+					),
 					DGenerator.reduce(
 						DGenerator.reduceFrom<CreateFileParams>({
 							packageName: sharedDependencyPackageName,
