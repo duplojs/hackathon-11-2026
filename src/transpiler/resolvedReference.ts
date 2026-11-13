@@ -1,3 +1,4 @@
+import * as DCommon from "@duplojs/lang/common";
 import * as DArray from "@duplojs/lang/array";
 import * as DEither from "@duplojs/lang/either";
 import * as DModeling from "@duplojs/lang/modeling";
@@ -15,6 +16,10 @@ export type DependencyReference =
 export interface ResolvedReference extends DModeling.ObjectTag<"ResolvedReference"> {
 	readonly node: DependencyReference | undefined;
 	readonly symbol: Symbol;
+}
+
+export interface DependencyFile extends ResolvedReference {
+	readonly filePath: string & DPath.Absolute;
 }
 
 export interface ResolvedModuleReference extends ResolvedReference {
@@ -56,24 +61,45 @@ async function resolveReferenceTarget(target: DependencyReference | Symbol, chec
 	}));
 }
 
-export async function resolveReference(
+export async function resolveDependencyFile(
 	target: DependencyReference | Symbol,
 	checker: Checker,
 	projectWorkDirectory: string & DPath.Absolute,
+	currentFilePath: string & DPath.Absolute,
 ) {
-	const reference = DEither.unwrapRight(await resolveReferenceTarget(target, checker));
+	const reference = await DCommon.asyncPipe(
+		resolveReferenceTarget(target, checker),
+		DEither.unwrapRight,
+	);
+
 	if (DEither.isLeft(reference)) {
 		return reference;
 	}
-	const { symbol } = reference;
-	const declaration = symbol.valueDeclaration ?? DArray.first(symbol.declarations);
-	if (!declaration || !DPath.isAbsolute(declaration.path) || DString.includes(declaration.path, "/node_modules/")) {
+
+	const declaration = reference.symbol.valueDeclaration;
+	if (!declaration) {
 		return DEither.none();
 	}
-	const relativePath = DPath.computeRelative(projectWorkDirectory, declaration.path);
-	return DPath.resolveFrom(projectWorkDirectory, [relativePath], { stayInOrigin: true })
-		? DEither.some(reference)
-		: DEither.none();
+
+	const filePath = DEither.unwrapRight(DPath.createAbsolute(declaration.path));
+	if (
+		DEither.isLeft(filePath)
+		|| filePath === currentFilePath
+		|| DString.includes(filePath, "/node_modules/")
+	) {
+		return DEither.none();
+	}
+
+	const relativePath = DPath.computeRelative(projectWorkDirectory, filePath);
+
+	if (!DPath.resolveFrom(projectWorkDirectory, [relativePath], { stayInOrigin: true })) {
+		return DEither.none();
+	}
+
+	return DEither.some({
+		...reference,
+		filePath,
+	});
 }
 
 export async function resolveReferenceModule(
@@ -82,21 +108,37 @@ export async function resolveReferenceModule(
 	moduleName: string,
 	entryPattern?: RegExp,
 ) {
-	const reference = DEither.unwrapRight(await resolveReferenceTarget(target, checker));
+	const reference = await DCommon.asyncPipe(
+		resolveReferenceTarget(target, checker),
+		DEither.unwrapRight,
+	);
+
 	if (DEither.isLeft(reference)) {
 		return reference;
 	}
+
 	const { symbol } = reference;
+
 	const declaration = symbol.valueDeclaration ?? DArray.first(symbol.declarations);
+
 	const match = declaration && DString.extract(
 		declaration.path,
 		/.*\/node_modules\/(?<packageName>@[^/]+\/[^/]+|[^/]+)\/(?<entry>.+)$/,
 	);
 	const { packageName, entry } = match?.namedGroups ?? {};
-	if (!packageName || !entry || packageName !== moduleName
-		|| (entryPattern !== undefined && DString.search(entry, entryPattern) === undefined)) {
+
+	if (
+		!packageName
+		|| !entry
+		|| packageName !== moduleName
+		|| (
+			entryPattern !== undefined
+			&& DString.search(entry, entryPattern) === undefined
+		)
+	) {
 		return DEither.none();
 	}
+
 	return DEither.some({
 		...reference,
 		packageName,

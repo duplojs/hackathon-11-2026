@@ -1,8 +1,3 @@
-function add(
-	one: number,
-	two: number,
-) {
-	return one + two;
-}
+import { add } from "./add";
 
 add(1, 2);

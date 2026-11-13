@@ -8,9 +8,8 @@ import type { Symbol } from "typescript/async";
 import { transform, type Transformer, type TransformerResultNode, type NotfoundTransformer, type TransformationError, type TransformationNotSupported, type TransformationSuccess, type TransformationSuccessPayload, sharedDependencyImportDeclaration, sharedDependencyPackageName, type SharedDependency } from "@transformer";
 import type { FileContext } from "./file";
 import type { TranspilationContext } from "./transpilation";
-import * as DPath from "@duplojs/lang/path";
 import type * as DArray from "@duplojs/lang/array";
-import { resolveReference, resolveReferenceModule, type DependencyReference, type ResolvedReference, type ResolvedModuleReference } from "../resolvedReference";
+import { resolveDependencyFile, resolveReferenceModule, type DependencyReference, type DependencyFile, type ResolvedModuleReference } from "../resolvedReference";
 
 export type { DependencyReference } from "../resolvedReference";
 
@@ -38,15 +37,15 @@ export interface BuildContext {
 	generateIdentifier(): GoAST.Identifier;
 	createSourceIdentifier(value: string): GoAST.Identifier;
 	registerSharedDependency(sharedDependency: SharedDependency): GoAST.Identifier;
-	resolveReference(
+	resolveDependencyFile(
 		reference: DependencyReference | Symbol,
-	): Promise<DEither.Maybe<ResolvedReference>>;
+	): Promise<DEither.Maybe<DependencyFile>>;
 	resolveReferenceModule(
 		reference: DependencyReference | Symbol,
 		moduleName: string,
 		entryPattern?: RegExp,
 	): Promise<DEither.Maybe<ResolvedModuleReference>>;
-	registerDependency(reference: ResolvedReference): DEither.Maybe<GoAST.Identifier>;
+	registerDependencyFile(dependencyFile: DependencyFile): GoAST.Identifier;
 }
 
 export function createBuildContext(
@@ -77,10 +76,11 @@ export function createBuildContext(
 
 			return sharedDependencyPackageName;
 		},
-		resolveReference: (reference) => resolveReference(
+		resolveDependencyFile: (reference) => resolveDependencyFile(
 			reference,
 			transpilation.typeChecker,
 			transpilation.projectWorkDirectory,
+			file.currentFilePath,
 		),
 		resolveReferenceModule: (reference, moduleName, entryPattern) => resolveReferenceModule(
 			reference,
@@ -88,31 +88,9 @@ export function createBuildContext(
 			moduleName,
 			entryPattern,
 		),
-		registerDependency: (reference) => {
-			const path = reference.symbol.valueDeclaration?.path;
-
-			if (!path) {
-				return DEither.none();
-			}
-
-			const currentDependencyFilePath = DCommon.pipe(
-				path,
-				DPath.createAbsolute,
-				DEither.unwrapRight,
-			);
-
-			if (DEither.isLeft(currentDependencyFilePath)) {
-				return DEither.none();
-			}
-
-			if (currentDependencyFilePath === file.currentFilePath) {
-				return DEither.none();
-			}
-
-			file.dependencyFiles.add(currentDependencyFilePath);
-			return DEither.some(
-				context.createSourceIdentifier(currentDependencyFilePath),
-			);
+		registerDependencyFile: ({ filePath }) => {
+			file.dependencyFiles.add(filePath);
+			return context.createSourceIdentifier(filePath);
 		},
 		generateIdentifier: () => GoAST.createIdentifier(`Generated_${transpilation.increment()}`),
 		createSourceIdentifier: (value) => DCommon.pipe(
