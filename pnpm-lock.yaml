@@ -167,21 +167,21 @@ importers:
   .:
     dependencies:
       '@duplojs/lang':
-        specifier: 0.1.0-beta.10
-        version: 0.1.0-beta.10
+        specifier: 0.1.0-beta.11
+        version: 0.1.0-beta.11
       '@duplojs/server':
-        specifier: 0.1.0-beta.10
-        version: 0.1.0-beta.10(@duplojs/lang@0.1.0-beta.10)
+        specifier: 0.1.0-beta.11
+        version: 0.1.0-beta.11(@duplojs/lang@0.1.0-beta.11)
       typescript:
         specifier: 7.1.0-beta
         version: 7.1.0-beta
     devDependencies:
       '@duplojs/agents-kit':
-        specifier: 0.1.0-beta.10
-        version: 0.1.0-beta.10(@duplojs/code-config@0.1.0-beta.10(conventional-commits-parser@7.1.4)(jiti@2.7.0)(typescript@7.1.0-beta))(@duplojs/lang@0.1.0-beta.10)(@duplojs/server@0.1.0-beta.10(@duplojs/lang@0.1.0-beta.10))
+        specifier: 0.1.0-beta.11
+        version: 0.1.0-beta.11(@duplojs/code-config@0.1.0-beta.11(conventional-commits-parser@7.1.4)(jiti@2.7.0)(typescript@7.1.0-beta))(@duplojs/lang@0.1.0-beta.11)(@duplojs/server@0.1.0-beta.11(@duplojs/lang@0.1.0-beta.11))
       '@duplojs/code-config':
-        specifier: 0.1.0-beta.10
-        version: 0.1.0-beta.10(conventional-commits-parser@7.1.4)(jiti@2.7.0)(typescript@7.1.0-beta)
+        specifier: 0.1.0-beta.11
+        version: 0.1.0-beta.11(conventional-commits-parser@7.1.4)(jiti@2.7.0)(typescript@7.1.0-beta)
       '@types/node':
         specifier: 24.19.2
         version: 24.19.2
@@ -294,20 +294,20 @@ packages:
     resolution: {integrity: sha512-mHyyEL0eIEqJ6+aF24+AdZRo4bu4W5GdUiCiCx5X7kfDY51ye8GQJ264uOINObrRSKxtSRCOWPpl9hbOy4UzxQ==}
     engines: {node: '>=22'}
 
-  '@duplojs/agents-kit@0.1.0-beta.10':
-    resolution: {integrity: sha512-oGOS46k1MyQIUiVPgOxu0Np5IBqzZUvAItVhwTpKakTUOZWguBQtuA2EfmPzKKKhhKY5zZr3oyPVGv7fobIxtQ==}
+  '@duplojs/agents-kit@0.1.0-beta.11':
+    resolution: {integrity: sha512-4fIz9KDGcK5bAQ1ooeNnFlrLnvWFpCSlFQ8i+rwTq+gHmLNaoNv48XqUFTdK0k3ivxNXyyZw6Qpq31A0Fg0n/w==}
     engines: {node: '>=24.18.0'}
     hasBin: true
     peerDependencies:
-      '@duplojs/code-config': 0.1.0-beta.10
-      '@duplojs/eslint': 0.1.0-beta.10
-      '@duplojs/form': 0.1.0-beta.10
-      '@duplojs/http': 0.1.0-beta.10
-      '@duplojs/json-web-token': 0.1.0-beta.10
-      '@duplojs/lang': 0.1.0-beta.10
-      '@duplojs/playwright': 0.1.0-beta.10
-      '@duplojs/server': 0.1.0-beta.10
-      '@duplojs/tools': 0.1.0-beta.10
+      '@duplojs/code-config': 0.1.0-beta.11
+      '@duplojs/eslint': 0.1.0-beta.11
+      '@duplojs/form': 0.1.0-beta.11
+      '@duplojs/http': 0.1.0-beta.11
+      '@duplojs/json-web-token': 0.1.0-beta.11
+      '@duplojs/lang': 0.1.0-beta.11
+      '@duplojs/playwright': 0.1.0-beta.11
+      '@duplojs/server': 0.1.0-beta.11
+      '@duplojs/tools': 0.1.0-beta.11
     peerDependenciesMeta:
       '@duplojs/code-config':
         optional: true
@@ -324,20 +324,20 @@ packages:
       '@duplojs/tools':
         optional: true
 
-  '@duplojs/code-config@0.1.0-beta.10':
-    resolution: {integrity: sha512-SSnUKCSgM/H+3uHElu62smjlIuLqj8EHOkSRCLqxtv2VpSKbiHo/6FFqV/LHzyAGlQNCmUgN93FVCdT75zxOWg==}
+  '@duplojs/code-config@0.1.0-beta.11':
+    resolution: {integrity: sha512-duYxQbk7JOLrYH5FFztJs3CDJj6SDhei6H7FL1ElbyPwYVB5AF6MPVmTo+6qx0Zz1CKin2za2Q0pnbli5NttDQ==}
     engines: {node: '>=24.18.0'}
     hasBin: true
 
-  '@duplojs/lang@0.1.0-beta.10':
-    resolution: {integrity: sha512-0Eu13XHsZYmh3YsZj4qzdONrRaUDw3P0PcyNVD/1PS6tUJn1tKwpQ5VMYds/82X8EA0sg2aH+sBfx5d+TuzNTw==}
+  '@duplojs/lang@0.1.0-beta.11':
+    resolution: {integrity: sha512-Z3QuRS5pj8Yb5yXRSZSRT3t0tUcmEf/1UJ9LFqBhM4jNaug7iMi3g/K7hVH/weOCDzoa9qS1n4DSnx5aDxzlLw==}
     engines: {node: '>=24.18.0'}
 
-  '@duplojs/server@0.1.0-beta.10':
-    resolution: {integrity: sha512-52kgFHEsT+0Vbjx8uNnsPSLcJwKePpoHN3LogaEAyj6YzvTl3P2mYa0T8Yi5f2ps9taoNEW7PvlQ83KiH13aHw==}
+  '@duplojs/server@0.1.0-beta.11':
+    resolution: {integrity: sha512-rqGcLZmtBvOsQfRb2h9+Ax49yPotn3co+2vVbwBRTT10TQq4sdDQItHJfxwtHHDrg2mcAtoUK1rg4WA3L4jLcA==}
     engines: {node: '>=24.18.0'}
     peerDependencies:
-      '@duplojs/lang': 0.1.0-beta.10
+      '@duplojs/lang': 0.1.0-beta.11
 
   '@esbuild/aix-ppc64@0.28.2':
     resolution: {integrity: sha512-XExcO+dvLKvVtNTibSTBej1NCAbaGhWn9Ww1ZPx80qsahhPFe/8jgWP0IchNe0F3HwkU7n8ejhH8bjonqht8mQ==}
@@ -1465,14 +1465,14 @@ snapshots:
 
   '@conventional-changelog/template@1.4.1': {}
 
-  '@duplojs/agents-kit@0.1.0-beta.10(@duplojs/code-config@0.1.0-beta.10(conventional-commits-parser@7.1.4)(jiti@2.7.0)(typescript@7.1.0-beta))(@duplojs/lang@0.1.0-beta.10)(@duplojs/server@0.1.0-beta.10(@duplojs/lang@0.1.0-beta.10))':
+  '@duplojs/agents-kit@0.1.0-beta.11(@duplojs/code-config@0.1.0-beta.11(conventional-commits-parser@7.1.4)(jiti@2.7.0)(typescript@7.1.0-beta))(@duplojs/lang@0.1.0-beta.11)(@duplojs/server@0.1.0-beta.11(@duplojs/lang@0.1.0-beta.11))':
     dependencies:
-      '@duplojs/lang': 0.1.0-beta.10
-      '@duplojs/server': 0.1.0-beta.10(@duplojs/lang@0.1.0-beta.10)
+      '@duplojs/lang': 0.1.0-beta.11
+      '@duplojs/server': 0.1.0-beta.11(@duplojs/lang@0.1.0-beta.11)
     optionalDependencies:
-      '@duplojs/code-config': 0.1.0-beta.10(conventional-commits-parser@7.1.4)(jiti@2.7.0)(typescript@7.1.0-beta)
+      '@duplojs/code-config': 0.1.0-beta.11(conventional-commits-parser@7.1.4)(jiti@2.7.0)(typescript@7.1.0-beta)
 
-  '@duplojs/code-config@0.1.0-beta.10(conventional-commits-parser@7.1.4)(jiti@2.7.0)(typescript@7.1.0-beta)':
+  '@duplojs/code-config@0.1.0-beta.11(conventional-commits-parser@7.1.4)(jiti@2.7.0)(typescript@7.1.0-beta)':
     dependencies:
       '@commitlint/cli': 21.2.2(conventional-commits-parser@7.1.4)(typescript@7.1.0-beta)
       '@commitlint/config-conventional': 21.2.2
@@ -1489,11 +1489,11 @@ snapshots:
       - typescript
       - vite-plus
 
-  '@duplojs/lang@0.1.0-beta.10': {}
+  '@duplojs/lang@0.1.0-beta.11': {}
 
-  '@duplojs/server@0.1.0-beta.10(@duplojs/lang@0.1.0-beta.10)':
+  '@duplojs/server@0.1.0-beta.11(@duplojs/lang@0.1.0-beta.11)':
     dependencies:
-      '@duplojs/lang': 0.1.0-beta.10
+      '@duplojs/lang': 0.1.0-beta.11
 
   '@esbuild/aix-ppc64@0.28.2':
     optional: true
