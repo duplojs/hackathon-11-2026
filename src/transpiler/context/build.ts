@@ -9,7 +9,7 @@ import { transform, type Transformer, type TransformerResultNode, type NotfoundT
 import type { FileContext } from "./file";
 import type { TranspilationContext } from "./transpilation";
 import type * as DArray from "@duplojs/lang/array";
-import { resolveDependencyFile, resolveReferenceModule, type DependencyReference, type DependencyFile, type ResolvedModuleReference } from "../resolvedReference";
+import { resolveDependencyFile, resolveReferenceModule, type DependencyReference, type DependencyFile, type ModuleReference, type ResolvedModuleReference } from "../resolvedReference";
 
 export type { DependencyReference } from "../resolvedReference";
 
@@ -41,7 +41,7 @@ export interface BuildContext {
 		reference: DependencyReference | Symbol,
 	): Promise<DEither.Maybe<DependencyFile>>;
 	resolveReferenceModule(
-		reference: DependencyReference | Symbol,
+		reference: ModuleReference,
 		moduleName: string,
 		entryPattern?: RegExp,
 	): Promise<DEither.Maybe<ResolvedModuleReference>>;
@@ -76,15 +76,10 @@ export function createBuildContext(
 
 			return sharedDependencyPackageName;
 		},
-		resolveDependencyFile: (reference) => resolveDependencyFile(
-			reference,
-			transpilation.typeChecker,
-			transpilation.projectWorkDirectory,
-			file.currentFilePath,
-		),
+		resolveDependencyFile: (reference) => resolveDependencyFile(reference, context),
 		resolveReferenceModule: (reference, moduleName, entryPattern) => resolveReferenceModule(
 			reference,
-			transpilation.typeChecker,
+			context,
 			moduleName,
 			entryPattern,
 		),

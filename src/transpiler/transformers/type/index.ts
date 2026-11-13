@@ -6,7 +6,7 @@ import { sharedTypeTransformers } from "../shared";
 import { float64TypeTransformer } from "./float";
 
 export const typeTransformers = DCommon.memo(
-	(): readonly Transformer<GoAST.Type>[] => [
+	(): readonly Transformer<GoAST.Type | GoAST.TypeReference>[] => [
 		...duploJSTypeTransformers.value,
 		...sharedTypeTransformers.value,
 		float64TypeTransformer,

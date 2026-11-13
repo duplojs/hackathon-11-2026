@@ -13,5 +13,5 @@ export const duploJSStatementTransformers = DCommon.memo(
 	(): readonly Transformer<GoAST.Statement>[] => [],
 );
 export const duploJSTypeTransformers = DCommon.memo(
-	(): readonly Transformer<GoAST.Type>[] => [duploJSEitherTypeTransformer],
+	() => [duploJSEitherTypeTransformer],
 );

@@ -116,24 +116,11 @@ export function transform<
 	| TransformationError
 	| NotfoundTransformer
 > {
-	return DCommon.pipe(
+	return DCommon.asyncPipe(
 		transformers,
 		DGenerator.asyncReduce(
-			DGenerator.reduceFrom<NotfoundTransformer>(
-				DEither.left("notfound-transformer", {
-					kind: TsAST.SyntaxKind[data.kind],
-					parentKind: data.parent ? TsAST.SyntaxKind[data.parent.kind] : undefined,
-					text: DCommon.pipe(
-						DEither.safeCallback(() => data.getText()),
-						DEither.whenIsRightOtherwise(
-							DCommon.forward,
-							() => "DisplayError",
-						),
-					),
-					getNode: () => data,
-					filePath: context.file.currentFilePath,
-					projectWorkDirectory: context.transpilation.projectWorkDirectory,
-				}),
+			DGenerator.reduceFrom<TransformationNotSupported>(
+				context.notSupport(),
 			),
 			async({
 				item,
@@ -148,6 +135,23 @@ export function transform<
 					exit,
 				),
 			),
+		),
+		DEither.whenHasInformation(
+			"transformation-not-supported",
+			() => DEither.left("notfound-transformer", {
+				kind: TsAST.SyntaxKind[data.kind],
+				parentKind: data.parent ? TsAST.SyntaxKind[data.parent.kind] : undefined,
+				text: DCommon.pipe(
+					DEither.safeCallback(() => data.getText()),
+					DEither.whenIsRightOtherwise(
+						DCommon.forward,
+						() => "DisplayError",
+					),
+				),
+				getNode: () => data,
+				filePath: context.file.currentFilePath,
+				projectWorkDirectory: context.transpilation.projectWorkDirectory,
+			}),
 		),
 	);
 }

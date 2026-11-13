@@ -4,10 +4,7 @@ import { TsAST } from "@typescript";
 
 export const float64TypeTransformer: Transformer<GoAST.BuiltinTypeReference<"float64">> = createTransformer(
 	(node, context) => {
-		if (
-			!TsAST.isKeywordTypeNode(node)
-			&& node.kind === TsAST.SyntaxKind.NumberKeyword
-		) {
+		if (node.kind !== TsAST.SyntaxKind.NumberKeyword) {
 			return context.notSupport();
 		}
 
