@@ -1,6 +1,7 @@
 export * from "./printArrayType";
 export * from "./printChannelType";
 export * from "./printTypeConstraint";
+export * from "./printTypeParameter";
 export * from "./printFunctionType";
 export * from "./printInterfaceMethod";
 export * from "./printInterfaceUnion";

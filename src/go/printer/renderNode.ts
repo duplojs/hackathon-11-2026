@@ -87,6 +87,7 @@ export function renderNode(node: Node, depth = 0): string {
 		"[node][type]array": TypePrinter.printArrayType(context),
 		"[node][type]channel": TypePrinter.printChannelType(context),
 		"[node]type-constraint": TypePrinter.printTypeConstraint(context),
+		"[node]type-parameter": TypePrinter.printTypeParameter(context),
 		"[node][type]function": TypePrinter.printFunctionType(context),
 		"[node]interface-method": TypePrinter.printInterfaceMethod(context),
 		"[node]interface-union": TypePrinter.printInterfaceUnion(context),

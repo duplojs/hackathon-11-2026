@@ -1,6 +1,6 @@
 import * as DModeling from "@duplojs/lang/modeling";
 import { GoAST } from "@go";
-import { goModulePath } from "./sourcePackage";
+import { goModulePath } from "../sourcePackage";
 
 export interface SharedDependency extends DModeling.ObjectTag<"SharedDependency"> {
 	readonly imports: readonly GoAST.ImportDeclaration[];

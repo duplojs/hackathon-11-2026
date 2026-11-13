@@ -102,7 +102,7 @@ export function createBuildContext(
 					DString.padStart(4, "0"),
 				),
 			),
-			DString.prepend("Duplojs_"),
+			DString.prepend("Sourced_"),
 			GoAST.createIdentifier,
 		),
 	};

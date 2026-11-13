@@ -11,6 +11,7 @@ import { transformSourceFile } from "./transformSourceFile";
 import { createFile, type CreateFileParams } from "./createFile";
 import { sharedDependencyPackageName } from "@transformer";
 import { createSourcePackageLayout, goModuleContent } from "./sourcePackage";
+import { defaultSharedDependencies } from "./sharedDependency/defaults";
 
 export function build(
 	typescriptInstance: DInvocation.GetEvidenceResult<
@@ -78,8 +79,12 @@ export function build(
 					return exit(mainFile, moduleFile);
 				}
 
-				const file = DCommon.pipe(
+				const sharedDependencies = new Set(DGenerator.concat(
+					defaultSharedDependencies.value,
 					context.sharedDependencies,
+				));
+				const file = DCommon.pipe(
+					sharedDependencies,
 					DGenerator.reduce(
 						DGenerator.reduceFrom<CreateFileParams>({
 							packageName: sharedDependencyPackageName,

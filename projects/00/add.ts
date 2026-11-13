@@ -1,6 +1,8 @@
+import * as DEither from "@duplojs/lang/either";
+
 export function add(
 	one: number,
 	two: number,
 ) {
-	return one + two;
+	return DEither.success(one + two);
 }
