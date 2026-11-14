@@ -17,7 +17,7 @@ export type TypeAliasType = (
 
 export interface TypeDeclaration extends DModeling.ObjectTagWithGroup<
 	"type",
-	[NodeGroup, DeclarationGroup[1], StatementGroup[1]]
+	[NodeGroup, DeclarationGroup, StatementGroup]
 > {
 	identifier: Identifier;
 	generic?: readonly TypeParameter[];
@@ -30,7 +30,7 @@ export const createTypeDefinition = DModeling.createTaggedObjectFactory<
 
 export interface TypeAliasDeclaration extends DModeling.ObjectTagWithGroup<
 	"type-alias",
-	[NodeGroup, DeclarationGroup[1], StatementGroup[1]]
+	[NodeGroup, DeclarationGroup, StatementGroup]
 > {
 	identifier: Identifier;
 	generic?: readonly TypeParameter[];

@@ -13,7 +13,7 @@ export type VariableType = (
 
 export interface VariableDeclarationZeroValue extends DModeling.ObjectTagWithGroup<
 	"variable-zero-value",
-	[NodeGroup, DeclarationGroup[1], StatementGroup[1]]
+	[NodeGroup, DeclarationGroup, StatementGroup]
 > {
 	identifier: Identifier;
 	typeReference: VariableType;
@@ -25,7 +25,7 @@ export const createVariableDeclarationZeroValue = DModeling.createTaggedObjectFa
 
 export interface VariableDeclarationInitialized extends DModeling.ObjectTagWithGroup<
 	"variable-initialized",
-	[NodeGroup, DeclarationGroup[1], StatementGroup[1]]
+	[NodeGroup, DeclarationGroup, StatementGroup]
 > {
 	identifier: Identifier;
 	typeReference?: VariableType;

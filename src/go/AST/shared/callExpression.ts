@@ -11,7 +11,7 @@ export interface CallExpression<
 	GenericCallee extends Expression = Expression,
 > extends DModeling.ObjectTagWithGroup<
 		"call",
-		[NodeGroup, ExpressionGroup[1], StatementGroup[1]]
+		[NodeGroup, ExpressionGroup, StatementGroup]
 	> {
 	callee: GenericCallee;
 	typeArgument?: CallTypeArgument;

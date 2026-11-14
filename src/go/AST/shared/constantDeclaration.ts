@@ -9,7 +9,7 @@ export type { ConstantExpression } from "../expression";
 
 export interface ConstantDeclaration extends DModeling.ObjectTagWithGroup<
 	"constant",
-	[NodeGroup, DeclarationGroup[1], StatementGroup[1]]
+	[NodeGroup, DeclarationGroup, StatementGroup]
 > {
 	identifier: Identifier;
 	typeReference?: TypeReference;

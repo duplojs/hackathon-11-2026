@@ -5,7 +5,7 @@ import { type StatementGroup } from "../statement";
 
 export interface ReceiveExpression extends DModeling.ObjectTagWithGroup<
 	"receive",
-	[NodeGroup, ExpressionGroup[1], StatementGroup[1]]
+	[NodeGroup, ExpressionGroup, StatementGroup]
 > {
 	operand: Expression;
 }
