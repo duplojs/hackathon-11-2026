@@ -7,6 +7,7 @@ import * as DString from "@duplojs/lang/string";
 import { TsAST } from "@typescript";
 import { Symbol, SymbolFlags } from "typescript/async";
 import type { BuildContext } from "./context/build";
+import { absoluteFromTypescriptPath } from "./typescriptPath";
 
 export type DependencyReference =
 	| TsAST.Identifier
@@ -127,7 +128,7 @@ export async function resolveDependencyFile(
 		return DEither.none();
 	}
 
-	const filePath = DEither.unwrapRight(DPath.createAbsolute(declaration.path));
+	const filePath = DEither.unwrapRight(absoluteFromTypescriptPath(declaration.path));
 	if (
 		DEither.isLeft(filePath)
 		|| filePath === context.file.currentFilePath

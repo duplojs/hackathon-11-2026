@@ -12,6 +12,7 @@ import { createFile, type CreateFileParams } from "./createFile";
 import { sharedDependencyPackageName } from "@transformer";
 import { createSourcePackageLayout, goModuleContent } from "./sourcePackage";
 import { defaultSharedDependencies } from "./sharedDependency/defaults";
+import { absoluteFromTypescriptPath, toTypescriptPath } from "./typescriptPath";
 
 export function build(
 	typescriptInstance: DInvocation.GetEvidenceResult<
@@ -39,7 +40,9 @@ export function build(
 			if (path === undefined) {
 				const entryPackage = DCommon.pipe(
 					DEither.rightPipe(
-						DPath.createAbsolute(typescriptInstance.api.getCanonicalFileName(input)),
+						absoluteFromTypescriptPath(
+							typescriptInstance.api.getCanonicalFileName(toTypescriptPath(input)),
+						),
 						(sourcePath) => createSourcePackageLayout(typescriptInstance.projectWorkDirectory, sourcePath),
 					),
 					DEither.unwrapRight,
@@ -118,7 +121,9 @@ export function build(
 				);
 			}
 
-			const sourceFile = await typescriptInstance.project.program.getSourceFile(path);
+			const sourceFile = await typescriptInstance.project.program.getSourceFile(
+				toTypescriptPath(path),
+			);
 
 			if (!sourceFile) {
 				return exit(DEither.left("source-file-not-found", path));
@@ -141,7 +146,7 @@ export function build(
 
 			const sourcePackage = DCommon.pipe(
 				DEither.rightPipe(
-					DPath.createAbsolute(sourceFile.path),
+					absoluteFromTypescriptPath(sourceFile.path),
 					(sourcePath) => createSourcePackageLayout(typescriptInstance.projectWorkDirectory, sourcePath),
 				),
 				DEither.unwrapRight,

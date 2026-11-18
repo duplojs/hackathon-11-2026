@@ -1,8 +1,9 @@
 import * as DCommon from "@duplojs/lang/common";
 import * as DEither from "@duplojs/lang/either";
-import * as DPath from "@duplojs/lang/path";
+import type * as DPath from "@duplojs/lang/path";
 import type { GoAST } from "@go";
 import type { TsAST } from "@typescript";
+import { absoluteFromTypescriptPath } from "../typescriptPath";
 
 export interface FileContext {
 	readonly sourceFile: TsAST.SourceFile;
@@ -15,7 +16,7 @@ export interface FileContext {
 export function createFileContext(sourceFile: TsAST.SourceFile) {
 	const currentFilePath = DCommon.pipe(
 		sourceFile.path,
-		DPath.createAbsolute,
+		absoluteFromTypescriptPath,
 		DEither.unwrapRight,
 	);
 
