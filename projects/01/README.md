@@ -74,7 +74,7 @@ L’arithmétique sur des **constantes** Go est exacte : `0.1 + 0.2` y vaut `0.3
 
 La sortie du programme Go généré est identique, octet par octet, à celle de `tsx projects/01/index.ts`. Le Go a été validé avec `go vet` et `go run`. Des variantes absentes de l’exemple ont été vérifiées de la même manière : union déclarée dans l’autre ordre, variable typée initialisée depuis une autre variable, `else`, `isRight` sur un type non-union (condition `true`), déclarations multiples (`const a = 1, b = a + 2`), affichage de `0.1 + 0.2`, `1e21`, `-0` et d’une chaîne.
 
-Reproduction (Linux, macOS ou WSL : les chemins `/C:/…` produits sous Windows ne sont pas reconnus par l’API TypeScript 7) :
+Reproduction (Linux, macOS ou Windows) :
 
 ```bash
 pnpm build --tsconfig projects/01/tsconfig.json --input projects/01/index.ts --output projects/01/dist

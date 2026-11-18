@@ -133,7 +133,7 @@ Le Go a été validé avec `go vet` et `go run`. Des variantes absentes de l’e
 
 Les projets 00 et 01 donnent toujours une sortie identique. `tsc -p tsconfig.app.json` et le lint passent.
 
-Reproduction (Linux, macOS ou WSL, voir le projet 01) :
+Reproduction (Linux, macOS ou Windows) :
 
 ```bash
 pnpm build --tsconfig projects/08/tsconfig.json --input projects/08/index.ts --output projects/08/dist
