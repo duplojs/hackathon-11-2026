@@ -5,6 +5,7 @@ import { createTransformer, type Transformer } from "@transformer";
 import type { GoAST } from "@go";
 import { TsAST } from "@typescript";
 import { mapExpressionHandler } from "./map";
+import { coalescingExpressionHandler } from "./coalescing";
 
 export const duploJSArrayExpressionTransformer: Transformer<GoAST.Expression> = createTransformer(
 	async(node, context) => {
@@ -33,6 +34,10 @@ export const duploJSArrayExpressionTransformer: Transformer<GoAST.Expression> = 
 			DPattern.match(
 				DCommon.equal("map"),
 				() => mapExpressionHandler(node, context),
+			),
+			DPattern.match(
+				DCommon.equal("coalescing"),
+				() => coalescingExpressionHandler(node, context),
 			),
 			DPattern.otherwise(
 				() => context.error(node, "duplojs-array-function-not-supported"),
