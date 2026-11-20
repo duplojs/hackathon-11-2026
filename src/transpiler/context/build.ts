@@ -1,6 +1,7 @@
 import * as DCommon from "@duplojs/lang/common";
 import * as DEither from "@duplojs/lang/either";
 import type * as DObject from "@duplojs/lang/object";
+import * as DPath from "@duplojs/lang/path";
 import * as DString from "@duplojs/lang/string";
 import { GoAST } from "@go";
 import { TsAST } from "@typescript";
@@ -34,8 +35,13 @@ export interface BuildContext {
 	): TransformationSuccess<GenericGoNode>;
 	notSupport(): TransformationNotSupported;
 	error(node: TsAST.Node, content?: unknown): TransformationError;
-	generateIdentifier(): GoAST.Identifier;
+	// Crée une variable Go nommée d'après son rôle (`left`, `argument`, `pipeStep`…) suivi d'un
+	// numéro : `left1`, `left2`. Le nom reste lisible et ne peut pas entrer en conflit avec un mot-clé Go.
+	generateIdentifier(name: string): GoAST.Identifier;
 	createSourceIdentifier(value: string): GoAST.Identifier;
+	// Nom du paquet Go d'un fichier source, tiré de son chemin dans le projet :
+	// `add.ts` → `add_ts`, `lib/math.ts` → `lib_math_ts`.
+	createPackageIdentifier(filePath: string & DPath.Absolute): GoAST.Identifier;
 	registerSharedDependency(sharedDependency: SharedDependency): GoAST.Identifier;
 	resolveDependencyFile(
 		reference: DependencyReference | Symbol,
@@ -59,7 +65,14 @@ export function createBuildContext(
 		error: (node, content) => DEither.left("transformation-error", {
 			kind: TsAST.SyntaxKind[node.kind],
 			parentKind: node.parent ? TsAST.SyntaxKind[node.parent.kind] : undefined,
-			text: node.getText(),
+			// Un nœud produit par le checker (`typeToTypeNode`) n'a pas de texte source.
+			text: DCommon.pipe(
+				DEither.safeCallback(() => node.getText()),
+				DEither.whenIsRightOtherwise(
+					DCommon.forward,
+					() => "DisplayError",
+				),
+			),
 			getNode: () => node,
 			content,
 			filePath: file.currentFilePath,
@@ -85,9 +98,31 @@ export function createBuildContext(
 		),
 		registerDependencyFile: ({ filePath }) => {
 			file.dependencyFiles.add(filePath);
-			return context.createSourceIdentifier(filePath);
+			return context.createPackageIdentifier(filePath);
 		},
-		generateIdentifier: () => GoAST.createIdentifier(`Generated_${transpilation.increment()}`),
+		createPackageIdentifier: (filePath) => DCommon.pipe(
+			DPath.computeRelative(transpilation.projectWorkDirectory, filePath),
+			// `_` est doublé avant de remplacer `/`, `.` et `-` par `_` : `my_file.ts` (`my__file_ts`)
+			// reste distinct de `my/file.ts` (`my_file_ts`).
+			DString.replace(/_/g, "__"),
+			DString.replace(/[^a-zA-Z0-9_]/g, "_"),
+			// Le suffixe `_ts` évite tout conflit avec un paquet Go standard (`math`, `regexp`…).
+			// Un identifiant Go ne peut pas commencer par un chiffre : `2026.ts` → `file_2026_ts`.
+			(name) => DString.test(name, /^[0-9]/) ? `file_${name}` : name,
+			GoAST.createIdentifier,
+		),
+		generateIdentifier: (name) => {
+			// Un nom qui n'est pas un identifiant Go valide (`$value`) est remplacé par `value`.
+			const baseName = DString.test(name, /^[A-Za-z_][A-Za-z0-9_]*$/)
+				? name
+				: "value";
+			// Un nom terminé par un chiffre reçoit un séparateur : `left1` + 1 donne `left1_1`,
+			// distinct de `left` + 11 (`left11`).
+			const separator = DString.test(baseName, /[0-9]$/) ? "_" : "";
+			const index = transpilation.nextIndexOf(baseName);
+
+			return GoAST.createIdentifier(`${baseName}${separator}${index}`);
+		},
 		createSourceIdentifier: (value) => DCommon.pipe(
 			value,
 			DString.replace(

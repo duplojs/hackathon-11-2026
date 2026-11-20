@@ -2,13 +2,15 @@ import * as DCommon from "@duplojs/lang/common";
 import { GoAST } from "@go";
 import { createSharedDependency } from "@transformer";
 
+export const nullTypeIdentifier = GoAST.createIdentifier("JSNull");
+
 export const nullShardDependency = DCommon.memo(
 	() => createSharedDependency({
 		imports: [],
 		init: [],
 		declarations: [
 			GoAST.createTypeDefinition({
-				identifier: GoAST.createIdentifier("JSNull"),
+				identifier: nullTypeIdentifier,
 				type: GoAST.createStructType({ fields: [] }),
 			}),
 			GoAST.createMethodDeclaration({

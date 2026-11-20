@@ -1,8 +1,8 @@
 import * as DCommon from "@duplojs/lang/common";
-import { nullShardDependency } from "./null";
-import { undefinedShardDependency } from "./undefined";
+import { nullShardDependency, nullTypeIdentifier } from "./null";
+import { undefinedShardDependency, undefinedTypeIdentifier } from "./undefined";
 
-export { nullShardDependency, undefinedShardDependency };
+export { nullShardDependency, nullTypeIdentifier, undefinedShardDependency, undefinedTypeIdentifier };
 
 export const defaultSharedDependencies = DCommon.memo(() => [
 	nullShardDependency.value,

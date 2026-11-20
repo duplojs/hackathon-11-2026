@@ -5,6 +5,7 @@ import * as DCommon from "@duplojs/lang/common";
 import { expressionTransformers } from "../expression";
 import * as DEither from "@duplojs/lang/either";
 import * as DArray from "@duplojs/lang/array";
+import { getReadableName } from "./readableName";
 
 export const callExpressionTransformer: Transformer<GoAST.CallExpression> = createTransformer(
 	async(rawNode, context) => {
@@ -25,7 +26,7 @@ export const callExpressionTransformer: Transformer<GoAST.CallExpression> = crea
 		}
 
 		const functionVariableStatement = GoAST.createShortVariableDeclarationStatement({
-			identifier: context.generateIdentifier(),
+			identifier: context.generateIdentifier(getReadableName(node.expression, "callee")),
 			initializer: callee.result,
 		});
 
@@ -46,13 +47,15 @@ export const callExpressionTransformer: Transformer<GoAST.CallExpression> = crea
 					before: [],
 					arguments: [],
 				}),
-				({ element, lastValue, next, exit }) => {
+				({ element, index, lastValue, next, exit }) => {
 					if (DEither.isLeft(element)) {
 						return exit(element);
 					}
 
 					const argumentVariableStatement = GoAST.createShortVariableDeclarationStatement({
-						identifier: context.generateIdentifier(),
+						identifier: context.generateIdentifier(
+							getReadableName(DArray.at(node.arguments, index), "argument"),
+						),
 						initializer: element.result,
 					});
 

@@ -3,7 +3,7 @@ import { GoAST } from "@go";
 import { createTransformer, type Transformer } from "@transformer";
 import * as DCommon from "@duplojs/lang/common";
 import * as DArray from "@duplojs/lang/array";
-import { typeTransformers } from "../type";
+import { typeTransformers, unwrapPromiseType } from "../type";
 import * as DEither from "@duplojs/lang/either";
 import { blockStatementTransformer } from "../statement/block";
 
@@ -64,9 +64,19 @@ export const functionDeclarationTransformer: Transformer<GoAST.FunctionDeclarati
 		}
 
 		const signature = await context.transpilation.typeChecker.getSignatureFromDeclaration(node);
+		let rawReturnType = await context.transpilation.typeChecker.getReturnTypeOfSignature(signature);
+
+		const isAsync = DArray.find(
+			node.modifiers ?? [],
+			(m) => m.kind === TsAST.SyntaxKind.AsyncKeyword,
+		) !== undefined;
+
+		if (isAsync) {
+			rawReturnType = await unwrapPromiseType(rawReturnType, context);
+		}
 
 		const returnTypeNode = node.type ?? await context.transpilation.typeChecker.typeToTypeNode(
-			await context.transpilation.typeChecker.getReturnTypeOfSignature(signature),
+			rawReturnType,
 			node,
 		) ?? TsAST.factory.createKeywordTypeNode(TsAST.SyntaxKind.AnyKeyword);
 

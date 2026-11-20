@@ -39,7 +39,13 @@ export async function transformSourceFile(
 				init: [],
 			}),
 			async({ item, lastValue, next, exit }) => {
-				if (TsAST.isImportDeclaration(item)) {
+				// Les imports et les déclarations de types (`type`, `interface`) n'existent qu'à la
+				// compilation : ils ne produisent pas de code Go.
+				if (
+					TsAST.isImportDeclaration(item)
+					|| TsAST.isTypeAliasDeclaration(item)
+					|| TsAST.isInterfaceDeclaration(item)
+				) {
 					return next(lastValue);
 				}
 
@@ -98,7 +104,7 @@ export async function transformSourceFile(
 
 	return DEither.success({
 		file: createFile({
-			packageName: context.createSourceIdentifier(fileContext.currentFilePath),
+			packageName: context.createPackageIdentifier(fileContext.currentFilePath),
 			imports: DArray.concat(dependencyImports, DArray.from(fileContext.imports)),
 			declarations: DArray.concat(
 				content.declarations,

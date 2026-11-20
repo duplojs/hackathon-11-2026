@@ -3,6 +3,7 @@ import * as DPath from "@duplojs/lang/path";
 import * as DEither from "@duplojs/lang/either";
 import * as DCommon from "@duplojs/lang/common";
 import * as DInvocation from "@duplojs/lang/invocation";
+import { absoluteFromTypescriptPath, toTypescriptPath } from "./typescriptPath";
 
 export interface CreateTypescriptInstanceParams {
 	tsconfigPath: string & DPath.Absolute;
@@ -18,14 +19,15 @@ export async function createTypescriptInstance(
 	}
 
 	const api = new API({
-		cwd: tsconfigDirectory,
+		cwd: toTypescriptPath(tsconfigDirectory),
 	});
 
+	const tsconfigPath = toTypescriptPath(params.tsconfigPath);
 	const snapshot = await api.createSnapshot({
-		openProjects: [params.tsconfigPath],
+		openProjects: [tsconfigPath],
 	});
 
-	const project = snapshot.getConfiguredProject(params.tsconfigPath);
+	const project = snapshot.getConfiguredProject(tsconfigPath);
 
 	if (!project) {
 		await api.close();
@@ -35,7 +37,7 @@ export async function createTypescriptInstance(
 	const projectWorkDirectory = DCommon.pipe(
 		api.getCurrentDirectory(),
 		(directory) => api.getCanonicalFileName(directory),
-		DPath.createAbsolute,
+		absoluteFromTypescriptPath,
 		DEither.unwrapRight,
 	);
 

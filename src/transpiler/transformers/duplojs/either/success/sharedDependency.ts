@@ -31,12 +31,19 @@ export const eitherSuccessDependency = DCommon.memo(() => {
 			GoAST.createTypeAlias({
 				identifier: successTypeIdentifier,
 				generic: [successTypeParameter],
+				// Les champs de taille nulle sont placés en tête : un champ vide en dernière
+				// position force Go à ajouter un remplissage (32 octets au lieu de 24 pour un float64).
 				type: GoAST.createStructType({
 					fields: [
 						GoAST.createStructField({
 							identifier: GoAST.createIdentifier("Right"),
 							typeReference: nullType,
 							tag: "json:\"@duplojs/lang/kind/@DuplojsLangEither/right\"",
+						}),
+						GoAST.createStructField({
+							identifier: GoAST.createIdentifier("Success"),
+							typeReference: nullType,
+							tag: "json:\"@duplojs/lang/kind/@DuplojsLangEither/success\"",
 						}),
 						GoAST.createStructField({
 							identifier: GoAST.createIdentifier("Information"),
@@ -47,11 +54,6 @@ export const eitherSuccessDependency = DCommon.memo(() => {
 							identifier: GoAST.createIdentifier("Value"),
 							typeReference: generic,
 							tag: "json:\"@duplojs/lang/kind/@DuplojsLangEither/value\"",
-						}),
-						GoAST.createStructField({
-							identifier: GoAST.createIdentifier("Success"),
-							typeReference: nullType,
-							tag: "json:\"@duplojs/lang/kind/@DuplojsLangEither/success\"",
 						}),
 					],
 				}),

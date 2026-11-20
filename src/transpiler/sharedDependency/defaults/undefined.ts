@@ -2,13 +2,15 @@ import * as DCommon from "@duplojs/lang/common";
 import { GoAST } from "@go";
 import { createSharedDependency } from "@transformer";
 
+export const undefinedTypeIdentifier = GoAST.createIdentifier("JSUndefined");
+
 export const undefinedShardDependency = DCommon.memo(
 	() => createSharedDependency({
 		imports: [],
 		init: [],
 		declarations: [
 			GoAST.createTypeDefinition({
-				identifier: GoAST.createIdentifier("JSUndefined"),
+				identifier: undefinedTypeIdentifier,
 				type: GoAST.createStructType({ fields: [] }),
 			}),
 			GoAST.createMethodDeclaration({

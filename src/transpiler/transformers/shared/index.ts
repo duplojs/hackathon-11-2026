@@ -2,6 +2,7 @@ import * as DCommon from "@duplojs/lang/common";
 import { callExpressionTransformer } from "./call";
 
 export * from "./call";
+export * from "./readableName";
 
 export const sharedStatementTransformers = DCommon.memo(
 	() => [callExpressionTransformer],

@@ -12,6 +12,7 @@ import { createFile, type CreateFileParams } from "./createFile";
 import { sharedDependencyPackageName } from "@transformer";
 import { createSourcePackageLayout, goModuleContent } from "./sourcePackage";
 import { defaultSharedDependencies } from "./sharedDependency/defaults";
+import { absoluteFromTypescriptPath, toTypescriptPath } from "./typescriptPath";
 
 export function build(
 	typescriptInstance: DInvocation.GetEvidenceResult<
@@ -39,7 +40,9 @@ export function build(
 			if (path === undefined) {
 				const entryPackage = DCommon.pipe(
 					DEither.rightPipe(
-						DPath.createAbsolute(typescriptInstance.api.getCanonicalFileName(input)),
+						absoluteFromTypescriptPath(
+							typescriptInstance.api.getCanonicalFileName(toTypescriptPath(input)),
+						),
 						(sourcePath) => createSourcePackageLayout(typescriptInstance.projectWorkDirectory, sourcePath),
 					),
 					DEither.unwrapRight,
@@ -80,10 +83,9 @@ export function build(
 				}
 
 				const file = DCommon.pipe(
-					DGenerator.concat(
-						defaultSharedDependencies.value,
-						context.sharedDependencies,
-					),
+					// Les dépendances par défaut (`JSNull`, `JSUndefined`) peuvent aussi être enregistrées
+					// par un transformer : l'ensemble évite de les déclarer deux fois.
+					new Set([...defaultSharedDependencies.value, ...context.sharedDependencies]),
 					DGenerator.reduce(
 						DGenerator.reduceFrom<CreateFileParams>({
 							packageName: sharedDependencyPackageName,
@@ -94,7 +96,18 @@ export function build(
 						({ item, lastValue, nextWithObject }) => nextWithObject(
 							lastValue,
 							{
-								imports: DArray.concat(lastValue.imports, item.imports),
+								imports: DArray.reduce(
+									item.imports,
+									DArray.reduceFrom<readonly GoAST.ImportDeclaration[]>(lastValue.imports),
+									({ element, lastValue: imported, next }) => next(
+										DArray.find(
+											imported,
+											(declaration) => declaration.path === element.path,
+										)
+											? imported
+											: DArray.push(imported, element),
+									),
+								),
 								declarations: DArray.concat(
 									lastValue.declarations,
 									item.declarations,
@@ -118,7 +131,9 @@ export function build(
 				);
 			}
 
-			const sourceFile = await typescriptInstance.project.program.getSourceFile(path);
+			const sourceFile = await typescriptInstance.project.program.getSourceFile(
+				toTypescriptPath(path),
+			);
 
 			if (!sourceFile) {
 				return exit(DEither.left("source-file-not-found", path));
@@ -141,7 +156,7 @@ export function build(
 
 			const sourcePackage = DCommon.pipe(
 				DEither.rightPipe(
-					DPath.createAbsolute(sourceFile.path),
+					absoluteFromTypescriptPath(sourceFile.path),
 					(sourcePath) => createSourcePackageLayout(typescriptInstance.projectWorkDirectory, sourcePath),
 				),
 				DEither.unwrapRight,
