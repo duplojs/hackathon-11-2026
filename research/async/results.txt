@@ -1,0 +1,49 @@
+Machine : Apple M4, 10 cœurs, macOS 15.6.1, go1.27.4 darwin/arm64
+Commande : go test -run '^$' -bench . -benchmem -count 5 ./...  (depuis research/async)
+Date : 2026-11-17
+
+## Synthèse (5 passes)
+BenchmarkAExercise             médiane     13.7 ns/op [13.5..14.6]    16 B/op    1 allocs/op  0 goroutines/op
+BenchmarkBExercise             médiane    759.9 ns/op [755.8..761.7]   592 B/op   10 allocs/op  3 goroutines/op
+BenchmarkBParallelExercise     médiane    937.0 ns/op [932.7..940.5]   592 B/op   10 allocs/op  3 goroutines/op
+BenchmarkAAllRight             médiane     91.5 ns/op [91.4..92.0]    50 B/op    2 allocs/op  0 goroutines/op
+BenchmarkBAllRight             médiane    886.8 ns/op [883.7..888.5]   626 B/op   11 allocs/op  3 goroutines/op
+BenchmarkBParallelAllRight     médiane   1034.0 ns/op [1032.0..1042.0]   626 B/op   11 allocs/op  3 goroutines/op
+
+## Sortie brute
+goos: darwin
+goarch: arm64
+pkg: research/async
+cpu: Apple M4
+BenchmarkAExercise-10            	87213595	        13.93 ns/op	         0 goroutines/op	      16 B/op	       1 allocs/op
+BenchmarkAExercise-10            	88290202	        14.58 ns/op	         0 goroutines/op	      16 B/op	       1 allocs/op
+BenchmarkAExercise-10            	88473013	        13.54 ns/op	         0 goroutines/op	      16 B/op	       1 allocs/op
+BenchmarkAExercise-10            	88282356	        13.53 ns/op	         0 goroutines/op	      16 B/op	       1 allocs/op
+BenchmarkAExercise-10            	88802007	        13.71 ns/op	         0 goroutines/op	      16 B/op	       1 allocs/op
+BenchmarkBExercise-10            	 1580197	       759.6 ns/op	         3.000 goroutines/op	     592 B/op	      10 allocs/op
+BenchmarkBExercise-10            	 1577102	       760.6 ns/op	         3.000 goroutines/op	     592 B/op	      10 allocs/op
+BenchmarkBExercise-10            	 1586970	       755.8 ns/op	         3.000 goroutines/op	     592 B/op	      10 allocs/op
+BenchmarkBExercise-10            	 1579996	       761.7 ns/op	         3.000 goroutines/op	     592 B/op	      10 allocs/op
+BenchmarkBExercise-10            	 1577816	       759.9 ns/op	         3.000 goroutines/op	     592 B/op	      10 allocs/op
+BenchmarkBParallelExercise-10    	 1282950	       936.1 ns/op	         3.000 goroutines/op	     592 B/op	      10 allocs/op
+BenchmarkBParallelExercise-10    	 1282377	       937.0 ns/op	         3.000 goroutines/op	     592 B/op	      10 allocs/op
+BenchmarkBParallelExercise-10    	 1277502	       939.8 ns/op	         3.000 goroutines/op	     592 B/op	      10 allocs/op
+BenchmarkBParallelExercise-10    	 1277022	       940.5 ns/op	         3.000 goroutines/op	     592 B/op	      10 allocs/op
+BenchmarkBParallelExercise-10    	 1287458	       932.7 ns/op	         3.000 goroutines/op	     592 B/op	      10 allocs/op
+BenchmarkAAllRight-10            	12932108	        91.98 ns/op	         0 goroutines/op	      50 B/op	       2 allocs/op
+BenchmarkAAllRight-10            	13084538	        91.46 ns/op	         0 goroutines/op	      50 B/op	       2 allocs/op
+BenchmarkAAllRight-10            	13125781	        91.55 ns/op	         0 goroutines/op	      50 B/op	       2 allocs/op
+BenchmarkAAllRight-10            	13098666	        91.44 ns/op	         0 goroutines/op	      50 B/op	       2 allocs/op
+BenchmarkAAllRight-10            	13030558	        91.43 ns/op	         0 goroutines/op	      50 B/op	       2 allocs/op
+BenchmarkBAllRight-10            	 1349522	       888.5 ns/op	         3.000 goroutines/op	     626 B/op	      11 allocs/op
+BenchmarkBAllRight-10            	 1360442	       883.7 ns/op	         3.000 goroutines/op	     626 B/op	      11 allocs/op
+BenchmarkBAllRight-10            	 1352046	       886.8 ns/op	         3.000 goroutines/op	     626 B/op	      11 allocs/op
+BenchmarkBAllRight-10            	 1353632	       887.5 ns/op	         3.000 goroutines/op	     626 B/op	      11 allocs/op
+BenchmarkBAllRight-10            	 1352840	       886.6 ns/op	         3.000 goroutines/op	     626 B/op	      11 allocs/op
+BenchmarkBParallelAllRight-10    	 1000000	      1038 ns/op	         3.000 goroutines/op	     626 B/op	      11 allocs/op
+BenchmarkBParallelAllRight-10    	 1000000	      1042 ns/op	         3.000 goroutines/op	     626 B/op	      11 allocs/op
+BenchmarkBParallelAllRight-10    	 1000000	      1034 ns/op	         3.000 goroutines/op	     626 B/op	      11 allocs/op
+BenchmarkBParallelAllRight-10    	 1000000	      1033 ns/op	         3.000 goroutines/op	     626 B/op	      11 allocs/op
+BenchmarkBParallelAllRight-10    	 1000000	      1032 ns/op	         3.000 goroutines/op	     626 B/op	      11 allocs/op
+PASS
+ok  	research/async	35.425s

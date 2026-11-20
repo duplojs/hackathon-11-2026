@@ -6,6 +6,9 @@ export interface CreateFileParams {
 	imports: readonly GoAST.ImportDeclaration[];
 	declarations: readonly GoAST.Declaration[];
 	init: readonly GoAST.Statement[];
+
+	/** Nom de la fonction d'initialisation (`init` par défaut). */
+	initIdentifier?: GoAST.Identifier;
 }
 
 export function createFile(params: CreateFileParams) {
@@ -14,7 +17,7 @@ export function createFile(params: CreateFileParams) {
 		: DArray.push(
 			params.declarations,
 			GoAST.createFunctionDeclaration({
-				identifier: GoAST.createIdentifier("init"),
+				identifier: params.initIdentifier ?? GoAST.createIdentifier("init"),
 				generic: [],
 				returnTypes: [],
 				arguments: [],

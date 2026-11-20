@@ -1,0 +1,166 @@
+## go version
+go version go1.27.1 linux/amd64
+## cpu
+model name	: 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz
+cpus: 8
+## vet
+## tests de comportement (sortie identique à tsx) et tailles
+=== RUN   TestBehaviourMatchesTypeScript
+--- PASS: TestBehaviourMatchesTypeScript (0.00s)
+PASS
+ok  	research/either/a	0.014s
+=== RUN   TestSizes
+    sizes_test.go:16: A  Either[float64]                 : 32 octets
+    sizes_test.go:17: A' Either2[float64, []float64]     : 56 octets
+    sizes_test.go:18: A' LimitUnion (2 gauches + droite) : 72 octets
+    sizes_test.go:19: B  Either (interface)              : 16 octets + valeur boxée sur le tas
+    sizes_test.go:20: B  Right[float64] (boxé)           : 32 octets
+    sizes_test.go:21: C  Either (Value any)              : 40 octets + valeur boxée sur le tas
+--- PASS: TestSizes (0.00s)
+=== RUN   TestUniformMatchesA
+--- PASS: TestUniformMatchesA (0.00s)
+PASS
+ok  	research/either/aprime	0.012s
+=== RUN   TestBehaviourMatchesTypeScript
+--- PASS: TestBehaviourMatchesTypeScript (0.01s)
+PASS
+ok  	research/either/b	0.016s
+=== RUN   TestBehaviourMatchesTypeScript
+--- PASS: TestBehaviourMatchesTypeScript (0.00s)
+PASS
+ok  	research/either/c	0.014s
+?   	research/either/golden	[no test files]
+?   	research/either/inspect	[no test files]
+## benchmarks
+goos: linux
+goarch: amd64
+pkg: research/either/a
+cpu: 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz
+BenchmarkAddMatch-8           	308931028	         3.839 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAddMatch-8           	293464672	         3.870 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAddMatch-8           	308984484	         4.316 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAddMatch-8           	201620018	         9.351 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAddMatch-8           	231946700	         5.267 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAddMatchNoInline-8   	209761179	         5.224 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAddMatchNoInline-8   	225280297	         6.188 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAddMatchNoInline-8   	220563111	         5.436 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAddMatchNoInline-8   	227199906	         5.719 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAddMatchNoInline-8   	243706695	         4.895 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMap1000-8            	   50895	     20577 ns/op	   32768 B/op	       1 allocs/op
+BenchmarkMap1000-8            	   57558	     20119 ns/op	   32768 B/op	       1 allocs/op
+BenchmarkMap1000-8            	   54470	     20832 ns/op	   32768 B/op	       1 allocs/op
+BenchmarkMap1000-8            	   55257	     19742 ns/op	   32768 B/op	       1 allocs/op
+BenchmarkMap1000-8            	   56348	     21155 ns/op	   32768 B/op	       1 allocs/op
+BenchmarkMapGroup1000-8       	   44900	     27799 ns/op	   40960 B/op	       2 allocs/op
+BenchmarkMapGroup1000-8       	   40444	     25286 ns/op	   40960 B/op	       2 allocs/op
+BenchmarkMapGroup1000-8       	   47911	     26800 ns/op	   40960 B/op	       2 allocs/op
+BenchmarkMapGroup1000-8       	   44151	     27724 ns/op	   40960 B/op	       2 allocs/op
+BenchmarkMapGroup1000-8       	   45100	     26015 ns/op	   40960 B/op	       2 allocs/op
+PASS
+ok  	research/either/a	34.104s
+goos: linux
+goarch: amd64
+pkg: research/either/aprime
+cpu: 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz
+BenchmarkUniformMap1000-8   	   15074	     76150 ns/op	   40960 B/op	       1 allocs/op
+BenchmarkUniformMap1000-8   	   15235	     76389 ns/op	   40960 B/op	       1 allocs/op
+BenchmarkUniformMap1000-8   	   14899	     72172 ns/op	   40960 B/op	       1 allocs/op
+BenchmarkUniformMap1000-8   	   16568	     70545 ns/op	   40960 B/op	       1 allocs/op
+BenchmarkUniformMap1000-8   	   17542	     69690 ns/op	   40960 B/op	       1 allocs/op
+PASS
+ok  	research/either/aprime	9.375s
+goos: linux
+goarch: amd64
+pkg: research/either/b
+cpu: 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz
+BenchmarkAddMatch-8           	245394572	         5.022 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAddMatch-8           	220898311	         6.252 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAddMatch-8           	240355461	         6.208 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAddMatch-8           	221712123	         5.872 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAddMatch-8           	190182838	         6.077 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAddMatchNoInline-8   	21548532	        60.33 ns/op	      32 B/op	       1 allocs/op
+BenchmarkAddMatchNoInline-8   	21166609	        68.24 ns/op	      32 B/op	       1 allocs/op
+BenchmarkAddMatchNoInline-8   	16335796	        82.35 ns/op	      32 B/op	       1 allocs/op
+BenchmarkAddMatchNoInline-8   	14097151	        81.07 ns/op	      32 B/op	       1 allocs/op
+BenchmarkAddMatchNoInline-8   	17712388	        75.15 ns/op	      32 B/op	       1 allocs/op
+BenchmarkMap1000-8            	    7161	    153036 ns/op	   80384 B/op	    2001 allocs/op
+BenchmarkMap1000-8            	    7270	    156264 ns/op	   80384 B/op	    2001 allocs/op
+BenchmarkMap1000-8            	    8364	    146817 ns/op	   80384 B/op	    2001 allocs/op
+BenchmarkMap1000-8            	    8416	    144596 ns/op	   80384 B/op	    2001 allocs/op
+BenchmarkMap1000-8            	    7490	    150078 ns/op	   80384 B/op	    2001 allocs/op
+BenchmarkMapGroup1000-8       	    6331	    174634 ns/op	   88624 B/op	    2003 allocs/op
+BenchmarkMapGroup1000-8       	    8373	    145903 ns/op	   88624 B/op	    2003 allocs/op
+BenchmarkMapGroup1000-8       	    7981	    146621 ns/op	   88624 B/op	    2003 allocs/op
+BenchmarkMapGroup1000-8       	    8103	    152436 ns/op	   88624 B/op	    2003 allocs/op
+BenchmarkMapGroup1000-8       	    9044	    150600 ns/op	   88624 B/op	    2003 allocs/op
+PASS
+ok  	research/either/b	30.372s
+goos: linux
+goarch: amd64
+pkg: research/either/c
+cpu: 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz
+BenchmarkAddMatch-8           	52759833	        25.20 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAddMatch-8           	51819378	        31.74 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAddMatch-8           	35040540	        31.41 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAddMatch-8           	51175282	        31.09 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAddMatch-8           	46797938	        27.51 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAddMatchNoInline-8   	19061865	        57.30 ns/op	       8 B/op	       1 allocs/op
+BenchmarkAddMatchNoInline-8   	19230070	        58.07 ns/op	       8 B/op	       1 allocs/op
+BenchmarkAddMatchNoInline-8   	20065306	        56.23 ns/op	       8 B/op	       1 allocs/op
+BenchmarkAddMatchNoInline-8   	22378611	        63.26 ns/op	       8 B/op	       1 allocs/op
+BenchmarkAddMatchNoInline-8   	23554921	        51.55 ns/op	       8 B/op	       1 allocs/op
+BenchmarkMap1000-8            	    7452	    161111 ns/op	   56960 B/op	    2001 allocs/op
+BenchmarkMap1000-8            	    7483	    164651 ns/op	   56960 B/op	    2001 allocs/op
+BenchmarkMap1000-8            	    8010	    163603 ns/op	   56960 B/op	    2001 allocs/op
+BenchmarkMap1000-8            	    8245	    156860 ns/op	   56960 B/op	    2001 allocs/op
+BenchmarkMap1000-8            	    6372	    212773 ns/op	   56960 B/op	    2001 allocs/op
+BenchmarkMapGroup1000-8       	    6102	    191575 ns/op	   65176 B/op	    2003 allocs/op
+BenchmarkMapGroup1000-8       	    5389	    195102 ns/op	   65176 B/op	    2003 allocs/op
+BenchmarkMapGroup1000-8       	    6561	    199083 ns/op	   65176 B/op	    2003 allocs/op
+BenchmarkMapGroup1000-8       	    5800	    201505 ns/op	   65176 B/op	    2003 allocs/op
+BenchmarkMapGroup1000-8       	    5882	    200897 ns/op	   65176 B/op	    2003 allocs/op
+PASS
+ok  	research/either/c	29.618s
+## escape analysis
+a/scenario.go:80:17: make([]Either[float64], len(inputs)) escapes to heap
+aprime/either.go:42:16: make([]float64, len(items)) escapes to heap
+aprime/uniform.go:42:17: make([]Either2[float64,float64], len(inputs)) escapes to heap
+b/either.go:27:6: Right[go.shape.[]float64]{...} escapes to heap
+b/either.go:27:6: Right[go.shape.float64]{...} escapes to heap
+b/either.go:28:17: Right[go.shape.[]float64]{...} escapes to heap
+b/either.go:28:17: Right[go.shape.float64]{...} escapes to heap
+b/either.go:31:6: Left[go.shape.float64]{...} escapes to heap
+b/either.go:32:16: Left[go.shape.float64]{...} escapes to heap
+b/either.go:37:23: Left[struct {}]{...} escapes to heap
+b/either.go:61:8: "b.Inspect: type non prévu" escapes to heap
+b/scenario.go:20:17: Left[go.shape.float64]{...} escapes to heap
+b/scenario.go:22:16: Right[go.shape.float64]{...} escapes to heap
+b/scenario.go:27:12: Left[go.shape.float64]{...} escapes to heap
+b/scenario.go:27:12: Right[go.shape.float64]{...} escapes to heap
+b/scenario.go:32:17: Left[go.shape.float64]{...} escapes to heap
+b/scenario.go:34:16: Right[go.shape.float64]{...} escapes to heap
+b/scenario.go:38:13: Left[go.shape.float64]{...} escapes to heap
+b/scenario.go:38:13: Right[go.shape.float64]{...} escapes to heap
+b/scenario.go:43:15: Left[go.shape.float64]{...} escapes to heap
+b/scenario.go:43:15: Right[go.shape.float64]{...} escapes to heap
+b/scenario.go:58:8: "b.Message: variante non prévue" escapes to heap
+b/scenario.go:75:17: make([]Either, len(inputs)) escapes to heap
+b/scenario.go:7:14: Left[struct {}]{...} escapes to heap
+b/scenario.go:83:16: make([]float64, len(items)) escapes to heap
+b/scenario.go:91:16: Right[go.shape.[]float64]{...} escapes to heap
+b/scenario.go:9:16: Right[go.shape.float64]{...} escapes to heap
+c/either.go:48:8: "c.formatValue: type non prévu" escapes to heap
+c/scenario.go:20:35: operand escapes to heap
+c/scenario.go:22:21: one + two escapes to heap
+c/scenario.go:27:12: one + two escapes to heap
+c/scenario.go:27:12: operand escapes to heap
+c/scenario.go:32:35: divisor escapes to heap
+c/scenario.go:34:23: value / divisor escapes to heap
+c/scenario.go:38:13: one + two escapes to heap
+c/scenario.go:38:13: operand escapes to heap
+c/scenario.go:42:15: divisor escapes to heap
+c/scenario.go:42:15: value / divisor escapes to heap
+c/scenario.go:68:17: make([]Either, len(inputs)) escapes to heap
+c/scenario.go:76:16: make([]float64, len(items)) escapes to heap
+c/scenario.go:83:17: values escapes to heap
+c/scenario.go:9:21: one + two escapes to heap

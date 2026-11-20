@@ -1,0 +1,5 @@
+# Les scripts shell doivent garder des fins de ligne LF, même sous Windows (core.autocrlf),
+# sinon bash échoue dans le conteneur Docker ("bash\r: No such file or directory").
+*.sh text eol=lf
+scripts/docker/Dockerfile text eol=lf
+.commands/* text eol=lf

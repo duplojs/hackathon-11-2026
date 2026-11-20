@@ -7,6 +7,7 @@ import * as DString from "@duplojs/lang/string";
 import { TsAST } from "@typescript";
 import { Symbol, SymbolFlags } from "typescript/async";
 import type { BuildContext } from "./context/build";
+import { toDPathAbsolute } from "./path";
 
 export type DependencyReference =
 	| TsAST.Identifier
@@ -127,7 +128,7 @@ export async function resolveDependencyFile(
 		return DEither.none();
 	}
 
-	const filePath = DEither.unwrapRight(DPath.createAbsolute(declaration.path));
+	const filePath = DEither.unwrapRight(toDPathAbsolute(declaration.path));
 	if (
 		DEither.isLeft(filePath)
 		|| filePath === context.file.currentFilePath
@@ -192,4 +193,124 @@ export async function resolveReferenceModule(
 		entry,
 		exportName: symbol.name,
 	});
+}
+
+/**
+ * Nœud de déclaration de PREMIER NIVEAU qui porte `nameNode` : fonction, variable
+ * ou élément de déstructuration d'une variable déclarée au niveau du module.
+ */
+export function isTopLevelDeclarationName(nameNode: TsAST.Node) {
+	let current: TsAST.Node | undefined = nameNode.parent;
+
+	if (current && TsAST.isFunctionDeclaration(current)) {
+		return current.parent?.kind === TsAST.SyntaxKind.SourceFile;
+	}
+
+	while (
+		current
+		&& (
+			TsAST.isBindingElement(current)
+			|| TsAST.isArrayBindingPattern(current)
+			|| TsAST.isObjectBindingPattern(current)
+		)
+	) {
+		current = current.parent;
+	}
+
+	return current !== undefined
+		&& TsAST.isVariableDeclaration(current)
+		&& current.parent?.parent?.parent?.kind === TsAST.SyntaxKind.SourceFile;
+}
+
+async function resolveDeclarationName(symbol: Symbol) {
+	const declaration = await symbol.valueDeclaration?.resolve();
+	const name = declaration && "name" in declaration
+		? declaration.name as TsAST.Node | undefined
+		: undefined;
+
+	return name && TsAST.isIdentifier(name) ? name : undefined;
+}
+
+/** Nom déclaré d'un symbole (et non l'alias local d'un `import { a as b }`). */
+export async function getDeclaredName(symbol: Symbol) {
+	const name = await resolveDeclarationName(symbol);
+
+	return name?.text ?? symbol.name;
+}
+
+/**
+ * Déclaration de premier niveau du FICHIER COURANT désignée par `target`
+ * (nécessaire seulement dans un package fusionné, où ces noms sont préfixés).
+ */
+export async function resolveCurrentFileTopLevelName(
+	target: TsAST.Identifier,
+	context: BuildContext,
+) {
+	const reference = await DCommon.asyncPipe(
+		resolveReferenceTarget(target, context),
+		DEither.unwrapRight,
+	);
+
+	if (
+		DEither.isLeft(reference)
+		|| reference.symbol.valueDeclaration?.path !== context.file.sourceFile.path
+	) {
+		return DEither.none();
+	}
+
+	const name = await resolveDeclarationName(reference.symbol);
+
+	if (!name || !isTopLevelDeclarationName(name)) {
+		return DEither.none();
+	}
+
+	return DEither.some(name.text);
+}
+
+/**
+ * Déclarations de TYPE du projet (hors node_modules) désignées par `typeName`,
+ * nœud réel ou synthétique (typeToTypeNode garde le nom des alias et des
+ * interfaces) : un alias, ou les déclarations (fusionnées) d'une interface.
+ */
+export async function resolveProjectTypeDeclarations(
+	typeName: TsAST.EntityName | TsAST.Expression,
+	context: BuildContext,
+) {
+	if (
+		!TsAST.isIdentifier(typeName)
+		&& !TsAST.isQualifiedName(typeName)
+		&& !TsAST.isPropertyAccessExpression(typeName)
+	) {
+		return DEither.none();
+	}
+
+	const reference = await DCommon.asyncPipe(
+		resolveReferenceTarget(typeName, context),
+		DEither.unwrapRight,
+	);
+
+	if (
+		DEither.isLeft(reference)
+		|| (reference.symbol.flags & (SymbolFlags.TypeAlias | SymbolFlags.Interface)) === 0
+	) {
+		return DEither.none();
+	}
+
+	const declarations: (TsAST.TypeAliasDeclaration | TsAST.InterfaceDeclaration)[] = [];
+
+	for (const handle of reference.symbol.declarations ?? []) {
+		if (DString.includes(handle.path, "/node_modules/")) {
+			return DEither.none();
+		}
+
+		const declaration = await handle.resolve();
+
+		if (declaration && (TsAST.isTypeAliasDeclaration(declaration) || TsAST.isInterfaceDeclaration(declaration))) {
+			declarations.push(declaration);
+		}
+	}
+
+	return DArray.lengthEqual(declarations, 0)
+		? DEither.none()
+		: DEither.some(declarations);
 }

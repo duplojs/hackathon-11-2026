@@ -1,0 +1,36 @@
+Environment: Windows 11 Famille 10.0.26200, windows/amd64
+CPU: Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz, 12 logical processors
+Go: go1.24.4 windows/amd64
+
+Command: go test -bench . -benchmem -count 5
+
+BenchmarkSliceTriplets1000:
+  26724 ns/op, 24000 B/op, 1000 allocs/op
+  23178 ns/op, 24000 B/op, 1000 allocs/op
+  23152 ns/op, 24000 B/op, 1000 allocs/op
+  23067 ns/op, 24000 B/op, 1000 allocs/op
+  22678 ns/op, 24000 B/op, 1000 allocs/op
+  median: 23152 ns/op; range: 22678..26724 ns/op
+
+BenchmarkArrayTriplets1000:
+  4544 ns/op, 0 B/op, 0 allocs/op
+  4372 ns/op, 0 B/op, 0 allocs/op
+  4279 ns/op, 0 B/op, 0 allocs/op
+  4918 ns/op, 0 B/op, 0 allocs/op
+  4341 ns/op, 0 B/op, 0 allocs/op
+  median: 4372 ns/op; range: 4279..4918 ns/op
+
+Escape analysis: go test -run '^$' -gcflags=-m
+
+Relevant output:
+  ./tuples_test.go:13:16: make([][]float64, 1000) escapes to heap
+  ./tuples_test.go:16:28: []float64{...} escapes to heap
+  ./tuples_test.go:27:16: make([][3]float64, 1000) escapes to heap
+  ./tuples_test.go:77:46: make([][]float64, 1000) does not escape
+  ./tuples_test.go:77:46: []float64{...} escapes to heap
+  ./tuples_test.go:83:46: make([][3]float64, 1000) does not escape
+
+Interpretation: in the benchmark loop the array representation is about 5.3x
+faster by median and avoids the 1000 inner-slice backing allocations. The
+benchmark is a local microbenchmark, not a claim about all Go programs or the
+transpiler's whole-program performance.

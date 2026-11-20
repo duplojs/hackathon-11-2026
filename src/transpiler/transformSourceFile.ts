@@ -10,11 +10,25 @@ import { createFileContext } from "./context/file";
 import type { TranspilationContext } from "./context/transpilation";
 import { sourceFileTransformers } from "./transformers";
 import { createFile } from "./createFile";
-import { createSourcePackageLayout } from "./sourcePackage";
+import { createFileKey, createFilePackageLayout } from "./sourcePackage";
+import { isMergedPackage } from "./moduleGraph";
+import { isTypeOnlyStatement } from "./typeOnlyStatement";
 
 interface TransformedFileContent {
 	declarations: GoAST.GoFile["declarations"];
 	init: readonly GoAST.Statement[];
+}
+
+/**
+ * Package fusionné : Go exécuterait les `init` de ses fichiers dans l'ordre
+ * alphabétique. Chaque fichier a donc sa propre fonction, appelée dans l'ordre
+ * d'évaluation ES par un `init` unique (voir build.ts).
+ */
+export function createInitIdentifier(
+	transpilationContext: TranspilationContext,
+	filePath: Parameters<typeof createFileKey>[1],
+) {
+	return GoAST.createIdentifier(`init__${createFileKey(transpilationContext.projectWorkDirectory, filePath)}`);
 }
 
 export async function transformSourceFile(
@@ -39,7 +53,7 @@ export async function transformSourceFile(
 				init: [],
 			}),
 			async({ item, lastValue, next, exit }) => {
-				if (TsAST.isImportDeclaration(item)) {
+				if (TsAST.isImportDeclaration(item) || isTypeOnlyStatement(item)) {
 					return next(lastValue);
 				}
 
@@ -81,11 +95,19 @@ export async function transformSourceFile(
 			DGenerator.reduceFrom<readonly GoAST.ImportDeclaration[]>([]),
 			({ item, lastValue, next, exit }) => {
 				const sourcePackage = DCommon.pipe(
-					createSourcePackageLayout(transpilationContext.projectWorkDirectory, item),
+					createFilePackageLayout(
+						transpilationContext.projectWorkDirectory,
+						transpilationContext.moduleGraph,
+						item,
+					),
 					DEither.unwrapRight,
 				);
 				if (DEither.isLeft(sourcePackage)) {
 					return exit(sourcePackage);
+				}
+				// Deux fichiers d'un même package fusionné : un seul import.
+				if (DArray.some(lastValue, (known) => known.path === sourcePackage.importPath)) {
+					return next(lastValue);
 				}
 				return next(DArray.push(lastValue, GoAST.createImportDeclaration({ path: sourcePackage.importPath })));
 			},
@@ -105,7 +127,11 @@ export async function transformSourceFile(
 				DArray.from(fileContext.declarations),
 			),
 			init: content.init,
+			initIdentifier: isMergedPackage(transpilationContext.moduleGraph, fileContext.currentFilePath)
+				? createInitIdentifier(transpilationContext, fileContext.currentFilePath)
+				: undefined,
 		}),
+		hasInit: !DArray.lengthEqual(content.init, 0),
 		context,
 	});
 }

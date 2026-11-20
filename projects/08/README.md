@@ -13,3 +13,13 @@ Dans `index.ts`, chaque entrée de `inputs` décrit un calcul distinct. `DArray.
 ### Déconstruire une entrée structurée dans un paramètre
 
 La fonction passée au premier `DArray.map` reçoit un tuple et le décompose directement dans son paramètre avec `([one, two, divisor])`. Comment traduire cette déconstruction positionnelle en Go, qui ne permet pas cette forme de liaison dans les paramètres d’une fonction, tout en associant chaque valeur à la bonne variable ?
+
+La décision ADR-11 conserve `[][]float64` pour ces tuples homogènes. Le paramètre
+déstructuré devient un slice Go et les liaisons utiles sont lues par indice ;
+les noms jamais utilisés ne sont pas déclarés. Le benchmark comparatif avec
+`[][3]float64` est documenté dans
+[research/tuples](../../research/tuples/README.md).
+
+La même règle s'applique à `const [a, b] = expr` : la source est évaluée une
+fois avant les lectures d'indices. Voir
+[docs/exercises/08.md](../../docs/exercises/08.md).

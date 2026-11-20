@@ -29,6 +29,9 @@ export interface TransformationDiagnosticContext {
 
 export interface TransformationErrorPayload extends TransformationDiagnosticContext {
 	readonly kind: string;
+
+	/** `fichier:ligne:colonne` du nœud, ou du site réel pour un nœud synthétique. */
+	readonly location?: string;
 	readonly parentKind: string | undefined;
 	readonly text: string;
 	getNode(): TsAST.Node;
@@ -37,6 +40,7 @@ export interface TransformationErrorPayload extends TransformationDiagnosticCont
 
 export interface NotfoundTransformerPayload extends TransformationDiagnosticContext {
 	readonly kind: string;
+	readonly location?: string;
 	readonly parentKind: string | undefined;
 	readonly text: string;
 	getNode(): TsAST.Node;
@@ -56,6 +60,42 @@ export type NotfoundTransformer = DEither.Left<
 	"notfound-transformer",
 	NotfoundTransformerPayload
 >;
+
+/**
+ * Texte d'un nœud pour un diagnostic. Un nœud SYNTHÉTIQUE (produit par
+ * typeToTypeNode) n'a pas de texte source : getText() lève une exception ou lit
+ * un autre fichier à la même position (D21). On l'indique au lieu de l'inventer.
+ */
+export function getNodeText(node: TsAST.Node) {
+	if (node.pos < 0 || node.end < 0) {
+		return `<nœud synthétique ${TsAST.SyntaxKind[node.kind]}>`;
+	}
+
+	try {
+		return node.getText();
+	} catch {
+		return `<nœud synthétique ${TsAST.SyntaxKind[node.kind]}>`;
+	}
+}
+
+/** `chemin:ligne:colonne` (base 1) d'un nœud du fichier courant ; sinon undefined. */
+export function describeNodeLocation(node: TsAST.Node, sourceFile: TsAST.SourceFile) {
+	if (node.pos < 0) {
+		return undefined;
+	}
+
+	try {
+		if (node.getSourceFile() !== sourceFile) {
+			return undefined;
+		}
+
+		const { line, character } = sourceFile.getLineAndCharacterOfPosition(node.getStart());
+
+		return `${sourceFile.fileName}:${line + 1}:${character + 1}`;
+	} catch {
+		return undefined;
+	}
+}
 
 export interface Transformer<
 	GenericResultNode extends GoAST.Node = GoAST.Node,
@@ -141,13 +181,8 @@ export function transform<
 			() => DEither.left("notfound-transformer", {
 				kind: TsAST.SyntaxKind[data.kind],
 				parentKind: data.parent ? TsAST.SyntaxKind[data.parent.kind] : undefined,
-				text: DCommon.pipe(
-					DEither.safeCallback(() => data.getText()),
-					DEither.whenIsRightOtherwise(
-						DCommon.forward,
-						() => "DisplayError",
-					),
-				),
+				location: describeNodeLocation(data, context.file.sourceFile),
+				text: getNodeText(data),
 				getNode: () => data,
 				filePath: context.file.currentFilePath,
 				projectWorkDirectory: context.transpilation.projectWorkDirectory,

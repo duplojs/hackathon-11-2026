@@ -1,0 +1,64 @@
+{
+  '@duplojs/lang/kind/@DuplojsLangEither/left': null,
+  '@duplojs/lang/kind/@DuplojsLangEither/information': 'fail',
+  '@duplojs/lang/kind/@DuplojsLangEither/value': undefined,
+  '@duplojs/lang/kind/@DuplojsLangEither/fail': null
+}
+{
+  '@duplojs/lang/kind/@DuplojsLangEither/right': null,
+  '@duplojs/lang/kind/@DuplojsLangEither/information': 'success',
+  '@duplojs/lang/kind/@DuplojsLangEither/value': 3,
+  '@duplojs/lang/kind/@DuplojsLangEither/success': null
+}
+{
+  '@duplojs/lang/kind/@DuplojsLangEither/right': null,
+  '@duplojs/lang/kind/@DuplojsLangEither/information': 'success',
+  '@duplojs/lang/kind/@DuplojsLangEither/value': 3,
+  '@duplojs/lang/kind/@DuplojsLangEither/success': null
+}
+{
+  '@duplojs/lang/kind/@DuplojsLangEither/left': null,
+  '@duplojs/lang/kind/@DuplojsLangEither/information': 'negative-operand',
+  '@duplojs/lang/kind/@DuplojsLangEither/value': -1
+}
+{
+  '@duplojs/lang/kind/@DuplojsLangEither/left': null,
+  '@duplojs/lang/kind/@DuplojsLangEither/information': 'negative-operand',
+  '@duplojs/lang/kind/@DuplojsLangEither/value': -2
+}
+{
+  '@duplojs/lang/kind/@DuplojsLangEither/right': null,
+  '@duplojs/lang/kind/@DuplojsLangEither/information': 'success',
+  '@duplojs/lang/kind/@DuplojsLangEither/value': 3,
+  '@duplojs/lang/kind/@DuplojsLangEither/success': null
+}
+{
+  '@duplojs/lang/kind/@DuplojsLangEither/left': null,
+  '@duplojs/lang/kind/@DuplojsLangEither/information': 'division-by-zero',
+  '@duplojs/lang/kind/@DuplojsLangEither/value': 0
+}
+{
+  '@duplojs/lang/kind/@DuplojsLangEither/left': null,
+  '@duplojs/lang/kind/@DuplojsLangEither/information': 'negative-operand',
+  '@duplojs/lang/kind/@DuplojsLangEither/value': -1
+}
+{
+  '@duplojs/lang/kind/@DuplojsLangEither/right': null,
+  '@duplojs/lang/kind/@DuplojsLangEither/information': 'success',
+  '@duplojs/lang/kind/@DuplojsLangEither/value': 0.75,
+  '@duplojs/lang/kind/@DuplojsLangEither/success': null
+}
+3
+division par zéro impossible
+un opérande est négatif
+{
+  '@duplojs/lang/kind/@DuplojsLangEither/left': null,
+  '@duplojs/lang/kind/@DuplojsLangEither/information': 'division-by-zero',
+  '@duplojs/lang/kind/@DuplojsLangEither/value': 0
+}
+{
+  '@duplojs/lang/kind/@DuplojsLangEither/right': null,
+  '@duplojs/lang/kind/@DuplojsLangEither/information': 'success',
+  '@duplojs/lang/kind/@DuplojsLangEither/value': [ 3, 3 ],
+  '@duplojs/lang/kind/@DuplojsLangEither/success': null
+}
