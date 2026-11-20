@@ -6,10 +6,9 @@ Renseignez le nom, le prénom et la classe de chaque membre. Les équipes sont c
 
 | | Nom | Prénom | Classe |
 |---|---|---|---|
-| 1 | À compléter | À compléter | À compléter |
-| 2 | À compléter | À compléter | À compléter |
-| 3 | À compléter | À compléter | À compléter |
-| 4 | À compléter | À compléter | À compléter |
+| 1 | Doual | Lucas | 4IWJ |
+| 2 | Neupert | Jerome | 4IWJ |
+| 3 | Moran | Diego | 4IWJ |
 
 ## Objectif
 

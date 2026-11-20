@@ -1,0 +1,18 @@
+{
+  '@duplojs/lang/kind/@DuplojsLangEither/left': null,
+  '@duplojs/lang/kind/@DuplojsLangEither/information': 'division-by-zero',
+  '@duplojs/lang/kind/@DuplojsLangEither/value': 0
+}
+{
+  '@duplojs/lang/kind/@DuplojsLangEither/left': null,
+  '@duplojs/lang/kind/@DuplojsLangEither/information': 'negative-operand',
+  '@duplojs/lang/kind/@DuplojsLangEither/value': -1
+}
+{
+  '@duplojs/lang/kind/@DuplojsLangEither/right': null,
+  '@duplojs/lang/kind/@DuplojsLangEither/information': 'success',
+  '@duplojs/lang/kind/@DuplojsLangEither/value': 3,
+  '@duplojs/lang/kind/@DuplojsLangEither/success': null
+}
+-1
+6

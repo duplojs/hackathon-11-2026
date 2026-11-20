@@ -6,6 +6,7 @@ export const undefinedShardDependency = DCommon.memo(
 	() => createSharedDependency({
 		imports: [],
 		init: [],
+		goFiles: [],
 		declarations: [
 			GoAST.createTypeDefinition({
 				identifier: GoAST.createIdentifier("JSUndefined"),

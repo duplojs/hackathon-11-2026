@@ -59,7 +59,9 @@ export function createBuildContext(
 		error: (node, content) => DEither.left("transformation-error", {
 			kind: TsAST.SyntaxKind[node.kind],
 			parentKind: node.parent ? TsAST.SyntaxKind[node.parent.kind] : undefined,
-			text: node.getText(),
+			// Un nœud fabriqué par le TypeChecker (typeToTypeNode) n'a pas de fichier source :
+			// getText() planterait et cacherait la vraie erreur.
+			text: node.pos >= 0 ? node.getText() : `<type synthétisé : ${TsAST.SyntaxKind[node.kind]}>`,
 			getNode: () => node,
 			content,
 			filePath: file.currentFilePath,

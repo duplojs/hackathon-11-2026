@@ -4,6 +4,7 @@ import * as DEither from "@duplojs/lang/either";
 import * as DGenerator from "@duplojs/lang/generator";
 import type * as DInvocation from "@duplojs/lang/invocation";
 import * as DPath from "@duplojs/lang/path";
+import * as DSFile from "@duplojs/server/file";
 import { GoAST, GoPrinter } from "@go";
 import type { createTypescriptInstance } from "./createTypescriptInstance";
 import { createTranspilationContext } from "./context/transpilation";
@@ -106,6 +107,31 @@ export function build(
 					createFile,
 				);
 
+				// Runtime Go écrit à la main, copié tel quel.
+				const goFiles = await DCommon.asyncPipe(
+					[...context.sharedDependencies],
+					DArray.flatMap((sharedDependency) => sharedDependency.goFiles),
+					DArray.map(
+						async(goFile) => DEither.rightAsyncPipe(
+							DPath.create(`${sharedDependencyPackageName.value}/${goFile.fileName}`),
+							async(outputPath) => DEither.rightAsyncPipe(
+								DSFile.readTextFile(goFile.sourcePath),
+								(content) => DEither.right("build-shared-dependencies-go-file", {
+									content,
+									outputPath,
+								}),
+							),
+						),
+					),
+					DCommon.promiseAll,
+				);
+
+				const unreadableGoFile = DArray.find(goFiles, DEither.isLeft);
+
+				if (unreadableGoFile) {
+					return exit(unreadableGoFile);
+				}
+
 				return exit(
 					DEither.right("build-shared-dependencies-file", {
 						content: GoPrinter.printGoFile(file),
@@ -113,6 +139,7 @@ export function build(
 							`${sharedDependencyPackageName.value}/${sharedDependencyPackageName.value}.go`,
 						),
 					}),
+					...DArray.filter(goFiles, DEither.isRight),
 					mainFile,
 					moduleFile,
 				);

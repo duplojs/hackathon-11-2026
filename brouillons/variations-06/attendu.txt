@@ -1,0 +1,12 @@
+{
+  '@duplojs/lang/kind/@DuplojsLangEither/left': null,
+  '@duplojs/lang/kind/@DuplojsLangEither/information': 'negative-operand',
+  '@duplojs/lang/kind/@DuplojsLangEither/value': -1
+}
+{
+  '@duplojs/lang/kind/@DuplojsLangEither/left': null,
+  '@duplojs/lang/kind/@DuplojsLangEither/information': 'negative-operand',
+  '@duplojs/lang/kind/@DuplojsLangEither/value': -5
+}
+un opérande est négatif
+6

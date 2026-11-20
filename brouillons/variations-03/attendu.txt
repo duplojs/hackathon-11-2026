@@ -1,0 +1,8 @@
+{
+  '@duplojs/lang/kind/@DuplojsLangEither/left': null,
+  '@duplojs/lang/kind/@DuplojsLangEither/information': 'fail',
+  '@duplojs/lang/kind/@DuplojsLangEither/value': undefined,
+  '@duplojs/lang/kind/@DuplojsLangEither/fail': null
+}
+4
+[ 7 ]
