@@ -79,11 +79,13 @@ export function build(
 					return exit(mainFile, moduleFile);
 				}
 
+				const allSharedDeps = new Set([
+					...defaultSharedDependencies.value,
+					...context.sharedDependencies,
+				]);
+
 				const file = DCommon.pipe(
-					DGenerator.concat(
-						defaultSharedDependencies.value,
-						context.sharedDependencies,
-					),
+					allSharedDeps,
 					DGenerator.reduce(
 						DGenerator.reduceFrom<CreateFileParams>({
 							packageName: sharedDependencyPackageName,
@@ -91,17 +93,21 @@ export function build(
 							declarations: [],
 							init: [],
 						}),
-						({ item, lastValue, nextWithObject }) => nextWithObject(
-							lastValue,
-							{
-								imports: DArray.concat(lastValue.imports, item.imports),
-								declarations: DArray.concat(
-									lastValue.declarations,
-									item.declarations,
-								),
-								init: DArray.concat(lastValue.init, item.init),
-							},
-						),
+						({ item, lastValue, nextWithObject }) => {
+							const existingPaths = new Set(lastValue.imports.map((imp) => imp.path));
+							const uniqueImports = item.imports.filter((imp) => !existingPaths.has(imp.path));
+							return nextWithObject(
+								lastValue,
+								{
+									imports: DArray.concat(lastValue.imports, uniqueImports),
+									declarations: DArray.concat(
+										lastValue.declarations,
+										item.declarations,
+									),
+									init: DArray.concat(lastValue.init, item.init),
+								},
+							);
+						},
 					),
 					createFile,
 				);

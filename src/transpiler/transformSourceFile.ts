@@ -39,7 +39,11 @@ export async function transformSourceFile(
 				init: [],
 			}),
 			async({ item, lastValue, next, exit }) => {
-				if (TsAST.isImportDeclaration(item)) {
+				if (
+					TsAST.isImportDeclaration(item)
+					|| TsAST.isTypeAliasDeclaration(item)
+					|| TsAST.isInterfaceDeclaration(item)
+				) {
 					return next(lastValue);
 				}
 

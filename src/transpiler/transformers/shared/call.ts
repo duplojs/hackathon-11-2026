@@ -5,6 +5,8 @@ import * as DCommon from "@duplojs/lang/common";
 import { expressionTransformers } from "../expression";
 import * as DEither from "@duplojs/lang/either";
 import * as DArray from "@duplojs/lang/array";
+import * as DModeling from "@duplojs/lang/modeling";
+import { SymbolFlags } from "typescript/async";
 
 export const callExpressionTransformer: Transformer<GoAST.CallExpression> = createTransformer(
 	async(rawNode, context) => {
@@ -24,10 +26,26 @@ export const callExpressionTransformer: Transformer<GoAST.CallExpression> = crea
 			return callee;
 		}
 
-		const functionVariableStatement = GoAST.createShortVariableDeclarationStatement({
-			identifier: context.generateIdentifier(),
-			initializer: callee.result,
-		});
+		// Une fonction directe (déclaration, identifiant simple ou sélecteur de package/méthode)
+		// est appelée directement sans variable intermédiaire.
+		const { typeChecker } = context.transpilation;
+		const calleeSymbol = await typeChecker.getSymbolAtLocation(node.expression);
+		const calleeDeclarationSymbol = calleeSymbol && calleeSymbol.flags & SymbolFlags.Alias
+			? await typeChecker.getAliasedSymbol(calleeSymbol)
+			: calleeSymbol;
+		const isFunctionDeclaration = !!calleeDeclarationSymbol
+			&& !!(calleeDeclarationSymbol.flags & SymbolFlags.Function);
+
+		const isDirectCallee = isFunctionDeclaration
+			|| DModeling.hasTagValue(callee.result, "[node]identifier")
+			|| DModeling.hasTagValue(callee.result, "[node][expression]selector");
+
+		const functionVariableStatement = !isDirectCallee
+			? GoAST.createShortVariableDeclarationStatement({
+				identifier: context.generateIdentifier(),
+				initializer: callee.result,
+			})
+			: undefined;
 
 		const argumentsResult = await DCommon.asyncPipe(
 			node.arguments,
@@ -51,20 +69,14 @@ export const callExpressionTransformer: Transformer<GoAST.CallExpression> = crea
 						return exit(element);
 					}
 
-					const argumentVariableStatement = GoAST.createShortVariableDeclarationStatement({
-						identifier: context.generateIdentifier(),
-						initializer: element.result,
-					});
-
 					return next({
 						before: DArray.concat(
 							lastValue.before,
 							element.before,
-							[argumentVariableStatement],
 						),
 						arguments: DArray.push(
 							lastValue.arguments,
-							argumentVariableStatement.identifier,
+							element.result,
 						),
 					});
 				},
@@ -78,11 +90,11 @@ export const callExpressionTransformer: Transformer<GoAST.CallExpression> = crea
 		return context.success({
 			before: DArray.concat(
 				callee.before,
-				[functionVariableStatement],
+				functionVariableStatement ? [functionVariableStatement] : [],
 				argumentsResult.before,
 			),
 			result: GoAST.createCallExpression({
-				callee: functionVariableStatement.identifier,
+				callee: functionVariableStatement ? functionVariableStatement.identifier : callee.result,
 				arguments: argumentsResult.arguments,
 			}),
 		});

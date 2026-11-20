@@ -53,11 +53,6 @@ export const binaryExpressionTransformer: Transformer<GoAST.BinaryExpression> = 
 			return left;
 		}
 
-		const leftAssignment = GoAST.createShortVariableDeclarationStatement({
-			identifier: context.generateIdentifier(),
-			initializer: left.result,
-		});
-
 		const right = await DCommon.asyncPipe(
 			context.transform(node.right, expressionTransformers.value),
 			DEither.unwrapRight,
@@ -67,22 +62,15 @@ export const binaryExpressionTransformer: Transformer<GoAST.BinaryExpression> = 
 			return right;
 		}
 
-		const rightAssignment = GoAST.createShortVariableDeclarationStatement({
-			identifier: context.generateIdentifier(),
-			initializer: right.result,
-		});
-
 		return context.success({
 			before: DArray.concat(
 				left.before,
-				[leftAssignment],
 				right.before,
-				[rightAssignment],
 			),
 			result: GoAST.createBinaryExpression({
 				operator,
-				right: rightAssignment.identifier,
-				left: leftAssignment.identifier,
+				left: left.result,
+				right: right.result,
 			}),
 		});
 	},
